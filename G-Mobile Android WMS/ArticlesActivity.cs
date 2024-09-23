@@ -1,36 +1,41 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
+using Acr.UserDialogs;
 using Android.App;
+using Android.Content;
+using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
-using Android.Views;
-using Android.Widget;
 using Android.Util;
-using System.Collections.Generic;
-using System.Threading;
-using Android.Media;
+using Android.Views;
 using Android.Views.InputMethods;
-
+using Android.Widget;
+using G_Mobile_Android_WMS.Enums;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
-
-using Acr.UserDialogs;
-
-using WMSServerAccess.Model;
-using Android.Content;
-using System.Timers;
-using System.Threading.Tasks;
-using G_Mobile_Android_WMS.Enums;
-using System.Linq;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, MainLauncher = false, WindowSoftInputMode = Android.Views.SoftInput.AdjustPan | Android.Views.SoftInput.StateHidden)]
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        MainLauncher = false,
+        WindowSoftInputMode = Android.Views.SoftInput.AdjustPan
+            | Android.Views.SoftInput.StateHidden
+    )]
     public class ArticlesActivity : ActivityWithScanner
     {
         FloatingActionButton Back;
         ListView ArticlesList;
+
         //TextView kodean;
         FloatingActionButton Refresh;
         FloatingActionButton Search;
@@ -92,7 +97,7 @@ namespace G_Mobile_Android_WMS
 
             GetAndSetControls();
 
-            if(IDTowaru > -1)
+            if (IDTowaru > -1)
             {
                 if (Globalne.towarBL.PobierzTowar(IDTowaru).strSymbol.Length > 0)
                     FilterText = Globalne.towarBL.PobierzTowar(IDTowaru).strSymbol;
@@ -106,7 +111,6 @@ namespace G_Mobile_Android_WMS
             else
                 System.Threading.Tasks.Task.Run(() => InsertData(FilterText));
         }
-
 
         private void GetAndSetControls()
         {
@@ -125,20 +129,22 @@ namespace G_Mobile_Android_WMS
 
             Search.Click += Search_Click;
             BtnSettings.Click += Settings_Click;
-
         }
 
         public void SelectArticleAndCloseActivity(TowarVO t)
         {
             Intent i = new Intent();
             i.PutExtra(Results.SelectedID.ToString(), t.ID);
-            i.PutExtra(Results.SelectedJSON.ToString(), Newtonsoft.Json.JsonConvert.SerializeObject(t));
+            i.PutExtra(
+                Results.SelectedJSON.ToString(),
+                Newtonsoft.Json.JsonConvert.SerializeObject(t)
+            );
 
             SetResult(Result.Ok, i);
             Finish();
         }
 
-        async protected override void OnScan(object sender, ElapsedEventArgs e)
+        protected override async void OnScan(object sender, ElapsedEventArgs e)
         {
             base.OnScan(sender, e);
             await RunIsBusyTaskAsync(() => ShowProgressAndDecodeBarcode(LastScanData));
@@ -163,16 +169,28 @@ namespace G_Mobile_Android_WMS
 
         private async System.Threading.Tasks.Task<int> ParseBarcode(List<string> Barcodes)
         {
-            KodKreskowyZSzablonuO Kod = Helpers.ParseBarcodesAccordingToOrder(Barcodes, Enums.DocTypes.RW);
+            KodKreskowyZSzablonuO Kod = Helpers.ParseBarcodesAccordingToOrder(
+                Barcodes,
+                Enums.DocTypes.RW
+            );
 
             if (Kod.TowaryJednostkiWBazie.Count == 0)
             {
-                await Helpers.AlertAsyncWithConfirm(this, Resource.String.articles_not_found, Resource.Raw.sound_error, Resource.String.global_alert);
+                await Helpers.AlertAsyncWithConfirm(
+                    this,
+                    Resource.String.articles_not_found,
+                    Resource.Raw.sound_error,
+                    Resource.String.global_alert
+                );
                 return -1;
             }
             else if (Kod.TowaryJednostkiWBazie.Count != 1)
             {
-                TowarJednostkaO TwJedn = await BusinessLogicHelpers.Indexes.SelectOneArticleFromMany(this, Kod.TowaryJednostkiWBazie);
+                TowarJednostkaO TwJedn =
+                    await BusinessLogicHelpers.Indexes.SelectOneArticleFromMany(
+                        this,
+                        Kod.TowaryJednostkiWBazie
+                    );
 
                 if (TwJedn.IDTowaru < 0)
                     return -1;
@@ -219,7 +237,9 @@ namespace G_Mobile_Android_WMS
             {
                 try
                 {
-                    TowarRowTerminal Selected = (ArticlesList.Adapter as ArticlesListAdapter)[e.Position];
+                    TowarRowTerminal Selected = (ArticlesList.Adapter as ArticlesListAdapter)[
+                        e.Position
+                    ];
                     TowarVO T = (TowarVO)Globalne.towarBL.PobierzTowar(Selected.ID);
 
                     if (T.ID != -1)
@@ -235,7 +255,13 @@ namespace G_Mobile_Android_WMS
 
         async void ChangeFilter()
         {
-            var Res = await Helpers.AlertAsyncWithPrompt(this, Resource.String.documents_filter, null, FilterText, InputType.Default);
+            var Res = await Helpers.AlertAsyncWithPrompt(
+                this,
+                Resource.String.documents_filter,
+                null,
+                FilterText,
+                InputType.Default
+            );
 
             if (Res.Ok)
             {
@@ -257,12 +283,20 @@ namespace G_Mobile_Android_WMS
 
                 Helpers.ShowProgressDialog(GetString(Resource.String.articles_loading));
 
-                List<TowarRowTerminal> Towary = await System.Threading.Tasks.Task.Factory.StartNew(() => GetData(Filtr));
+                List<TowarRowTerminal> Towary = await System.Threading.Tasks.Task.Factory.StartNew(
+                    () => GetData(Filtr)
+                );
 
                 RunOnUiThread(() =>
                 {
                     ArticlesList.Adapter = new ArticlesListAdapter(this, Towary);
-                    Helpers.SetTextOnTextView(this, ItemCount, GetString(Resource.String.global_liczba_pozycji) + " " + ArticlesList.Adapter.Count.ToString());
+                    Helpers.SetTextOnTextView(
+                        this,
+                        ItemCount,
+                        GetString(Resource.String.global_liczba_pozycji)
+                            + " "
+                            + ArticlesList.Adapter.Count.ToString()
+                    );
                 });
 
                 Helpers.HideProgressDialog();
@@ -284,18 +318,19 @@ namespace G_Mobile_Android_WMS
 
         private List<TowarRowTerminal> GetData(string Filtr)
         {
-            List<TowarRowTerminal> Towary = Globalne.towarBL.PobierzListęDostępnychTowarówZeStanemWedług(IDDokumentu,
-                                                                                                           IDMagazynu,
-                                                                                                           IDLokalizacji,
-                                                                                                           IDFunkcjiLogistycznej,
-                                                                                                           IDPartii,
-                                                                                                           IDPalety,
-                                                                                                           Globalne.CurrentUserSettings.DisplayUnit,
-                                                                                                           IDKontrahenta,
-                                                                                                           Filtr,
-                                                                                                           Rozchód);
-
-
+            List<TowarRowTerminal> Towary =
+                Globalne.towarBL.PobierzListęDostępnychTowarówZeStanemWedług(
+                    IDDokumentu,
+                    IDMagazynu,
+                    IDLokalizacji,
+                    IDFunkcjiLogistycznej,
+                    IDPartii,
+                    IDPalety,
+                    Globalne.CurrentUserSettings.DisplayUnit,
+                    IDKontrahenta,
+                    Filtr,
+                    Rozchód
+                );
 
             return Towary;
         }
@@ -312,7 +347,8 @@ namespace G_Mobile_Android_WMS
         readonly List<TowarRowTerminal> Items;
         readonly Activity Ctx;
 
-        public ArticlesListAdapter(Activity Ctx, List<TowarRowTerminal> Items) : base()
+        public ArticlesListAdapter(Activity Ctx, List<TowarRowTerminal> Items)
+            : base()
         {
             this.Ctx = Ctx;
             this.Items = Items;
@@ -322,6 +358,7 @@ namespace G_Mobile_Android_WMS
         {
             return position;
         }
+
         public override TowarRowTerminal this[int position]
         {
             get { return Items[position]; }
@@ -330,6 +367,7 @@ namespace G_Mobile_Android_WMS
         {
             get { return Items.Count; }
         }
+
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
             var Towar = Items[position];
@@ -338,13 +376,16 @@ namespace G_Mobile_Android_WMS
             if (view == null)
                 view = Ctx.LayoutInflater.Inflate(Resource.Layout.list_item_articles, null);
 
-
-            view.FindViewById<TextView>(Resource.Id.articles_list_name).Text = String.Concat(Towar.strSymbol) + " - " + String.Concat(Towar.strNazwa);
-            view.FindViewById<TextView>(Resource.Id.articles_list_amount).Text = String.Concat(Towar.Zapas >= 0 ? Towar.Zapas.ToString() : "---", " (", Towar.strJednostkaMiary, " )");
+            view.FindViewById<TextView>(Resource.Id.articles_list_name).Text =
+                String.Concat(Towar.strSymbol) + " - " + String.Concat(Towar.strNazwa);
+            view.FindViewById<TextView>(Resource.Id.articles_list_amount).Text = String.Concat(
+                Towar.Zapas >= 0 ? Towar.Zapas.ToString() : "---",
+                " (",
+                Towar.strJednostkaMiary,
+                " )"
+            );
 
             return view;
         }
-
     }
 }
-

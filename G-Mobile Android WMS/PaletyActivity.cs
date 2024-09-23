@@ -1,31 +1,35 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
+using Acr.UserDialogs;
 using Android.App;
+using Android.Content;
+using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
-using Android.Views;
-using Android.Widget;
 using Android.Util;
-using System.Collections.Generic;
-using System.Threading;
-using Android.Media;
+using Android.Views;
 using Android.Views.InputMethods;
-
+using Android.Widget;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
-
-using Acr.UserDialogs;
-
-using WMSServerAccess.Model;
-using Android.Content;
-using System.Timers;
-using System.Threading.Tasks;
-using System.Linq;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, WindowSoftInputMode = Android.Views.SoftInput.AdjustPan | Android.Views.SoftInput.StateHidden)]
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        MainLauncher = false,
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        WindowSoftInputMode = Android.Views.SoftInput.AdjustPan
+            | Android.Views.SoftInput.StateHidden
+    )]
     public class PaletyActivity : ActivityWithScanner
     {
         FloatingActionButton Back;
@@ -101,9 +105,7 @@ namespace G_Mobile_Android_WMS
                 else
                     Task.Run(() => InsertData());
             }
-            
         }
-
 
         private void GetAndSetControls()
         {
@@ -142,7 +144,7 @@ namespace G_Mobile_Android_WMS
             Finish();
         }
 
-        async protected override void OnScan(object sender, ElapsedEventArgs e)
+        protected override async void OnScan(object sender, ElapsedEventArgs e)
         {
             base.OnScan(sender, e);
             await RunIsBusyTaskAsync(() => ShowProgressAndDecodeBarcode(LastScanData[0]));
@@ -171,7 +173,12 @@ namespace G_Mobile_Android_WMS
 
             if (Kod.ID < 0)
             {
-                await Helpers.AlertAsyncWithConfirm(this, Resource.String.palety_not_found, Resource.Raw.sound_error, Resource.String.global_alert);
+                await Helpers.AlertAsyncWithConfirm(
+                    this,
+                    Resource.String.palety_not_found,
+                    Resource.Raw.sound_error,
+                    Resource.String.global_alert
+                );
                 return -1;
             }
             else
@@ -202,12 +209,13 @@ namespace G_Mobile_Android_WMS
             {
                 try
                 {
-                    PaletaRowTerminal Selected = (PaletyList.Adapter as PaletyListAdapter)[e.Position];
+                    PaletaRowTerminal Selected = (PaletyList.Adapter as PaletyListAdapter)[
+                        e.Position
+                    ];
                     PaletaO Pal = Globalne.paletaBL.PobierzPaletę(Selected.ID, "");
 
                     if (Pal.ID != -1)
                         SelectPaletaAndCloseActivity(Pal);
-
                 }
                 catch (Exception ex)
                 {
@@ -219,7 +227,13 @@ namespace G_Mobile_Android_WMS
 
         async void ChangeFilter()
         {
-            var Res = await Helpers.AlertAsyncWithPrompt(this, Resource.String.palety_filter, null, FilterText, InputType.Default);
+            var Res = await Helpers.AlertAsyncWithPrompt(
+                this,
+                Resource.String.palety_filter,
+                null,
+                FilterText,
+                InputType.Default
+            );
 
             if (Res.Ok)
             {
@@ -246,7 +260,13 @@ namespace G_Mobile_Android_WMS
                 RunOnUiThread(() =>
                 {
                     PaletyList.Adapter = new PaletyListAdapter(this, Palety, IDTowaru);
-                    Helpers.SetTextOnTextView(this, ItemCount, GetString(Resource.String.global_liczba_pozycji) + " " + PaletyList.Adapter.Count.ToString());
+                    Helpers.SetTextOnTextView(
+                        this,
+                        ItemCount,
+                        GetString(Resource.String.global_liczba_pozycji)
+                            + " "
+                            + PaletyList.Adapter.Count.ToString()
+                    );
                 });
 
                 Helpers.HideProgressDialog();
@@ -268,23 +288,30 @@ namespace G_Mobile_Android_WMS
 
         private List<PaletaRowTerminal> GetData()
         {
-            List<PaletaRowTerminal> Lokalizacje = Globalne.paletaBL.PobierzListęDostępnychPaletNaTerminalZeStanemWedług(IDMagazynu,
-                                                                                                                        IDTowaru,
-                                                                                                                        IDFunkcjiLogistycznej,
-                                                                                                                        IDLokalizacji,
-                                                                                                                        IDPartii,
-                                                                                                                        Globalne.CurrentUserSettings.DisplayUnit,
-                                                                                                                        IDKontrahenta,
-                                                                                                                        IDDokumentu,
-                                                                                                                        FilterText,
-                                                                                                                        Rozchód,
-                                                                                                                        "");
+            List<PaletaRowTerminal> Lokalizacje =
+                Globalne.paletaBL.PobierzListęDostępnychPaletNaTerminalZeStanemWedług(
+                    IDMagazynu,
+                    IDTowaru,
+                    IDFunkcjiLogistycznej,
+                    IDLokalizacji,
+                    IDPartii,
+                    Globalne.CurrentUserSettings.DisplayUnit,
+                    IDKontrahenta,
+                    IDDokumentu,
+                    FilterText,
+                    Rozchód,
+                    ""
+                );
             // usuniecie zduplikowanych wpisow z numerami SSCC
             return DistinctBy(Lokalizacje, x => x.strNazwa).ToList();
 
             //return Lokalizacje;
         }
-        public IEnumerable<TSource> DistinctBy<TSource, TKey>(IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+
+        public IEnumerable<TSource> DistinctBy<TSource, TKey>(
+            IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector
+        )
         {
             HashSet<TKey> seenKeys = new HashSet<TKey>();
             foreach (TSource element in source)
@@ -295,6 +322,7 @@ namespace G_Mobile_Android_WMS
                 }
             }
         }
+
         private void Back_Click(object sender, EventArgs e)
         {
             SetResult(Result.Canceled);
@@ -308,7 +336,8 @@ namespace G_Mobile_Android_WMS
         readonly Activity Ctx;
         readonly int ArticleID;
 
-        public PaletyListAdapter(Activity Ctx, List<PaletaRowTerminal> Items, int ArticleID) : base()
+        public PaletyListAdapter(Activity Ctx, List<PaletaRowTerminal> Items, int ArticleID)
+            : base()
         {
             this.Ctx = Ctx;
             this.Items = Items;
@@ -319,6 +348,7 @@ namespace G_Mobile_Android_WMS
         {
             return position;
         }
+
         public override PaletaRowTerminal this[int position]
         {
             get { return Items[position]; }
@@ -327,6 +357,7 @@ namespace G_Mobile_Android_WMS
         {
             get { return Items.Count; }
         }
+
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
             var Partia = Items[position];
@@ -338,13 +369,13 @@ namespace G_Mobile_Android_WMS
             view.FindViewById<TextView>(Resource.Id.palety_list_name).Text = Partia.strNazwa;
 
             if (ArticleID < 0)
-                view.FindViewById<TextView>(Resource.Id.palety_list_amount).Visibility = ViewStates.Invisible;
+                view.FindViewById<TextView>(Resource.Id.palety_list_amount).Visibility =
+                    ViewStates.Invisible;
             else
-                view.FindViewById<TextView>(Resource.Id.palety_list_amount).Text = Partia.Zapas.ToString() + "(" + Partia.strNazwaJednostki.ToString() + ")";
+                view.FindViewById<TextView>(Resource.Id.palety_list_amount).Text =
+                    Partia.Zapas.ToString() + "(" + Partia.strNazwaJednostki.ToString() + ")";
 
             return view;
         }
-
     }
 }
-

@@ -2,19 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Acr.UserDialogs;
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-
-using WMSServerAccess.Model;
-using Acr.UserDialogs;
-using G_Mobile_Android_WMS.ExtendedModel;
 using G_Mobile_Android_WMS.Enums;
-using Android.Content.PM;
+using G_Mobile_Android_WMS.ExtendedModel;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
@@ -37,11 +35,12 @@ namespace G_Mobile_Android_WMS
             Orientation = ScreenOrientation.Portrait;
         }
 
-
-
         public static TerminalSettings GetSettings()
         {
-            var SettingsBundle = Application.Context.GetSharedPreferences(SettingsBundleName, FileCreationMode.Private);
+            var SettingsBundle = Application.Context.GetSharedPreferences(
+                SettingsBundleName,
+                FileCreationMode.Private
+            );
 
             if (SettingsBundle == null)
                 return null;
@@ -71,7 +70,10 @@ namespace G_Mobile_Android_WMS
 
         public static void SaveSettings(TerminalSettings Set)
         {
-            var SettingsBundle = Application.Context.GetSharedPreferences(SettingsBundleName, FileCreationMode.Private);
+            var SettingsBundle = Application.Context.GetSharedPreferences(
+                SettingsBundleName,
+                FileCreationMode.Private
+            );
             var SettingsEditor = SettingsBundle.Edit();
 
             // Encrypt the password, then return it to its unencrypted state for further operations
@@ -84,7 +86,6 @@ namespace G_Mobile_Android_WMS
 
             SettingsEditor.PutString("Json", Json);
             SettingsEditor.Apply();
-
         }
     }
 
@@ -110,7 +111,10 @@ namespace G_Mobile_Android_WMS
 
         public string SetMagazineForMM { get; set; }
 
-        public Dictionary<DocTypes, Dictionary<DocumentFields, bool>> CreatingDocumentsRequiredFields { get; set; }
+        public Dictionary<
+            DocTypes,
+            Dictionary<DocumentFields, bool>
+        > CreatingDocumentsRequiredFields { get; set; }
 
         public int DecimalSpaces { get; set; }
         public bool FunkcjeLogistyczne { get; set; }
@@ -137,7 +141,7 @@ namespace G_Mobile_Android_WMS
 
         public bool MultipickingConfirmOutLocation { get; set; }
 
-        public bool MultipickingSelectDocuments {  get; set; }
+        public bool MultipickingSelectDocuments { get; set; }
 
         public bool MultipickingConfirmArticle { get; set; }
 
@@ -171,13 +175,11 @@ namespace G_Mobile_Android_WMS
         public int DefaultValueOnOrderDocPZ { get; set; }
         public int DefaultValueOnOrderDocZL { get; set; }
 
-
         public int DefaultValueOnDocRW { get; set; }
         public int DefaultValueOnDocPW { get; set; }
         public int DefaultValueOnDocWZ { get; set; }
         public int DefaultValueOnDocPZ { get; set; }
         public int DefaultValueOnDocZL { get; set; }
-
 
         public bool DisableNavigationBar { get; set; }
 
@@ -192,9 +194,18 @@ namespace G_Mobile_Android_WMS
         public Dictionary<DocTypes, int> StatusesToSetOnDocumentDone { get; set; }
         public Dictionary<DocTypes, int> StatusesToSetOnDocumentFinish { get; set; }
         public Dictionary<DocTypes, int> StatusesToSetOnDocumentFinishIncorrect { get; set; }
-        public Dictionary<DocTypes, Dictionary<EditingDocumentsListDisplayElements, bool>> EditingDocumentsListDisplayElementsListsINNNR { get; set; }
-        public Dictionary<DocTypes, Dictionary<DocumentItemDisplayElements, bool>> EditingDocumentItemDisplayElementsListsKAT { get; set; }
-        public Dictionary<DocTypes, Dictionary<DocumentItemFields, bool>> RequiredDocItemFields { get; set; }
+        public Dictionary<
+            DocTypes,
+            Dictionary<EditingDocumentsListDisplayElements, bool>
+        > EditingDocumentsListDisplayElementsListsINNNR { get; set; }
+        public Dictionary<
+            DocTypes,
+            Dictionary<DocumentItemDisplayElements, bool>
+        > EditingDocumentItemDisplayElementsListsKAT { get; set; }
+        public Dictionary<
+            DocTypes,
+            Dictionary<DocumentItemFields, bool>
+        > RequiredDocItemFields { get; set; }
         public Dictionary<string, string> CodeParsing { get; set; }
         public bool GetDataFromFirstSSCCEntry { get; set; }
         public bool AutoDetal { get; set; }
@@ -211,8 +222,8 @@ namespace G_Mobile_Android_WMS
             DocumentsDaysDisplayThreshhold = 2;
             SetRejestrForDetal = "";
             SetContrahForDetal = "";
-            SetRejestrForMM = "" ;
-            SetMagazineForMM = "" ;
+            SetRejestrForMM = "";
+            SetMagazineForMM = "";
             DateFormat = "dd.MM.yyyy";
             InsertProdDate = false;
             InsertBestBeforeDate = false;
@@ -282,18 +293,23 @@ namespace G_Mobile_Android_WMS
 
             CodeParsing = new Dictionary<string, string>()
             {
-                [nameof(KodKreskowyZSzablonuO.DataProdukcji)] = nameof(DocumentItemVO.ExProductionDate),            // Should be static
-                [nameof(KodKreskowyZSzablonuO.DataPrzydatności)] = nameof(DocumentItemVO.ExBestBefore),             // Should be static
+                [nameof(KodKreskowyZSzablonuO.DataProdukcji)] = nameof(
+                    DocumentItemVO.ExProductionDate
+                ), // Should be static
+                [nameof(KodKreskowyZSzablonuO.DataPrzydatności)] = nameof(
+                    DocumentItemVO.ExBestBefore
+                ), // Should be static
                 [nameof(KodKreskowyZSzablonuO.Partia)] = nameof(DocumentItemVO.ExPartia),
                 [nameof(KodKreskowyZSzablonuO.Paleta)] = nameof(DocumentItemVO.ExPaletaP),
-                [nameof(KodKreskowyZSzablonuO.Ilość)] = nameof(DocumentItemVO.Base.numIloscZrealizowana),
+                [nameof(KodKreskowyZSzablonuO.Ilość)] = nameof(
+                    DocumentItemVO.Base.numIloscZrealizowana
+                ),
                 [nameof(KodKreskowyZSzablonuO.KrajPochodzenia)] = "",
                 [nameof(KodKreskowyZSzablonuO.NrSeryjny)] = nameof(DocumentItemVO.ExSerialNum),
                 [nameof(KodKreskowyZSzablonuO.NumerZamówienia)] = "",
                 [nameof(KodKreskowyZSzablonuO.Lot)] = nameof(DocumentItemVO.ExLot),
-                [nameof(KodKreskowyZSzablonuO.Producent)] = nameof(DocumentItemVO.ExOwner)                        // Should be static
+                [nameof(KodKreskowyZSzablonuO.Producent)] = nameof(DocumentItemVO.ExOwner) // Should be static
             };
-
 
             StatusesToSetOnDocumentEnter = new Dictionary<Enums.DocTypes, int>()
             {
@@ -390,63 +406,33 @@ namespace G_Mobile_Android_WMS
             BarcodeScanningOrderForce = false;
             BarcodeScanningOrder = new Dictionary<DocTypes, List<int>>()
             {
-                [Enums.DocTypes.PW] = new List<int>()
-                {
-                    BarcodeOrder.Template
-                },
+                [Enums.DocTypes.PW] = new List<int>() { BarcodeOrder.Template },
 
-                [Enums.DocTypes.RW] = new List<int>()
-                {
-                    BarcodeOrder.Template
-                },
+                [Enums.DocTypes.RW] = new List<int>() { BarcodeOrder.Template },
 
-                [Enums.DocTypes.PZ] = new List<int>()
-                {
-                    BarcodeOrder.Template
-                },
+                [Enums.DocTypes.PZ] = new List<int>() { BarcodeOrder.Template },
 
-                [Enums.DocTypes.WZ] = new List<int>()
-                {
-                    BarcodeOrder.Template
-                },
+                [Enums.DocTypes.WZ] = new List<int>() { BarcodeOrder.Template },
 
-                [Enums.DocTypes.MM] = new List<int>()
-                {
-                    BarcodeOrder.Template
-                },
+                [Enums.DocTypes.MM] = new List<int>() { BarcodeOrder.Template },
 
-                [Enums.DocTypes.MMGathering] = new List<int>()
-                {
-                    BarcodeOrder.Template
-                },
+                [Enums.DocTypes.MMGathering] = new List<int>() { BarcodeOrder.Template },
 
-                [Enums.DocTypes.MMDistribution] = new List<int>()
-                {
-                    BarcodeOrder.Template
-                },
+                [Enums.DocTypes.MMDistribution] = new List<int>() { BarcodeOrder.Template },
 
-                [Enums.DocTypes.ZL] = new List<int>()
-                {
-                    BarcodeOrder.Template
-                },
+                [Enums.DocTypes.ZL] = new List<int>() { BarcodeOrder.Template },
 
-                [Enums.DocTypes.ZLGathering] = new List<int>()
-                {
-                    BarcodeOrder.Template
-                },
+                [Enums.DocTypes.ZLGathering] = new List<int>() { BarcodeOrder.Template },
 
-                [Enums.DocTypes.ZLDistribution] = new List<int>()
-                {
-                    BarcodeOrder.Template
-                },
+                [Enums.DocTypes.ZLDistribution] = new List<int>() { BarcodeOrder.Template },
 
-                [Enums.DocTypes.IN] = new List<int>()
-                {
-                    BarcodeOrder.Template
-                },
+                [Enums.DocTypes.IN] = new List<int>() { BarcodeOrder.Template },
             };
 
-            RequiredDocItemFields = new Dictionary<Enums.DocTypes, Dictionary<Enums.DocumentItemFields, bool>>()
+            RequiredDocItemFields = new Dictionary<
+                Enums.DocTypes,
+                Dictionary<Enums.DocumentItemFields, bool>
+            >()
             {
                 [Enums.DocTypes.PW] = new Dictionary<Enums.DocumentItemFields, bool>()
                 {
@@ -462,7 +448,6 @@ namespace G_Mobile_Android_WMS
                     [DocumentItemFields.DataProdukcji] = false,
                     [DocumentItemFields.DataPrzydatności] = false,
                     [DocumentItemFields.Location] = true,
-                   
                 },
 
                 [Enums.DocTypes.RW] = new Dictionary<Enums.DocumentItemFields, bool>()
@@ -530,7 +515,6 @@ namespace G_Mobile_Android_WMS
                     [DocumentItemFields.DataPrzydatności] = false,
                     [DocumentItemFields.LocationIn] = true,
                     [DocumentItemFields.LocationOut] = true,
-                    
                 },
 
                 [Enums.DocTypes.ZLGathering] = new Dictionary<Enums.DocumentItemFields, bool>()
@@ -548,7 +532,6 @@ namespace G_Mobile_Android_WMS
                     [DocumentItemFields.DataPrzydatności] = false,
                     [DocumentItemFields.Location] = true,
                 },
-
 
                 [Enums.DocTypes.ZLDistribution] = new Dictionary<Enums.DocumentItemFields, bool>()
                 {
@@ -634,9 +617,15 @@ namespace G_Mobile_Android_WMS
                 },
             };
 
-            EditingDocumentsListDisplayElementsListsINNNR = new Dictionary<Enums.DocTypes, Dictionary<Enums.EditingDocumentsListDisplayElements, bool>>()
+            EditingDocumentsListDisplayElementsListsINNNR = new Dictionary<
+                Enums.DocTypes,
+                Dictionary<Enums.EditingDocumentsListDisplayElements, bool>
+            >()
             {
-                [Enums.DocTypes.PW] = new Dictionary<Enums.EditingDocumentsListDisplayElements, bool>()
+                [Enums.DocTypes.PW] = new Dictionary<
+                    Enums.EditingDocumentsListDisplayElements,
+                    bool
+                >()
                 {
                     [Enums.EditingDocumentsListDisplayElements.Symbol] = true,
                     [Enums.EditingDocumentsListDisplayElements.ArticleName] = true,
@@ -654,7 +643,10 @@ namespace G_Mobile_Android_WMS
                     [Enums.EditingDocumentsListDisplayElements.NrKat] = true,
                 },
 
-                [Enums.DocTypes.RW] = new Dictionary<Enums.EditingDocumentsListDisplayElements, bool>()
+                [Enums.DocTypes.RW] = new Dictionary<
+                    Enums.EditingDocumentsListDisplayElements,
+                    bool
+                >()
                 {
                     [Enums.EditingDocumentsListDisplayElements.Symbol] = true,
                     [Enums.EditingDocumentsListDisplayElements.ArticleName] = true,
@@ -672,7 +664,10 @@ namespace G_Mobile_Android_WMS
                     [Enums.EditingDocumentsListDisplayElements.NrKat] = false,
                 },
 
-                [Enums.DocTypes.PZ] = new Dictionary<Enums.EditingDocumentsListDisplayElements, bool>()
+                [Enums.DocTypes.PZ] = new Dictionary<
+                    Enums.EditingDocumentsListDisplayElements,
+                    bool
+                >()
                 {
                     [Enums.EditingDocumentsListDisplayElements.Symbol] = true,
                     [Enums.EditingDocumentsListDisplayElements.ArticleName] = true,
@@ -690,7 +685,10 @@ namespace G_Mobile_Android_WMS
                     [Enums.EditingDocumentsListDisplayElements.NrKat] = false,
                 },
 
-                [Enums.DocTypes.WZ] = new Dictionary<Enums.EditingDocumentsListDisplayElements, bool>()
+                [Enums.DocTypes.WZ] = new Dictionary<
+                    Enums.EditingDocumentsListDisplayElements,
+                    bool
+                >()
                 {
                     [Enums.EditingDocumentsListDisplayElements.Symbol] = true,
                     [Enums.EditingDocumentsListDisplayElements.ArticleName] = true,
@@ -708,7 +706,10 @@ namespace G_Mobile_Android_WMS
                     [Enums.EditingDocumentsListDisplayElements.NrKat] = false,
                 },
 
-                [Enums.DocTypes.ZL] = new Dictionary<Enums.EditingDocumentsListDisplayElements, bool>()
+                [Enums.DocTypes.ZL] = new Dictionary<
+                    Enums.EditingDocumentsListDisplayElements,
+                    bool
+                >()
                 {
                     [Enums.EditingDocumentsListDisplayElements.Symbol] = true,
                     [Enums.EditingDocumentsListDisplayElements.ArticleName] = true,
@@ -730,7 +731,10 @@ namespace G_Mobile_Android_WMS
                     [Enums.EditingDocumentsListDisplayElements.NrKat] = false,
                 },
 
-                [Enums.DocTypes.ZLGathering] = new Dictionary<Enums.EditingDocumentsListDisplayElements, bool>()
+                [Enums.DocTypes.ZLGathering] = new Dictionary<
+                    Enums.EditingDocumentsListDisplayElements,
+                    bool
+                >()
                 {
                     [Enums.EditingDocumentsListDisplayElements.Symbol] = true,
                     [Enums.EditingDocumentsListDisplayElements.ArticleName] = true,
@@ -752,8 +756,10 @@ namespace G_Mobile_Android_WMS
                     [Enums.EditingDocumentsListDisplayElements.NrKat] = false,
                 },
 
-
-                [Enums.DocTypes.ZLDistribution] = new Dictionary<Enums.EditingDocumentsListDisplayElements, bool>()
+                [Enums.DocTypes.ZLDistribution] = new Dictionary<
+                    Enums.EditingDocumentsListDisplayElements,
+                    bool
+                >()
                 {
                     [Enums.EditingDocumentsListDisplayElements.Symbol] = true,
                     [Enums.EditingDocumentsListDisplayElements.ArticleName] = true,
@@ -775,7 +781,10 @@ namespace G_Mobile_Android_WMS
                     [Enums.EditingDocumentsListDisplayElements.NrKat] = false,
                 },
 
-                [Enums.DocTypes.MM] = new Dictionary<Enums.EditingDocumentsListDisplayElements, bool>()
+                [Enums.DocTypes.MM] = new Dictionary<
+                    Enums.EditingDocumentsListDisplayElements,
+                    bool
+                >()
                 {
                     [Enums.EditingDocumentsListDisplayElements.Symbol] = true,
                     [Enums.EditingDocumentsListDisplayElements.ArticleName] = true,
@@ -797,7 +806,10 @@ namespace G_Mobile_Android_WMS
                     [Enums.EditingDocumentsListDisplayElements.NrKat] = false,
                 },
 
-                [Enums.DocTypes.MMGathering] = new Dictionary<Enums.EditingDocumentsListDisplayElements, bool>()
+                [Enums.DocTypes.MMGathering] = new Dictionary<
+                    Enums.EditingDocumentsListDisplayElements,
+                    bool
+                >()
                 {
                     [Enums.EditingDocumentsListDisplayElements.Symbol] = true,
                     [Enums.EditingDocumentsListDisplayElements.ArticleName] = true,
@@ -819,8 +831,10 @@ namespace G_Mobile_Android_WMS
                     [Enums.EditingDocumentsListDisplayElements.NrKat] = false,
                 },
 
-
-                [Enums.DocTypes.MMDistribution] = new Dictionary<Enums.EditingDocumentsListDisplayElements, bool>()
+                [Enums.DocTypes.MMDistribution] = new Dictionary<
+                    Enums.EditingDocumentsListDisplayElements,
+                    bool
+                >()
                 {
                     [Enums.EditingDocumentsListDisplayElements.Symbol] = true,
                     [Enums.EditingDocumentsListDisplayElements.ArticleName] = true,
@@ -842,7 +856,10 @@ namespace G_Mobile_Android_WMS
                     [Enums.EditingDocumentsListDisplayElements.NrKat] = false,
                 },
 
-                [Enums.DocTypes.IN] = new Dictionary<Enums.EditingDocumentsListDisplayElements, bool>()
+                [Enums.DocTypes.IN] = new Dictionary<
+                    Enums.EditingDocumentsListDisplayElements,
+                    bool
+                >()
                 {
                     [Enums.EditingDocumentsListDisplayElements.Symbol] = true,
                     [Enums.EditingDocumentsListDisplayElements.ArticleName] = true,
@@ -861,7 +878,10 @@ namespace G_Mobile_Android_WMS
                 },
             };
 
-            EditingDocumentItemDisplayElementsListsKAT = new Dictionary<Enums.DocTypes, Dictionary<Enums.DocumentItemDisplayElements, bool>>()
+            EditingDocumentItemDisplayElementsListsKAT = new Dictionary<
+                Enums.DocTypes,
+                Dictionary<Enums.DocumentItemDisplayElements, bool>
+            >()
             {
                 [Enums.DocTypes.PW] = new Dictionary<Enums.DocumentItemDisplayElements, bool>()
                 {
@@ -955,7 +975,10 @@ namespace G_Mobile_Android_WMS
                     [Enums.DocumentItemDisplayElements.NrKat] = false,
                 },
 
-                [Enums.DocTypes.ZLGathering] = new Dictionary<Enums.DocumentItemDisplayElements, bool>()
+                [Enums.DocTypes.ZLGathering] = new Dictionary<
+                    Enums.DocumentItemDisplayElements,
+                    bool
+                >()
                 {
                     [Enums.DocumentItemDisplayElements.Symbol] = true,
                     [Enums.DocumentItemDisplayElements.ArticleName] = true,
@@ -978,7 +1001,10 @@ namespace G_Mobile_Android_WMS
                     [Enums.DocumentItemDisplayElements.NrKat] = false,
                 },
 
-                [Enums.DocTypes.ZLDistribution] = new Dictionary<Enums.DocumentItemDisplayElements, bool>()
+                [Enums.DocTypes.ZLDistribution] = new Dictionary<
+                    Enums.DocumentItemDisplayElements,
+                    bool
+                >()
                 {
                     [Enums.DocumentItemDisplayElements.Symbol] = true,
                     [Enums.DocumentItemDisplayElements.ArticleName] = true,
@@ -1001,7 +1027,10 @@ namespace G_Mobile_Android_WMS
                     [Enums.DocumentItemDisplayElements.NrKat] = false,
                 },
 
-                [Enums.DocTypes.MMGathering] = new Dictionary<Enums.DocumentItemDisplayElements, bool>()
+                [Enums.DocTypes.MMGathering] = new Dictionary<
+                    Enums.DocumentItemDisplayElements,
+                    bool
+                >()
                 {
                     [Enums.DocumentItemDisplayElements.Symbol] = true,
                     [Enums.DocumentItemDisplayElements.ArticleName] = true,
@@ -1024,7 +1053,10 @@ namespace G_Mobile_Android_WMS
                     [Enums.DocumentItemDisplayElements.NrKat] = false,
                 },
 
-                [Enums.DocTypes.MMDistribution] = new Dictionary<Enums.DocumentItemDisplayElements, bool>()
+                [Enums.DocTypes.MMDistribution] = new Dictionary<
+                    Enums.DocumentItemDisplayElements,
+                    bool
+                >()
                 {
                     [Enums.DocumentItemDisplayElements.Symbol] = true,
                     [Enums.DocumentItemDisplayElements.ArticleName] = true,
@@ -1069,7 +1101,6 @@ namespace G_Mobile_Android_WMS
                     [Enums.DocumentItemDisplayElements.KodEAN] = true,
                     [Enums.DocumentItemDisplayElements.NrKat] = false,
                 },
-
 
                 [Enums.DocTypes.MM] = new Dictionary<Enums.DocumentItemDisplayElements, bool>()
                 {
@@ -1118,7 +1149,10 @@ namespace G_Mobile_Android_WMS
                 },
             };
 
-            CreatingDocumentsRequiredFields = new Dictionary<Enums.DocTypes, Dictionary<Enums.DocumentFields, bool>>()
+            CreatingDocumentsRequiredFields = new Dictionary<
+                Enums.DocTypes,
+                Dictionary<Enums.DocumentFields, bool>
+            >()
             {
                 [Enums.DocTypes.PW] = new Dictionary<Enums.DocumentFields, bool>()
                 {
@@ -1222,7 +1256,7 @@ namespace G_Mobile_Android_WMS
             ShowDifferenceColorOnDocumentsWhenAnyPositionIsComplete = false;
             ShowHidenDocumentsEditingByOthers = false;
             ColorForEditedPositionsOnDocument = "7FFFD4"; // kolor zgnila zielen ;)
-            DisplayUnit = -1; // -1 = Default unit, >= 0 specified unit 
+            DisplayUnit = -1; // -1 = Default unit, >= 0 specified unit
         }
 
         public static void ShowUnitSelectionDialog(Context ctx)
@@ -1241,15 +1275,26 @@ namespace G_Mobile_Android_WMS
                     return;
                 }
 
-                Units.Add(new JednostkaMiaryO() { ID = -1, strNazwa = ctx.GetString(Resource.String.stocks_default_unit) });
-                Units.Add(new JednostkaMiaryO() { ID = -2, strNazwa = ctx.GetString(Resource.String.stocks_base_unit) });
+                Units.Add(
+                    new JednostkaMiaryO()
+                    {
+                        ID = -1,
+                        strNazwa = ctx.GetString(Resource.String.stocks_default_unit)
+                    }
+                );
+                Units.Add(
+                    new JednostkaMiaryO()
+                    {
+                        ID = -2,
+                        strNazwa = ctx.GetString(Resource.String.stocks_base_unit)
+                    }
+                );
 
                 Units = Units.OrderBy(x => x.ID).ToList();
 
                 ActionSheetConfig Conf = new ActionSheetConfig()
-                                                .SetCancel(ctx.GetString(Resource.String.global_cancel))
-                                                .SetTitle(ctx.GetString(Resource.String.stocks_unit_mode));
-
+                    .SetCancel(ctx.GetString(Resource.String.global_cancel))
+                    .SetTitle(ctx.GetString(Resource.String.stocks_unit_mode));
 
                 foreach (JednostkaMiaryO JM in Units)
                     Conf.Add(JM.strNazwa, () => SetUnitMode(ctx, JM.ID));

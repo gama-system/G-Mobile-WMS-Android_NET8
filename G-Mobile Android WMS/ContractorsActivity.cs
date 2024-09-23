@@ -1,32 +1,35 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
+using Acr.UserDialogs;
 using Android.App;
+using Android.Content;
+using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
-using Android.Views;
-using Android.Widget;
 using Android.Util;
-using System.Collections.Generic;
-using System.Threading;
-using Android.Media;
+using Android.Views;
 using Android.Views.InputMethods;
-
+using Android.Widget;
+using G_Mobile_Android_WMS.SQL;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
-
-using Acr.UserDialogs;
-
-using WMSServerAccess.Model;
-using Android.Content;
-using System.Timers;
-
-using G_Mobile_Android_WMS.SQL;
-using System.Threading.Tasks;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, MainLauncher = false, WindowSoftInputMode = Android.Views.SoftInput.AdjustPan | Android.Views.SoftInput.StateHidden)]
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        MainLauncher = false,
+        WindowSoftInputMode = Android.Views.SoftInput.AdjustPan
+            | Android.Views.SoftInput.StateHidden
+    )]
     public class ContractorsActivity : ActivityWithScanner
     {
         FloatingActionButton Back;
@@ -71,7 +74,6 @@ namespace G_Mobile_Android_WMS
                 System.Threading.Tasks.Task.Run(() => InsertData());
         }
 
-
         private void GetAndSetControls()
         {
             Helpers.SetActivityHeader(this, GetString(Resource.String.contractors_activity_name));
@@ -105,7 +107,7 @@ namespace G_Mobile_Android_WMS
             Finish();
         }
 
-        async protected override void OnScan(object sender, ElapsedEventArgs e)
+        protected override async void OnScan(object sender, ElapsedEventArgs e)
         {
             base.OnScan(sender, e);
             await RunIsBusyTaskAsync(() => ShowProgressAndDecodeBarcode(LastScanData[0]));
@@ -134,7 +136,12 @@ namespace G_Mobile_Android_WMS
 
             if (Kod.ID < 0)
             {
-                await Helpers.AlertAsyncWithConfirm(this, Resource.String.contractors_not_found, Resource.Raw.sound_error, Resource.String.global_alert);
+                await Helpers.AlertAsyncWithConfirm(
+                    this,
+                    Resource.String.contractors_not_found,
+                    Resource.Raw.sound_error,
+                    Resource.String.global_alert
+                );
                 return -1;
             }
             else
@@ -150,8 +157,12 @@ namespace G_Mobile_Android_WMS
             {
                 try
                 {
-                    object[] Selected = (ContractorsList.Adapter as ContractorsListAdapter)[e.Position];
-                    int IDKontrahenta = Convert.ToInt32(Selected[(int)Contractors.Contractors_Results.idKontrahenta]);
+                    object[] Selected = (ContractorsList.Adapter as ContractorsListAdapter)[
+                        e.Position
+                    ];
+                    int IDKontrahenta = Convert.ToInt32(
+                        Selected[(int)Contractors.Contractors_Results.idKontrahenta]
+                    );
 
                     KontrahentVO Ktr = Globalne.podmiotBL.PobierzKontrahenta(IDKontrahenta);
 
@@ -168,7 +179,13 @@ namespace G_Mobile_Android_WMS
 
         async void ChangeFilter()
         {
-            var Res = await Helpers.AlertAsyncWithPrompt(this, Resource.String.contractors_filter, null, FilterText, InputType.Default);
+            var Res = await Helpers.AlertAsyncWithPrompt(
+                this,
+                Resource.String.contractors_filter,
+                null,
+                FilterText,
+                InputType.Default
+            );
 
             if (Res.Ok)
             {
@@ -190,15 +207,26 @@ namespace G_Mobile_Android_WMS
 
                 Helpers.ShowProgressDialog(GetString(Resource.String.articles_loading));
 
-                ZapytanieZTabeliO Kontrahenci = await System.Threading.Tasks.Task.Factory.StartNew(() => GetData());
+                ZapytanieZTabeliO Kontrahenci = await System.Threading.Tasks.Task.Factory.StartNew(
+                    () => GetData()
+                );
 
                 if (Kontrahenci.Poprawność != null && Kontrahenci.Poprawność != "")
                     throw new Exception(Kontrahenci.Poprawność);
 
                 RunOnUiThread(() =>
                 {
-                    ContractorsList.Adapter = new ContractorsListAdapter(this, Kontrahenci.ListaWierszy);
-                    Helpers.SetTextOnTextView(this, ItemCount, GetString(Resource.String.global_liczba_pozycji) + " " + ContractorsList.Adapter.Count.ToString());
+                    ContractorsList.Adapter = new ContractorsListAdapter(
+                        this,
+                        Kontrahenci.ListaWierszy
+                    );
+                    Helpers.SetTextOnTextView(
+                        this,
+                        ItemCount,
+                        GetString(Resource.String.global_liczba_pozycji)
+                            + " "
+                            + ContractorsList.Adapter.Count.ToString()
+                    );
                 });
 
                 Helpers.HideProgressDialog();
@@ -222,7 +250,12 @@ namespace G_Mobile_Android_WMS
         {
             string Komenda = SQL.Contractors.GetContactors.Replace("<<FILTR>>", FilterText);
 
-            ZapytanieZTabeliO Zap = (ZapytanieZTabeliO)Helpers.HiveInvoke(typeof(WMSServerAccess.Ogólne.OgólneBL), "ZapytanieSQL", Komenda);
+            ZapytanieZTabeliO Zap = (ZapytanieZTabeliO)
+                Helpers.HiveInvoke(
+                    typeof(WMSServerAccess.Ogólne.OgólneBL),
+                    "ZapytanieSQL",
+                    Komenda
+                );
             return Zap;
         }
 
@@ -238,7 +271,8 @@ namespace G_Mobile_Android_WMS
         readonly List<object[]> Items;
         readonly Activity Ctx;
 
-        public ContractorsListAdapter(Activity Ctx, List<object[]> Items) : base()
+        public ContractorsListAdapter(Activity Ctx, List<object[]> Items)
+            : base()
         {
             this.Ctx = Ctx;
             this.Items = Items;
@@ -248,6 +282,7 @@ namespace G_Mobile_Android_WMS
         {
             return position;
         }
+
         public override object[] this[int position]
         {
             get { return Items[position]; }
@@ -256,6 +291,7 @@ namespace G_Mobile_Android_WMS
         {
             get { return Items.Count; }
         }
+
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
             var Pos = Items[position];
@@ -264,16 +300,26 @@ namespace G_Mobile_Android_WMS
             if (view == null)
                 view = Ctx.LayoutInflater.Inflate(Resource.Layout.list_item_contractors, null);
 
-            view.FindViewById<TextView>(Resource.Id.contractors_list_contractorname).Text = (string)Pos[(int)SQL.Contractors.Contractors_Results.strNazwa];
-            view.FindViewById<TextView>(Resource.Id.contractors_list_contractorsymbol).Text = (string)Pos[(int)SQL.Contractors.Contractors_Results.strSymbol];
+            view.FindViewById<TextView>(Resource.Id.contractors_list_contractorname).Text = (string)
+                Pos[(int)SQL.Contractors.Contractors_Results.strNazwa];
+            view.FindViewById<TextView>(Resource.Id.contractors_list_contractorsymbol).Text =
+                (string)Pos[(int)SQL.Contractors.Contractors_Results.strSymbol];
 
-            int IDKontrahenta = Convert.ToInt32(Pos[(int)SQL.Contractors.Contractors_Results.idKontrahenta]);
-            int IDKontrahentaNadrz = Convert.ToInt32(Pos[(int)SQL.Contractors.Contractors_Results.idKontrahentaNadrz]);
+            int IDKontrahenta = Convert.ToInt32(
+                Pos[(int)SQL.Contractors.Contractors_Results.idKontrahenta]
+            );
+            int IDKontrahentaNadrz = Convert.ToInt32(
+                Pos[(int)SQL.Contractors.Contractors_Results.idKontrahentaNadrz]
+            );
 
-            view.FindViewById<LinearLayout>(Resource.Id.contractors_list_item).SetBackgroundColor(IDKontrahenta == IDKontrahentaNadrz ? Android.Graphics.Color.Wheat : Android.Graphics.Color.White);
+            view.FindViewById<LinearLayout>(Resource.Id.contractors_list_item)
+                .SetBackgroundColor(
+                    IDKontrahenta == IDKontrahentaNadrz
+                        ? Android.Graphics.Color.Wheat
+                        : Android.Graphics.Color.White
+                );
 
             return view;
         }
     }
 }
-

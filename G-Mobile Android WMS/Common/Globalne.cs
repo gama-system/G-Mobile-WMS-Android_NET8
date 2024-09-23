@@ -2,27 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Android;
 using Android.App;
 using Android.Content;
+using Android.Graphics;
+using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using Android.Media;
-
-using WMSServerAccess.Model;
-using Symbol.XamarinEMDK.Barcode;
-using Android.Graphics;
 using Symbol.XamarinEMDK;
-using Android;
+using Symbol.XamarinEMDK.Barcode;
+using WMS_Model.ModeleDanych;
 using Xamarin.Essentials;
 
 namespace G_Mobile_Android_WMS
 {
     public static class Globalne
     {
-        
         public static string AppName = "G-Mobile WMS Android";
         public static string AppVer = AppInfo.Version.ToString();
         public static int WersjaBazy = 0;
@@ -67,7 +64,6 @@ namespace G_Mobile_Android_WMS
         public static WMSServerAccess.Menu.MenuBL menuBL;
         public static WMSServerAccess.Aktualizacje.AktualizacjeBL aktualizacjeBL;
         public static WMSServerAccess.NumerSeryjny.NumerSeryjnyBL numerSeryjnyBL;
-
 
         public static LicencjaPortableO Licencja = null;
         public static OperatorVO Operator;

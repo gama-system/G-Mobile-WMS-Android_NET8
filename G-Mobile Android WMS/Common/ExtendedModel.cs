@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -11,7 +10,7 @@ using Android.Views;
 using Android.Widget;
 using G_Mobile_Android_WMS.Enums;
 using Newtonsoft.Json;
-using WMSServerAccess.Model;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS.ExtendedModel
 {
@@ -46,12 +45,9 @@ namespace G_Mobile_Android_WMS.ExtendedModel
         public int ExIDNumerSeryjny { get; set; }
         public string ExNumerSeryjny { get; set; }
 
-        public DocItemStatus Status {get; set;}
+        public DocItemStatus Status { get; set; }
 
-        public DocumentItemRow()
-        {
-
-        }
+        public DocumentItemRow() { }
 
         public DocumentItemRow(PozycjaRow R)
         {
@@ -72,16 +68,34 @@ namespace G_Mobile_Android_WMS.ExtendedModel
             ExFunkcjaLogistycznaP = R.strFunkcjiLogistycznejP;
             ExIDFunkcjaLogistycznaW = R.idFunkcjiLogistycznejW;
             ExFunkcjaLogistycznaW = R.strFunkcjiLogistycznejW;
-           ExSymbol = R.strSymbolTowaru;
+            ExSymbol = R.strSymbolTowaru;
             ExKODEAN = R.kodean;
             ExNrKat = R.NrKat;
             ExNumerSeryjny = R.strNumerySeryjne;
             EXIDLokalizacjaDokumentu = -1;
         }
 
-        public DocumentItemRow(PozycjaRow R, DocItemStatus Stat, int Kolejność, int ExIDLokW, int ExIDLokP, string ExLokW, string ExLokP, 
-                               int ExIDPalP, string ExPalP, int ExIDPalW, string ExPalW, int ExIDPar, string ExPar, int ExIDFlogW, 
-                               string ExFlogW, int ExIDFlogP, string ExFlogP, string Exkod, string ExNrKat)
+        public DocumentItemRow(
+            PozycjaRow R,
+            DocItemStatus Stat,
+            int Kolejność,
+            int ExIDLokW,
+            int ExIDLokP,
+            string ExLokW,
+            string ExLokP,
+            int ExIDPalP,
+            string ExPalP,
+            int ExIDPalW,
+            string ExPalW,
+            int ExIDPar,
+            string ExPar,
+            int ExIDFlogW,
+            string ExFlogW,
+            int ExIDFlogP,
+            string ExFlogP,
+            string Exkod,
+            string ExNrKat
+        )
         {
             Base = R;
             Status = Stat;
@@ -100,8 +114,7 @@ namespace G_Mobile_Android_WMS.ExtendedModel
             ExFunkcjaLogistycznaP = ExFlogP;
             ExIDFunkcjaLogistycznaW = ExIDFlogW;
             ExFunkcjaLogistycznaW = ExFlogW;
-           // ExKODEAN = Exkod;
-            
+            // ExKODEAN = Exkod;
         }
     }
 
@@ -143,10 +156,8 @@ namespace G_Mobile_Android_WMS.ExtendedModel
         public string ExSymbol { get; set; }
         public int ExIDNumerSeryjny { get; set; }
         public string ExNumerSeryjny { get; set; }
-        public DocumentItemVO()
-        {
 
-        }
+        public DocumentItemVO() { }
 
         public DocumentItemVO(PozycjaVO V)
         {
@@ -181,15 +192,40 @@ namespace G_Mobile_Android_WMS.ExtendedModel
             ExSymbol = "";
             ExIDNumerSeryjny = -1;
             ExNumerSeryjny = "";
-
         }
 
-        public DocumentItemVO(PozycjaVO V, int ExIDLokW, int ExIDLokP, string ExLokW, string ExLokP,
-                                           int ExIDPalP, string ExPalP, int ExIDPalW, string ExPalW,
-                                           int ExIDPar, string ExPar, int _ExIDUnit, string _ExUnit,
-                                           int ExIDFlogP, string ExFlogP, int ExIDFlogW, string ExFlogW,
-                                           DateTime ExDtProd, DateTime ExDtBestBefore, int _ExIDOwner, string _ExOwner,
-                                           string _ExLot, string _ExSerialNum, string _ExArticle, int ExIdArt, string _Exkod, string _ExNrKat, string _ExSymbol, int _ExIDNumerSeryjny, string _ExNumerSeryjny)
+        public DocumentItemVO(
+            PozycjaVO V,
+            int ExIDLokW,
+            int ExIDLokP,
+            string ExLokW,
+            string ExLokP,
+            int ExIDPalP,
+            string ExPalP,
+            int ExIDPalW,
+            string ExPalW,
+            int ExIDPar,
+            string ExPar,
+            int _ExIDUnit,
+            string _ExUnit,
+            int ExIDFlogP,
+            string ExFlogP,
+            int ExIDFlogW,
+            string ExFlogW,
+            DateTime ExDtProd,
+            DateTime ExDtBestBefore,
+            int _ExIDOwner,
+            string _ExOwner,
+            string _ExLot,
+            string _ExSerialNum,
+            string _ExArticle,
+            int ExIdArt,
+            string _Exkod,
+            string _ExNrKat,
+            string _ExSymbol,
+            int _ExIDNumerSeryjny,
+            string _ExNumerSeryjny
+        )
         {
             Base = V;
             ExIDLokalizacjaW = ExIDLokW;
@@ -261,7 +297,12 @@ namespace G_Mobile_Android_WMS.ExtendedModel
                 ExProductionDate = R.Base.dtDataProdukcji;
                 ExBestBefore = R.Base.dtDataPrzydatności;
                 ExIDOwner = R.Base.idKontrahent;
-                ExOwner = (string)Helpers.HiveInvoke(typeof(WMSServerAccess.Podmiot.PodmiotBL), "PobierzNazwęKontrahenta", R.Base.idKontrahent);
+                ExOwner = (string)
+                    Helpers.HiveInvoke(
+                        typeof(WMSServerAccess.Podmiot.PodmiotBL),
+                        "PobierzNazwęKontrahenta",
+                        R.Base.idKontrahent
+                    );
                 DefaultAmount = 0;
                 ExNumerSeryjny = R.Base.strNumerySeryjne;
             }
@@ -271,8 +312,19 @@ namespace G_Mobile_Android_WMS.ExtendedModel
             }
         }
 
-        public DocumentItemVO(DocumentItemRow R, DateTime ExDtProd, DateTime ExDtBestBefore, int _ExIDOwner, string _ExOwner,
-                              string _ExLot, string _ExSerialNum, string _Exkod, string _ExNrKat, int _ExIDNumerSeryjny, string _ExNumerSeryjny)
+        public DocumentItemVO(
+            DocumentItemRow R,
+            DateTime ExDtProd,
+            DateTime ExDtBestBefore,
+            int _ExIDOwner,
+            string _ExOwner,
+            string _ExLot,
+            string _ExSerialNum,
+            string _Exkod,
+            string _ExNrKat,
+            int _ExIDNumerSeryjny,
+            string _ExNumerSeryjny
+        )
         {
             try
             {

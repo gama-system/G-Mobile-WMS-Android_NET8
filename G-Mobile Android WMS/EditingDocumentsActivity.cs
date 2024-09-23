@@ -1,31 +1,36 @@
-﻿using Acr.UserDialogs;
-using Android.App;
-using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Widget;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Linq;
-
-using WMSServerAccess.Model;
-using Android.Content;
-using Android.Runtime;
-using Android.Views;
-using System.Timers;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
+using Acr.UserDialogs;
+using Android.App;
+using Android.Content;
+using Android.OS;
+using Android.Renderscripts;
+using Android.Runtime;
+using Android.Support.Design.Widget;
+using Android.Views;
+using Android.Views.Accessibility;
+using Android.Widget;
 using G_Mobile_Android_WMS.BusinessLogicHelpers;
-using G_Mobile_Android_WMS.ExtendedModel;
 using G_Mobile_Android_WMS.Common.BusinessLogicHelpers;
 using G_Mobile_Android_WMS.Enums;
-using Android.Renderscripts;
-using Symbol.XamarinEMDK.Barcode;
+using G_Mobile_Android_WMS.ExtendedModel;
 using Java.Nio.Channels;
-using Android.Views.Accessibility;
+using Symbol.XamarinEMDK.Barcode;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, WindowSoftInputMode = SoftInput.AdjustNothing | SoftInput.StateHidden)]
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        MainLauncher = false,
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        WindowSoftInputMode = SoftInput.AdjustNothing | SoftInput.StateHidden
+    )]
     public class EditingDocumentsActivity : ActivityWithScanner
     {
         FloatingActionButton Back;
@@ -58,23 +63,52 @@ namespace G_Mobile_Android_WMS
         public bool ShowCheckboxes = false;
         public List<int> CheckedItems = new List<int>();
 
-        readonly Dictionary<Enums.EditingDocumentsListDisplayElements, int> HeaderElementsDict = new Dictionary<Enums.EditingDocumentsListDisplayElements, int>()
-        {
-            [EditingDocumentsListDisplayElements.DoneAmount] = Resource.Id.editingdocuments_listheader_amount,
-            [EditingDocumentsListDisplayElements.SetAmount] = Resource.Id.editingdocuments_listheader_setamount,
-            [EditingDocumentsListDisplayElements.Location] = Resource.Id.editingdocuments_listheader_location,
-            [EditingDocumentsListDisplayElements.BestBefore] = Resource.Id.editingdocuments_listheader_bestbefore,
-            [EditingDocumentsListDisplayElements.ProductionDate] = Resource.Id.editingdocuments_listheader_proddate,
-            [EditingDocumentsListDisplayElements.SerialNumber] = Resource.Id.editingdocuments_listheader_serialnumber,
-            [EditingDocumentsListDisplayElements.Flog] = Resource.Id.editingdocuments_listheader_flog,
-            [EditingDocumentsListDisplayElements.Partia] = Resource.Id.editingdocuments_listheader_partia,
-            [EditingDocumentsListDisplayElements.Paleta] = Resource.Id.editingdocuments_listheader_paleta,
-            [EditingDocumentsListDisplayElements.Lot] = Resource.Id.editingdocuments_listheader_lot,
-            [EditingDocumentsListDisplayElements.ArticleName] = Resource.Id.editingdocuments_listheader_articlename,
-            [EditingDocumentsListDisplayElements.KodEAN] = Resource.Id.editingdocuments_listheader_kodean,
-            [EditingDocumentsListDisplayElements.NrKat] = Resource.Id.editingdocuments_listheader_NrKat,
-            [EditingDocumentsListDisplayElements.Symbol] = Resource.Id.editingdocuments_listheader_symbol,
-        };
+        readonly Dictionary<Enums.EditingDocumentsListDisplayElements, int> HeaderElementsDict =
+            new Dictionary<Enums.EditingDocumentsListDisplayElements, int>()
+            {
+                [EditingDocumentsListDisplayElements.DoneAmount] = Resource
+                    .Id
+                    .editingdocuments_listheader_amount,
+                [EditingDocumentsListDisplayElements.SetAmount] = Resource
+                    .Id
+                    .editingdocuments_listheader_setamount,
+                [EditingDocumentsListDisplayElements.Location] = Resource
+                    .Id
+                    .editingdocuments_listheader_location,
+                [EditingDocumentsListDisplayElements.BestBefore] = Resource
+                    .Id
+                    .editingdocuments_listheader_bestbefore,
+                [EditingDocumentsListDisplayElements.ProductionDate] = Resource
+                    .Id
+                    .editingdocuments_listheader_proddate,
+                [EditingDocumentsListDisplayElements.SerialNumber] = Resource
+                    .Id
+                    .editingdocuments_listheader_serialnumber,
+                [EditingDocumentsListDisplayElements.Flog] = Resource
+                    .Id
+                    .editingdocuments_listheader_flog,
+                [EditingDocumentsListDisplayElements.Partia] = Resource
+                    .Id
+                    .editingdocuments_listheader_partia,
+                [EditingDocumentsListDisplayElements.Paleta] = Resource
+                    .Id
+                    .editingdocuments_listheader_paleta,
+                [EditingDocumentsListDisplayElements.Lot] = Resource
+                    .Id
+                    .editingdocuments_listheader_lot,
+                [EditingDocumentsListDisplayElements.ArticleName] = Resource
+                    .Id
+                    .editingdocuments_listheader_articlename,
+                [EditingDocumentsListDisplayElements.KodEAN] = Resource
+                    .Id
+                    .editingdocuments_listheader_kodean,
+                [EditingDocumentsListDisplayElements.NrKat] = Resource
+                    .Id
+                    .editingdocuments_listheader_NrKat,
+                [EditingDocumentsListDisplayElements.Symbol] = Resource
+                    .Id
+                    .editingdocuments_listheader_symbol,
+            };
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -82,16 +116,33 @@ namespace G_Mobile_Android_WMS
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_editingdocuments);
 
-            InventoryLoc = Intent.GetIntExtra(EditingDocumentsActivity_Common.Vars.InventoryLoc, -1);
+            InventoryLoc = Intent.GetIntExtra(
+                EditingDocumentsActivity_Common.Vars.InventoryLoc,
+                -1
+            );
             DocType = (DocTypes)Intent.GetIntExtra(EditingDocumentsActivity_Common.Vars.DocType, 0);
 
-            Status = (DocumentStatusTypes)Intent.GetIntExtra(EditingDocumentsActivity_Common.Vars.DocStatus, 5);
-            Documents = (List<DokumentVO>)Helpers.DeserializePassedJSON(Intent, EditingDocumentsActivity_Common.Vars.DocsJSON, typeof(List<DokumentVO>));
+            Status = (DocumentStatusTypes)
+                Intent.GetIntExtra(EditingDocumentsActivity_Common.Vars.DocStatus, 5);
+            Documents =
+                (List<DokumentVO>)
+                    Helpers.DeserializePassedJSON(
+                        Intent,
+                        EditingDocumentsActivity_Common.Vars.DocsJSON,
+                        typeof(List<DokumentVO>)
+                    );
 
             BarcodeOrder = Globalne.CurrentSettings.BarcodeScanningOrder[DocType];
 
-            CurrentOperation = (DocType == Enums.DocTypes.PW || DocType == Enums.DocTypes.PZ || DocType == Enums.DocTypes.IN) ? Enums.Operation.In : Enums.Operation.Out;
-            
+            CurrentOperation =
+                (
+                    DocType == Enums.DocTypes.PW
+                    || DocType == Enums.DocTypes.PZ
+                    || DocType == Enums.DocTypes.IN
+                )
+                    ? Enums.Operation.In
+                    : Enums.Operation.Out;
+
             GetAndSetControls();
 
             Task.Run(() => InsertData(false));
@@ -99,7 +150,9 @@ namespace G_Mobile_Android_WMS
 
         private void SetVisibilityOnHeaderItems()
         {
-            Dictionary<EditingDocumentsListDisplayElements, bool> Set = Globalne.CurrentSettings.EditingDocumentsListDisplayElementsListsINNNR[DocType];
+            Dictionary<EditingDocumentsListDisplayElements, bool> Set = Globalne
+                .CurrentSettings
+                .EditingDocumentsListDisplayElementsListsINNNR[DocType];
 
             foreach (EditingDocumentsListDisplayElements Item in HeaderElementsDict.Keys)
             {
@@ -115,20 +168,30 @@ namespace G_Mobile_Android_WMS
 
                 switch (Item)
                 {
-                    case EditingDocumentsListDisplayElements.SetAmount: VisibilityToSet = (Set[Item] && Documents[0].bZlecenie); break;
-                    case EditingDocumentsListDisplayElements.Flog: VisibilityToSet = (Set[Item] && Globalne.CurrentSettings.FunkcjeLogistyczne); break;
-                    case EditingDocumentsListDisplayElements.Paleta: VisibilityToSet = (Set[Item] && Globalne.CurrentSettings.Palety); break;
-                    case EditingDocumentsListDisplayElements.Partia: VisibilityToSet = (Set[Item] && Globalne.CurrentSettings.Partie); break;
+                    case EditingDocumentsListDisplayElements.SetAmount:
+                        VisibilityToSet = (Set[Item] && Documents[0].bZlecenie);
+                        break;
+                    case EditingDocumentsListDisplayElements.Flog:
+                        VisibilityToSet = (
+                            Set[Item] && Globalne.CurrentSettings.FunkcjeLogistyczne
+                        );
+                        break;
+                    case EditingDocumentsListDisplayElements.Paleta:
+                        VisibilityToSet = (Set[Item] && Globalne.CurrentSettings.Palety);
+                        break;
+                    case EditingDocumentsListDisplayElements.Partia:
+                        VisibilityToSet = (Set[Item] && Globalne.CurrentSettings.Partie);
+                        break;
                     default:
+                    {
+                        if (Set.ContainsKey(Item))
                         {
-                            if (Set.ContainsKey(Item))
-                            {
-                                VisibilityToSet = Set[Item];
-                                break;
-                            }
-                            else
-                                continue;
+                            VisibilityToSet = Set[Item];
+                            break;
                         }
+                        else
+                            continue;
+                    }
                 }
 
                 v.Visibility = VisibilityToSet ? ViewStates.Visible : ViewStates.Gone;
@@ -141,10 +204,13 @@ namespace G_Mobile_Android_WMS
 
             if (Documents.Count == 1)
             {
-                if(string.IsNullOrEmpty(Documents[0].strDokumentDostawcy))
+                if (string.IsNullOrEmpty(Documents[0].strDokumentDostawcy))
                     Helpers.SetActivityHeader(this, Documents[0].strNazwa);
                 else
-                    Helpers.SetActivityHeader(this, Documents[0].strNazwa + "\r\n" + Documents[0].strDokumentDostawcy);
+                    Helpers.SetActivityHeader(
+                        this,
+                        Documents[0].strNazwa + "\r\n" + Documents[0].strDokumentDostawcy
+                    );
 
                 if (InventoryLoc >= 0)
                     SelectedDefaultLoc = InventoryLoc;
@@ -154,7 +220,12 @@ namespace G_Mobile_Android_WMS
                 if (SelectedDefaultLoc >= 0)
                 {
 #warning HiveInvoke
-                    SelectedDefaultLocName = (string)Helpers.HiveInvoke(typeof(WMSServerAccess.Lokalizacja.LokalizacjaBL), "PobierzNazwęLokalizacji", SelectedDefaultLoc);
+                    SelectedDefaultLocName = (string)
+                        Helpers.HiveInvoke(
+                            typeof(WMSServerAccess.Lokalizacja.LokalizacjaBL),
+                            "PobierzNazwęLokalizacji",
+                            SelectedDefaultLoc
+                        );
 
                     int ResId = 0;
 
@@ -165,21 +236,31 @@ namespace G_Mobile_Android_WMS
                     else
                         ResId = Resource.String.editingdocuments_activity_scanhint2_unk;
 
-                    Helpers.SetTextOnTextView(this, ScanHint, GetString(ResId) + " " + SelectedDefaultLocName);
+                    Helpers.SetTextOnTextView(
+                        this,
+                        ScanHint,
+                        GetString(ResId) + " " + SelectedDefaultLocName
+                    );
                 }
             }
             else
-                Helpers.SetActivityHeader(this, GetString(Resource.String.editing_documents_activity_name));
-
+                Helpers.SetActivityHeader(
+                    this,
+                    GetString(Resource.String.editing_documents_activity_name)
+                );
 
             Back = FindViewById<FloatingActionButton>(Resource.Id.editingdocuments_btn_back);
             Add = FindViewById<FloatingActionButton>(Resource.Id.editingdocuments_btn_add);
             Edit = FindViewById<FloatingActionButton>(Resource.Id.editingdocuments_btn_edit);
             EditAdd = FindViewById<FloatingActionButton>(Resource.Id.editingdocuments_btn_editadd);
             Delete = FindViewById<FloatingActionButton>(Resource.Id.editingdocuments_btn_delete);
-            ChangeLoc = FindViewById<FloatingActionButton>(Resource.Id.editingdocuments_btn_changeloc);
+            ChangeLoc = FindViewById<FloatingActionButton>(
+                Resource.Id.editingdocuments_btn_changeloc
+            );
             Info = FindViewById<FloatingActionButton>(Resource.Id.editingdocuments_btn_info);
-            DocumentsListHeader = FindViewById<LinearLayout>(Resource.Id.editingdocuments_list_header);
+            DocumentsListHeader = FindViewById<LinearLayout>(
+                Resource.Id.editingdocuments_list_header
+            );
             //ListView = FindViewById<ListView>(Resource.Id.list_view_documents);
 
             //     ListView.ItemClick += ListView_ItemClick;
@@ -199,13 +280,15 @@ namespace G_Mobile_Android_WMS
             Edit.Click += Edit_Click;
             EditAdd.Click += EditAdd_Click;
             DocumentsListHeader.Click += DocumentsListHeader_Click;
-            if (!Globalne.CurrentUserSettings.CanDeleteItems || (Documents[0].bZlecenie && !Globalne.CurrentUserSettings.CanDeleteItemsOnOrders))
+            if (
+                !Globalne.CurrentUserSettings.CanDeleteItems
+                || (Documents[0].bZlecenie && !Globalne.CurrentUserSettings.CanDeleteItemsOnOrders)
+            )
                 Delete.Visibility = ViewStates.Gone;
 
             if (Documents[0].bZlecenie || Documents.Count != 1)
                 Add.Visibility = ViewStates.Gone;
 
-            
             if (Documents[0].bZlecenie)
                 EditAdd.Visibility = ViewStates.Gone;
 
@@ -213,7 +296,7 @@ namespace G_Mobile_Android_WMS
             EditAdd.Visibility = ViewStates.Gone;
 
             if (DocType == DocTypes.IN)
-            { 
+            {
                 ChangeLoc.Visibility = ViewStates.Gone;
                 Info.Visibility = ViewStates.Gone;
             }
@@ -241,13 +324,22 @@ namespace G_Mobile_Android_WMS
                 Intent i = new Intent(this, typeof(StocksActivity));
                 i.PutExtra(ArticlesActivity.Vars.AskOnStart, true);
 
-                RunOnUiThread(() => StartActivityForResult(i, (int)StocksActivity.ResultCodes.LocationsActivityResult));
+                RunOnUiThread(
+                    () =>
+                        StartActivityForResult(
+                            i,
+                            (int)StocksActivity.ResultCodes.LocationsActivityResult
+                        )
+                );
                 EditingDocumentsActivity_Common.ShowLocDialog(this, -1);
             }
             else
             {
-                DocumentItemRow SelectedItem = (ListView.Adapter as EditingDocumentsListAdapter)[SelectedItemPos];
-                EditingDocumentsActivity_Common.ShowLocDialog(this, SelectedItem.Base.idTowaru); }
+                DocumentItemRow SelectedItem = (ListView.Adapter as EditingDocumentsListAdapter)[
+                    SelectedItemPos
+                ];
+                EditingDocumentsActivity_Common.ShowLocDialog(this, SelectedItem.Base.idTowaru);
+            }
         }
 
         private void EditAdd_Click(object sender, EventArgs e)
@@ -257,15 +349,33 @@ namespace G_Mobile_Android_WMS
                 if (SelectedItemPos < 0)
                     return;
 
-                if (Status != DocumentStatusTypes.Zamknięty || Status == DocumentStatusTypes.Wstrzymany)
+                if (
+                    Status != DocumentStatusTypes.Zamknięty
+                    || Status == DocumentStatusTypes.Wstrzymany
+                )
                 {
                     RunIsBusyAction(() =>
                     {
-                        DocumentItemRow SelectedItem = (ListView.Adapter as EditingDocumentsListAdapter)[SelectedItemPos];
+                        DocumentItemRow SelectedItem = (
+                            ListView.Adapter as EditingDocumentsListAdapter
+                        )[SelectedItemPos];
 
-                        DocumentItems.EditItem(this, Documents, SelectedItem, DocType, CurrentOperation,
-                                               SelectedDefaultLoc, DefaultLocType.None, SelectedDefaultLocName,
-                                               (int)EditingDocumentsActivity_Common.ResultCodes.DocumentItemActivityResult, true, false);
+                        DocumentItems.EditItem(
+                            this,
+                            Documents,
+                            SelectedItem,
+                            DocType,
+                            CurrentOperation,
+                            SelectedDefaultLoc,
+                            DefaultLocType.None,
+                            SelectedDefaultLocName,
+                            (int)
+                                EditingDocumentsActivity_Common
+                                    .ResultCodes
+                                    .DocumentItemActivityResult,
+                            true,
+                            false
+                        );
                     });
                 }
             }
@@ -280,6 +390,7 @@ namespace G_Mobile_Android_WMS
         {
             EditingDocumentsActivity_Common.ChangeDefaultLocDialog(this, Globalne.Magazyn.ID);
         }
+
         private void Edit_Click(object sender, EventArgs e)
         {
             try
@@ -289,15 +400,33 @@ namespace G_Mobile_Android_WMS
 
                 Thread.Sleep(Globalne.TaskDelay);
 
-                if (Status != Enums.DocumentStatusTypes.Zamknięty && Status != DocumentStatusTypes.Wstrzymany)
+                if (
+                    Status != Enums.DocumentStatusTypes.Zamknięty
+                    && Status != DocumentStatusTypes.Wstrzymany
+                )
                 {
                     RunIsBusyAction(() =>
                     {
-                        DocumentItemRow SelectedItem = (ListView.Adapter as EditingDocumentsListAdapter)[SelectedItemPos];
+                        DocumentItemRow SelectedItem = (
+                            ListView.Adapter as EditingDocumentsListAdapter
+                        )[SelectedItemPos];
 
-                        DocumentItems.EditItem(this, Documents, SelectedItem, DocType, CurrentOperation,
-                                               SelectedDefaultLoc, DefaultLocType.None, SelectedDefaultLocName,
-                                               (int)EditingDocumentsActivity_Common.ResultCodes.DocumentItemActivityResult, false, false);
+                        DocumentItems.EditItem(
+                            this,
+                            Documents,
+                            SelectedItem,
+                            DocType,
+                            CurrentOperation,
+                            SelectedDefaultLoc,
+                            DefaultLocType.None,
+                            SelectedDefaultLocName,
+                            (int)
+                                EditingDocumentsActivity_Common
+                                    .ResultCodes
+                                    .DocumentItemActivityResult,
+                            false,
+                            false
+                        );
                     });
                 }
             }
@@ -311,8 +440,11 @@ namespace G_Mobile_Android_WMS
             RunIsBusyAction(() => DoEdit());
         }
 
-
-        private async void DoEdit(List<int> SelectedDocIDs = null, List<DokumentVO> Docs = null, bool Multipicking = false)
+        private async void DoEdit(
+            List<int> SelectedDocIDs = null,
+            List<DokumentVO> Docs = null,
+            bool Multipicking = false
+        )
         {
             try
             {
@@ -328,19 +460,18 @@ namespace G_Mobile_Android_WMS
                     foreach (int Pos in CheckedItems)
                     {
                         object[] Selected = (ListView.Adapter as DocumentsListAdapter)[Pos];
-                        int IDDoc = Convert.ToInt32(Selected[(int)SQL.Documents.Documents_Results.idDokumentu]);
+                        int IDDoc = Convert.ToInt32(
+                            Selected[(int)SQL.Documents.Documents_Results.idDokumentu]
+                        );
                         SelectedDocIDs.Add(IDDoc);
                     }
                 }
 
-
-                
-               // await Task.Delay(100);
+                // await Task.Delay(100);
 
                 //BusinessLogicHelpers.Documents.EditDocuments(this, SelectedDocIDs, DocType, ZLMMMode, -1, Docs, Multipicking);
 
                 Helpers.HideProgressDialog();
-
             }
             catch (Exception ex)
             {
@@ -349,6 +480,7 @@ namespace G_Mobile_Android_WMS
                 return;
             }
         }
+
         async void Delete_Click(object sender, EventArgs e)
         {
             await RunIsBusyTaskAsync(async () =>
@@ -365,8 +497,14 @@ namespace G_Mobile_Android_WMS
                 if (SelectedItemPos < 0)
                     return;
 
-                DocumentItemRow Item = (ListView.Adapter as EditingDocumentsListAdapter)[SelectedItemPos];
-                await DocumentItems.DeleteDocumentItems(this, new List<int>() { Item.Base.ID }, DocType);
+                DocumentItemRow Item = (ListView.Adapter as EditingDocumentsListAdapter)[
+                    SelectedItemPos
+                ];
+                await DocumentItems.DeleteDocumentItems(
+                    this,
+                    new List<int>() { Item.Base.ID },
+                    DocType
+                );
             }
             catch (Exception ex)
             {
@@ -381,8 +519,17 @@ namespace G_Mobile_Android_WMS
             {
                 RunIsBusyAction(() =>
                 {
-                    DocumentItems.AddItem(this, Documents[0], DocType, CurrentOperation, SelectedDefaultLoc, SelectedDefaultLocName, DefaultLocType.None,
-                                          (int)EditingDocumentsActivity_Common.ResultCodes.DocumentItemActivityResult, false);
+                    DocumentItems.AddItem(
+                        this,
+                        Documents[0],
+                        DocType,
+                        CurrentOperation,
+                        SelectedDefaultLoc,
+                        SelectedDefaultLocName,
+                        DefaultLocType.None,
+                        (int)EditingDocumentsActivity_Common.ResultCodes.DocumentItemActivityResult,
+                        false
+                    );
                 });
             }
             catch (Exception ex)
@@ -399,6 +546,7 @@ namespace G_Mobile_Android_WMS
             else
                 await RunIsBusyTaskAsync(() => Do_Exit());
         }
+
         private void DocumentsListHeader_Click(object sender, EventArgs e)
         {
             ShowCheckboxes = false;
@@ -410,7 +558,8 @@ namespace G_Mobile_Android_WMS
 
                 if (Item != null)
                 {
-                    CheckBox Chb = (CheckBox)Item.FindViewById(Resource.Id.documents_list_checkboxBOX);
+                    CheckBox Chb = (CheckBox)
+                        Item.FindViewById(Resource.Id.documents_list_checkboxBOX);
                     Chb.Checked = false;
                 }
             }
@@ -418,16 +567,18 @@ namespace G_Mobile_Android_WMS
             if (ListView.Adapter != null)
                 (ListView.Adapter as EditingDocumentsListAdapter).NotifyDataSetChanged();
         }
+
         private void ListView_ItemLongClick(object sender, AdapterView.ItemLongClickEventArgs e)
         {
             ShowCheckboxes = true;
             CheckedItems = new List<int>();
             (ListView.Adapter as EditingDocumentsListAdapter).NotifyDataSetChanged();
         }
+
         private void ListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
             SelectedItemPos = e.Position;
-            
+
             // jezeli zmiana pozycji na liscie to wyzeruj licznik aby nie mozna bylo wejsc jednoklikiem w inna pozycje
             if (LastSelectedItemPos != SelectedItemPos)
             {
@@ -455,12 +606,21 @@ namespace G_Mobile_Android_WMS
 
                 if (DocType == DocTypes.IN)
                 {
-                    if (await BusinessLogicHelpers.Documents.ShowAndApplyInventoryLocationExitOptions(this, Documents[0], InventoryLoc))
+                    if (
+                        await BusinessLogicHelpers.Documents.ShowAndApplyInventoryLocationExitOptions(
+                            this,
+                            Documents[0],
+                            InventoryLoc
+                        )
+                    )
                     {
                         IsSwitchingActivity = true;
 
                         Intent i = new Intent(this, typeof(InventoryLocationsActivity));
-                        i.PutExtra(InventoryLocationsActivity.Vars.InventoryDoc, Helpers.SerializeJSON(Documents[0]));
+                        i.PutExtra(
+                            InventoryLocationsActivity.Vars.InventoryDoc,
+                            Helpers.SerializeJSON(Documents[0])
+                        );
                         i.SetFlags(ActivityFlags.NewTask);
 
                         StartActivity(i);
@@ -469,7 +629,13 @@ namespace G_Mobile_Android_WMS
                 }
                 else
                 {
-                    if (await BusinessLogicHelpers.Documents.ShowAndApplyDocumentExitOptions(this, Documents, DocType))
+                    if (
+                        await BusinessLogicHelpers.Documents.ShowAndApplyDocumentExitOptions(
+                            this,
+                            Documents,
+                            DocType
+                        )
+                    )
                     {
                         IsSwitchingActivity = true;
 
@@ -500,10 +666,18 @@ namespace G_Mobile_Android_WMS
 
                 if (DocType == DocTypes.IN)
                 {
-                    await BusinessLogicHelpers.Documents.ShowAndApplyInventoryLocationExitOptions(this, Documents[0], InventoryLoc, true);
+                    await BusinessLogicHelpers.Documents.ShowAndApplyInventoryLocationExitOptions(
+                        this,
+                        Documents[0],
+                        InventoryLoc,
+                        true
+                    );
 
                     Intent i = new Intent(this, typeof(InventoryLocationsActivity));
-                    i.PutExtra(InventoryLocationsActivity.Vars.InventoryDoc, Helpers.SerializeJSON(Documents[0]));
+                    i.PutExtra(
+                        InventoryLocationsActivity.Vars.InventoryDoc,
+                        Helpers.SerializeJSON(Documents[0])
+                    );
                     i.SetFlags(ActivityFlags.NewTask);
 
                     StartActivity(i);
@@ -533,7 +707,6 @@ namespace G_Mobile_Android_WMS
         {
             try
             {
-
                 // ShowCheckboxes = false;
                 // CheckedItems = new List<int>();
                 LastSelectedItemPos = -1;
@@ -541,8 +714,18 @@ namespace G_Mobile_Android_WMS
 
                 Helpers.ShowProgressDialog(GetString(Resource.String.editing_documents_loading));
 
-                List<DocumentItemRow> Items = await Task.Factory.StartNew(() => EditingDocumentsActivity_Common.GetData(Documents, DocType, ZLMMMode.None, CurrentOperation, SelectedDefaultLoc,
-                                                                                                                        DefaultLocType.None, InventoryLoc));
+                List<DocumentItemRow> Items = await Task.Factory.StartNew(
+                    () =>
+                        EditingDocumentsActivity_Common.GetData(
+                            Documents,
+                            DocType,
+                            ZLMMMode.None,
+                            CurrentOperation,
+                            SelectedDefaultLoc,
+                            DefaultLocType.None,
+                            InventoryLoc
+                        )
+                );
 
                 RunOnUiThread(() =>
                 {
@@ -559,17 +742,31 @@ namespace G_Mobile_Android_WMS
                     else
                         SelectedItemPos = -1;
 
-                    Helpers.SetTextOnTextView(this, ItemCount, GetString(Resource.String.global_liczba_pozycji) + " " + ListView.Adapter.Count.ToString());
+                    Helpers.SetTextOnTextView(
+                        this,
+                        ItemCount,
+                        GetString(Resource.String.global_liczba_pozycji)
+                            + " "
+                            + ListView.Adapter.Count.ToString()
+                    );
 
                     decimal? Sum = (ListView.Adapter as EditingDocumentsListAdapter).Sum;
-                    Helpers.SetTextOnTextView(this, ItemSum, GetString(Resource.String.global_suma_pozycji) + " " + (Sum == null ? "---" : Sum.ToString()));
+                    Helpers.SetTextOnTextView(
+                        this,
+                        ItemSum,
+                        GetString(Resource.String.global_suma_pozycji)
+                            + " "
+                            + (Sum == null ? "---" : Sum.ToString())
+                    );
                 });
 
                 Helpers.HideProgressDialog();
 
                 if (Globalne.CurrentSettings.InventAutoClose && ListView.Adapter.Count != 0)
                 {
-                    int Il = await Task.Factory.StartNew(() => GetNumberOfLocsInInventoryDoc(Documents[0].ID));
+                    int Il = await Task.Factory.StartNew(
+                        () => GetNumberOfLocsInInventoryDoc(Documents[0].ID)
+                    );
 
                     if (Il > 1)
                     {
@@ -617,13 +814,17 @@ namespace G_Mobile_Android_WMS
             {
                 SelectedDefaultLoc = -1;
                 SelectedDefaultLocName = "";
-                Helpers.SetTextOnTextView(this, ScanHint, GetString(Resource.String.editingdocuments_activity_scanhint));
+                Helpers.SetTextOnTextView(
+                    this,
+                    ScanHint,
+                    GetString(Resource.String.editingdocuments_activity_scanhint)
+                );
             }
             else
             {
                 SelectedDefaultLoc = Loc.ID;
                 SelectedDefaultLocName = Loc.strNazwa;
-                
+
                 // wylaczamy - powodowało ze
                 // lista pozycji odswiezała sie tylko z ta lokalizacja, pozotalych nie widac
                 // InventoryLoc = Loc.ID;
@@ -637,51 +838,70 @@ namespace G_Mobile_Android_WMS
                 else
                     ResId = Resource.String.editingdocuments_activity_scanhint2_unk;
 
-
-                Helpers.SetTextOnTextView(this, ScanHint, GetString(ResId) + " " + SelectedDefaultLocName);
+                Helpers.SetTextOnTextView(
+                    this,
+                    ScanHint,
+                    GetString(ResId) + " " + SelectedDefaultLocName
+                );
             }
             if (ListView?.Adapter != null)
-                RunOnUiThread(() => (ListView.Adapter as EditingDocumentsListAdapter).NotifyDataSetChanged());
+                RunOnUiThread(
+                    () => (ListView.Adapter as EditingDocumentsListAdapter).NotifyDataSetChanged()
+                );
         }
 
-
-        protected override async void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        protected override async void OnActivityResult(
+            int requestCode,
+            [GeneratedEnum] Result resultCode,
+            Intent data
+        )
         {
             base.OnActivityResult(requestCode, resultCode, data);
 
             switch (requestCode)
             {
                 case (int)EditingDocumentsActivity_Common.ResultCodes.LocationsActivityResult:
+                {
+                    if (resultCode == Result.Canceled)
                     {
-                        if (resultCode == Result.Canceled)
-                        {
-                            SetDefaultLocationTo(null);
-                        }
-                        else if (resultCode == Result.Ok)
-                        {
-                            LokalizacjaVO Loc = (LokalizacjaVO)Helpers.DeserializePassedJSON(data, LocationsActivity.Results.SelectedJSON, typeof(LokalizacjaVO));
-                            SetDefaultLocationTo(Loc);
-                        }
-                        break;
+                        SetDefaultLocationTo(null);
                     }
+                    else if (resultCode == Result.Ok)
+                    {
+                        LokalizacjaVO Loc = (LokalizacjaVO)
+                            Helpers.DeserializePassedJSON(
+                                data,
+                                LocationsActivity.Results.SelectedJSON,
+                                typeof(LokalizacjaVO)
+                            );
+                        SetDefaultLocationTo(Loc);
+                    }
+                    break;
+                }
                 case (int)EditingDocumentsActivity_Common.ResultCodes.DocumentItemActivityResult:
+                {
+                    if (resultCode == Result.Ok)
                     {
-                        if (resultCode == Result.Ok)
-                        {
-                            string[] Scanned = new string[0];
-                            
-                            if (data != null && data.HasExtra(DocumentItemActivity_Common.Results.WereScanned))
-                                Scanned = data.GetStringArrayExtra(DocumentItemActivity_Common.Results.WereScanned);
+                        string[] Scanned = new string[0];
 
-                            if (Scanned.Length != 0)
-                                LastScanData = Scanned.ToList();
+                        if (
+                            data != null
+                            && data.HasExtra(DocumentItemActivity_Common.Results.WereScanned)
+                        )
+                            Scanned = data.GetStringArrayExtra(
+                                DocumentItemActivity_Common.Results.WereScanned
+                            );
 
-                            await RunIsBusyTaskAsync(() => InsertData(Globalne.CurrentSettings.InstantScanning[DocType]));
-                        }
-                        break;
+                        if (Scanned.Length != 0)
+                            LastScanData = Scanned.ToList();
+
+                        await RunIsBusyTaskAsync(
+                            () => InsertData(Globalne.CurrentSettings.InstantScanning[DocType])
+                        );
                     }
+                    break;
+                }
             }
-
         }
 
         #region Old
@@ -897,16 +1117,20 @@ namespace G_Mobile_Android_WMS
             else
             {
                 LokalizacjaVO Loc = Barcodes.GetLocationFromBarcode(BarcodesL[0], true);
-                
+
                 if (Loc != null && Loc.ID >= 0)
                 {
                     if (Loc.idMagazyn != Globalne.Magazyn.ID)
                     {
-                        await Helpers.AlertAsyncWithConfirm(this, Resource.String.editingdocuments_locnoinwarehouse, Resource.Raw.sound_miss);
+                        await Helpers.AlertAsyncWithConfirm(
+                            this,
+                            Resource.String.editingdocuments_locnoinwarehouse,
+                            Resource.Raw.sound_miss
+                        );
                         LastScanData = null;
                         return false;
                     }
-                    
+
                     SetDefaultLocationTo(Loc);
                     return false;
                 }
@@ -917,13 +1141,13 @@ namespace G_Mobile_Android_WMS
             }
         }
 
-        async protected override void OnScan(object sender, System.Timers.ElapsedEventArgs e)
+        protected override async void OnScan(object sender, System.Timers.ElapsedEventArgs e)
         {
             base.OnScan(sender, e);
-           
+
             if (Status == DocumentStatusTypes.Zamknięty || Status == DocumentStatusTypes.Wstrzymany)
                 return;
-            
+
             await RunIsBusyTaskAsync(() => ShowProgressAndDecideOperation(LastScanData));
         }
 
@@ -944,7 +1168,6 @@ namespace G_Mobile_Android_WMS
                 }
             });
 
-
             Helpers.HideProgressDialog();
             return;
         }
@@ -958,14 +1181,21 @@ namespace G_Mobile_Android_WMS
 
             if (Kod.TowaryJednostkiWBazie != null && Kod.TowaryJednostkiWBazie.Count == 0)
             {
-                await Helpers.AlertAsyncWithConfirm(this, Resource.String.articles_not_found, Resource.Raw.sound_miss);
+                await Helpers.AlertAsyncWithConfirm(
+                    this,
+                    Resource.String.articles_not_found,
+                    Resource.Raw.sound_miss
+                );
                 LastScanData = null;
                 return;
             }
 
             if (Kod.TowaryJednostkiWBazie != null && Kod.TowaryJednostkiWBazie.Count > 1)
             {
-                TowarJednostkaO Towarjedn = await Indexes.SelectOneArticleFromMany(this, Kod.TowaryJednostkiWBazie);
+                TowarJednostkaO Towarjedn = await Indexes.SelectOneArticleFromMany(
+                    this,
+                    Kod.TowaryJednostkiWBazie
+                );
 
                 if (Towarjedn.IDTowaru >= 0)
                     Kod.TowaryJednostkiWBazie = new List<TowarJednostkaO>() { Towarjedn };
@@ -975,9 +1205,19 @@ namespace G_Mobile_Android_WMS
 
             if (DocType == DocTypes.IN)
             {
-                if (!Globalne.dokumentBL.SprawdźCzyTowarMożeByćUżytyDlaPozycji(Kod.TowaryJednostkiWBazie[0].IDTowaru, "I", Documents[0].ID))
+                if (
+                    !Globalne.dokumentBL.SprawdźCzyTowarMożeByćUżytyDlaPozycji(
+                        Kod.TowaryJednostkiWBazie[0].IDTowaru,
+                        "I",
+                        Documents[0].ID
+                    )
+                )
                 {
-                    await Helpers.AlertAsyncWithConfirm(this, Resource.String.articles_cannot_be_used, Resource.Raw.sound_miss);
+                    await Helpers.AlertAsyncWithConfirm(
+                        this,
+                        Resource.String.articles_cannot_be_used,
+                        Resource.Raw.sound_miss
+                    );
                     LastScanData = null;
                     return;
                 }
@@ -985,70 +1225,104 @@ namespace G_Mobile_Android_WMS
 
             if (Documents[0].bZlecenie)
             {
-                var result = from x in (ListView.Adapter as EditingDocumentsListAdapter).Items
-                             where
+                var result =
+                    from x in (ListView.Adapter as EditingDocumentsListAdapter).Items
+                    where
+                        (x.Base.idTowaru == Kod.TowaryJednostkiWBazie[0].IDTowaru)
+                        &&
+                        // if () { }
+                        (x.Base.idJednostkaMiary == Kod.TowaryJednostkiWBazie[0].IDJednostki)
+                        && ((Kod.Partia == x.Base.strPartia) || (x.Base.strPartia == ""))
+                        && (
+                            (
+                                CurrentOperation == Enums.Operation.In
+                                    ? (Kod.Paleta == x.Base.strPaletaP)
+                                    : (Kod.Paleta == x.Base.strPaletaW)
+                            )
+                            || (
+                                CurrentOperation == Enums.Operation.In
+                                    ? (x.Base.strPaletaP == "")
+                                    : (x.Base.strPaletaW == "")
+                            )
+                        )
+                        && (x.Base.numIloscZrealizowana != x.Base.numIloscZlecona)
 
-                             (x.Base.idTowaru == Kod.TowaryJednostkiWBazie[0].IDTowaru)
-
-                             &&
-                             // if () { }
-                             (x.Base.idJednostkaMiary == Kod.TowaryJednostkiWBazie[0].IDJednostki)
-
-                             &&
-
-                             ((Kod.Partia == x.Base.strPartia) || (x.Base.strPartia == ""))
-
-                             &&
-
-
-                             ((CurrentOperation == Enums.Operation.In ? (Kod.Paleta == x.Base.strPaletaP) : (Kod.Paleta == x.Base.strPaletaW))
-                             || (CurrentOperation == Enums.Operation.In ? (x.Base.strPaletaP == "") : (x.Base.strPaletaW == "")))
-
-                             &&
-
-
-                             (x.Base.numIloscZrealizowana != x.Base.numIloscZlecona)
-
-
-                             select x;
-
+                    select x;
 
                 if (result.Count() != 0)
                 {
-                    DocumentItems.EditItem(this, Documents, result.OrderBy(x => x.KolejnośćNaŚcieżce).First(), DocType, CurrentOperation,
-                                           SelectedDefaultLoc, DefaultLocType.None, SelectedDefaultLocName,
-                                           (int)EditingDocumentsActivity_Common.ResultCodes.DocumentItemActivityResult, false, true, Kod);
+                    DocumentItems.EditItem(
+                        this,
+                        Documents,
+                        result.OrderBy(x => x.KolejnośćNaŚcieżce).First(),
+                        DocType,
+                        CurrentOperation,
+                        SelectedDefaultLoc,
+                        DefaultLocType.None,
+                        SelectedDefaultLocName,
+                        (int)EditingDocumentsActivity_Common.ResultCodes.DocumentItemActivityResult,
+                        false,
+                        true,
+                        Kod
+                    );
                 }
                 else
                 {
-                    var resultFinished = from x in (ListView.Adapter as EditingDocumentsListAdapter).Items
-                                         where
+                    var resultFinished =
+                        from x in (ListView.Adapter as EditingDocumentsListAdapter).Items
+                        where
+                            (x.Base.idTowaru == Kod.TowaryJednostkiWBazie[0].IDTowaru)
+                            &&
+                            // LIDER ZMIANA jednostki miary jednostka miary jednostkamiary/ rolka/
 
-                                         (x.Base.idTowaru == Kod.TowaryJednostkiWBazie[0].IDTowaru) &&
-                                         // LIDER ZMIANA jednostki miary jednostka miary jednostkamiary/ rolka/
-                                         
-                                         // (x.Base.idJednostkaMiary == Kod.TowaryJednostkiWBazie[0].IDJednostki) &&
+                            // (x.Base.idJednostkaMiary == Kod.TowaryJednostkiWBazie[0].IDJednostki) &&
 
-                                         ((Kod.Partia == x.Base.strPartia) || (x.Base.strPartia == "")) 
+                            ((Kod.Partia == x.Base.strPartia) || (x.Base.strPartia == ""))
+                            // 30.11.2023 przy testach na paletach okazuje sie ze trzeba bylo zmienic zapis
 
-                                         // 30.11.2023 przy testach na paletach okazuje sie ze trzeba bylo zmienic zapis 
-                                         
-                                         && ((CurrentOperation == Enums.Operation.In ? (Kod.Paleta == x.Base.strPaletaW) : (Kod.Paleta == x.Base.strPaletaP))
-                                          || (CurrentOperation == Enums.Operation.In ? (x.Base.strPaletaW == "") : (x.Base.strPaletaP == "")))
-                                          //&& ((CurrentOperation == Enums.Operation.In ? (Kod.Paleta == x.Base.strPaletaP) : (Kod.Paleta == x.Base.strPaletaW))
-                                          //|| (CurrentOperation == Enums.Operation.In ? (x.Base.strPaletaP == "") : (x.Base.strPaletaW == "")))
+                            && (
+                                (
+                                    CurrentOperation == Enums.Operation.In
+                                        ? (Kod.Paleta == x.Base.strPaletaW)
+                                        : (Kod.Paleta == x.Base.strPaletaP)
+                                )
+                                || (
+                                    CurrentOperation == Enums.Operation.In
+                                        ? (x.Base.strPaletaW == "")
+                                        : (x.Base.strPaletaP == "")
+                                )
+                            )
+                        //&& ((CurrentOperation == Enums.Operation.In ? (Kod.Paleta == x.Base.strPaletaP) : (Kod.Paleta == x.Base.strPaletaW))
+                        //|| (CurrentOperation == Enums.Operation.In ? (x.Base.strPaletaP == "") : (x.Base.strPaletaW == "")))
 
-                                          select x;
-                    
+                        select x;
+
                     if (resultFinished.Count() != 0)
                     {
-                        DocumentItems.EditItem(this, Documents, resultFinished.OrderBy(x => x.KolejnośćNaŚcieżce).First(), DocType, CurrentOperation,
-                                               SelectedDefaultLoc, DefaultLocType.None, SelectedDefaultLocName,
-                                               (int)EditingDocumentsActivity_Common.ResultCodes.DocumentItemActivityResult, false, true);
+                        DocumentItems.EditItem(
+                            this,
+                            Documents,
+                            resultFinished.OrderBy(x => x.KolejnośćNaŚcieżce).First(),
+                            DocType,
+                            CurrentOperation,
+                            SelectedDefaultLoc,
+                            DefaultLocType.None,
+                            SelectedDefaultLocName,
+                            (int)
+                                EditingDocumentsActivity_Common
+                                    .ResultCodes
+                                    .DocumentItemActivityResult,
+                            false,
+                            true
+                        );
                     }
                     else
                     {
-                        await Helpers.AlertAsyncWithConfirm(this, Resource.String.editingdocuments_cannot_find_item, Resource.Raw.sound_miss);
+                        await Helpers.AlertAsyncWithConfirm(
+                            this,
+                            Resource.String.editingdocuments_cannot_find_item,
+                            Resource.Raw.sound_miss
+                        );
                         LastScanData = null;
                         return;
                     }
@@ -1057,21 +1331,38 @@ namespace G_Mobile_Android_WMS
             else
             {
                 // sprawdzenie czy nowo dodany towar i jego paleta jest juz w systemie, jezeli jest to pomin dodawanie
-                
+
                 bool czyJestPaleta = Globalne.paletaBL.CzyPaletaIstnieje(Kod.Paleta, -1);
 
-                if(Globalne.CurrentSettings.OnlyOncePalleteSSCCOnDocument && czyJestPaleta
-                    && (DocType == DocTypes.PZ || DocType == DocTypes.PW))
+                if (
+                    Globalne.CurrentSettings.OnlyOncePalleteSSCCOnDocument
+                    && czyJestPaleta
+                    && (DocType == DocTypes.PZ || DocType == DocTypes.PW)
+                )
                 {
-                    await Helpers.Alert(this, "Ustawienia wdrożeniowe nie pozwalają na dodanie drugiej takiej samej palety.\nPaleta (SSCC) o takim kodzie jest już w systemie.", Title: "Uwaga!");
+                    await Helpers.Alert(
+                        this,
+                        "Ustawienia wdrożeniowe nie pozwalają na dodanie drugiej takiej samej palety.\nPaleta (SSCC) o takim kodzie jest już w systemie.",
+                        Title: "Uwaga!"
+                    );
                     LastScanData = null;
                     return;
                 }
-                
+
                 // dodawanie nowej pozycji
 
-                DocumentItems.AddItem(this, Documents[0], DocType, CurrentOperation, SelectedDefaultLoc, SelectedDefaultLocName, DefaultLocType.None,
-                                      (int)EditingDocumentsActivity_Common.ResultCodes.DocumentItemActivityResult, true, Kod);
+                DocumentItems.AddItem(
+                    this,
+                    Documents[0],
+                    DocType,
+                    CurrentOperation,
+                    SelectedDefaultLoc,
+                    SelectedDefaultLocName,
+                    DefaultLocType.None,
+                    (int)EditingDocumentsActivity_Common.ResultCodes.DocumentItemActivityResult,
+                    true,
+                    Kod
+                );
             }
         }
     }
@@ -1081,7 +1372,11 @@ namespace G_Mobile_Android_WMS
         public List<DocumentItemRow> Items;
         readonly EditingDocumentsActivity Ctx;
 
-        public EditingDocumentsListAdapter(EditingDocumentsActivity Ctx, List<DocumentItemRow> Items) : base()
+        public EditingDocumentsListAdapter(
+            EditingDocumentsActivity Ctx,
+            List<DocumentItemRow> Items
+        )
+            : base()
         {
             this.Ctx = Ctx;
             this.Items = Items;
@@ -1091,6 +1386,7 @@ namespace G_Mobile_Android_WMS
         {
             return position;
         }
+
         public override DocumentItemRow this[int position]
         {
             get { return Items[position]; }
@@ -1114,7 +1410,9 @@ namespace G_Mobile_Android_WMS
 
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
-            Dictionary<EditingDocumentsListDisplayElements, bool> Set = Globalne.CurrentSettings.EditingDocumentsListDisplayElementsListsINNNR[Ctx.DocType];
+            Dictionary<EditingDocumentsListDisplayElements, bool> Set = Globalne
+                .CurrentSettings
+                .EditingDocumentsListDisplayElementsListsINNNR[Ctx.DocType];
 
             var Pos = Items[position];
 
@@ -1122,52 +1420,114 @@ namespace G_Mobile_Android_WMS
             if (view == null)
                 view = Ctx.LayoutInflater.Inflate(Resource.Layout.list_item_editingdocuments, null);
 
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_amount,
+                Pos.Base.numIloscZrealizowana.ToString() + " " + Pos.Base.strNazwaJednostki,
+                Set[EditingDocumentsListDisplayElements.DoneAmount]
+            );
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_amount,
+                Pos.Base.numIloscZrealizowana.ToString() + " " + Pos.Base.strNazwaJednostki,
+                Set[EditingDocumentsListDisplayElements.DoneAmount]
+            );
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_setamount,
+                Pos.Base.numIloscZlecona.ToString() + " " + Pos.Base.strNazwaJednostki,
+                Set[EditingDocumentsListDisplayElements.SetAmount] && Ctx.Documents[0].bZlecenie
+            );
 
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_amount, Pos.Base.numIloscZrealizowana.ToString() + " " + Pos.Base.strNazwaJednostki,
-                                                    Set[EditingDocumentsListDisplayElements.DoneAmount]);
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_amount, Pos.Base.numIloscZrealizowana.ToString() + " " + Pos.Base.strNazwaJednostki,
-                                                    Set[EditingDocumentsListDisplayElements.DoneAmount]);
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_setamount, Pos.Base.numIloscZlecona.ToString() + " " + Pos.Base.strNazwaJednostki,
-                                                    Set[EditingDocumentsListDisplayElements.SetAmount] && Ctx.Documents[0].bZlecenie);
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_location,
+                Ctx.CurrentOperation == Operation.In ? Pos.ExLokalizacjaP : Pos.ExLokalizacjaW,
+                Set[EditingDocumentsListDisplayElements.Location]
+            );
 
-            EditingDocumentsActivity_Common.SetView(view,
-                                                    Resource.Id.editingdocuments_list_location,
-                                                    Ctx.CurrentOperation == Operation.In ? Pos.ExLokalizacjaP : Pos.ExLokalizacjaW,
-                                                    Set[EditingDocumentsListDisplayElements.Location]);
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_bestbefore,
+                Pos.Base.dtDataPrzydatności.Year > 2900
+                    ? "---"
+                    : Pos.Base.dtDataPrzydatności.ToString(Globalne.CurrentSettings.DateFormat),
+                Set[EditingDocumentsListDisplayElements.BestBefore]
+            );
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_proddate,
+                Pos.Base.dtDataProdukcji.Year > 2900
+                    ? "---"
+                    : Pos.Base.dtDataPrzydatności.ToString(Globalne.CurrentSettings.DateFormat),
+                Set[EditingDocumentsListDisplayElements.ProductionDate]
+            );
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_serialnumber,
+                Pos.Base.strNumerySeryjne,
+                Set[EditingDocumentsListDisplayElements.SerialNumber]
+            );
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_lot,
+                Pos.Base.strLoty,
+                Set[EditingDocumentsListDisplayElements.Lot]
+            );
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_flog,
+                Ctx.CurrentOperation == Operation.In
+                    ? Pos.Base.strFunkcjiLogistycznejP
+                    : Pos.Base.strFunkcjiLogistycznejW,
+                Set[EditingDocumentsListDisplayElements.Flog]
+                    && Globalne.CurrentSettings.FunkcjeLogistyczne
+            );
 
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_bestbefore,
-                                                    Pos.Base.dtDataPrzydatności.Year > 2900 ? "---" : Pos.Base.dtDataPrzydatności.ToString(Globalne.CurrentSettings.DateFormat),
-                                                    Set[EditingDocumentsListDisplayElements.BestBefore]);
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_proddate,
-                                                    Pos.Base.dtDataProdukcji.Year > 2900 ? "---" : Pos.Base.dtDataPrzydatności.ToString(Globalne.CurrentSettings.DateFormat),
-                                                    Set[EditingDocumentsListDisplayElements.ProductionDate]);
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_serialnumber, Pos.Base.strNumerySeryjne,
-                                                    Set[EditingDocumentsListDisplayElements.SerialNumber]);
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_lot, Pos.Base.strLoty,
-                                                    Set[EditingDocumentsListDisplayElements.Lot]);
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_flog,
-                                                    Ctx.CurrentOperation == Operation.In ? Pos.Base.strFunkcjiLogistycznejP : Pos.Base.strFunkcjiLogistycznejW,
-                                                    Set[EditingDocumentsListDisplayElements.Flog] && Globalne.CurrentSettings.FunkcjeLogistyczne);
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_partia,
+                Pos.Base.strPartia,
+                Set[EditingDocumentsListDisplayElements.Partia] && Globalne.CurrentSettings.Partie
+            );
 
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_partia, Pos.Base.strPartia,
-                                                    Set[EditingDocumentsListDisplayElements.Partia] && Globalne.CurrentSettings.Partie);
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_paleta,
+                Ctx.CurrentOperation == Operation.In ? Pos.Base.strPaletaP : Pos.Base.strPaletaW,
+                Set[EditingDocumentsListDisplayElements.Paleta] && Globalne.CurrentSettings.Palety
+            );
 
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_paleta, Ctx.CurrentOperation == Operation.In ? Pos.Base.strPaletaP : Pos.Base.strPaletaW,
-                                                    Set[EditingDocumentsListDisplayElements.Paleta] && Globalne.CurrentSettings.Palety);
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_articlename,
+                Pos.Base.strNazwaTowaru,
+                Set[EditingDocumentsListDisplayElements.ArticleName]
+            );
 
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_articlename, Pos.Base.strNazwaTowaru,
-                                                    Set[EditingDocumentsListDisplayElements.ArticleName]);
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_symbol,
+                Pos.Base.strSymbolTowaru,
+                Set[EditingDocumentsListDisplayElements.Symbol]
+            );
 
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_symbol, Pos.Base.strSymbolTowaru,
-                                                    Set[EditingDocumentsListDisplayElements.Symbol]);
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_kodean,
+                Pos.Base.kodean,
+                Set[EditingDocumentsListDisplayElements.KodEAN]
+            );
 
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_kodean, Pos.Base.kodean,
-                                                    Set[EditingDocumentsListDisplayElements.KodEAN]);
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_listheader_NrKat,
+                Pos.Base.NrKat,
+                Set[EditingDocumentsListDisplayElements.NrKat]
+            );
 
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_listheader_NrKat, Pos.Base.NrKat,
-                                          Set[EditingDocumentsListDisplayElements.NrKat]);
-
-            view.FindViewById<TextView>(Resource.Id.editingdocuments_list_status).SetBackgroundColor(Helpers.GetItemStatusColorForStatus(Pos.Status));
+            view.FindViewById<TextView>(Resource.Id.editingdocuments_list_status)
+                .SetBackgroundColor(Helpers.GetItemStatusColorForStatus(Pos.Status));
             // view.FindViewById<TextView>(Resource.Id.editingdocuments_list_status).SetBackgroundColor(Helpers.GetItemStatusColorForStatus(Pos.Status));
             CheckBox chb = view.FindViewById<CheckBox>(Resource.Id.documents_list_checkboxBOX);
             chb.Click -= Chb_Click;
@@ -1187,6 +1547,7 @@ namespace G_Mobile_Android_WMS
 
             return view;
         }
+
         private void Chb_Click(object sender, EventArgs e)
         {
             CheckBox Chb = (sender as CheckBox);
@@ -1204,4 +1565,3 @@ namespace G_Mobile_Android_WMS
         }
     }
 }
-

@@ -1,4 +1,8 @@
-﻿using Android.App;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Android.App;
 using Android.Content;
 using Android.Graphics;
 using Android.OS;
@@ -7,20 +11,21 @@ using Android.Support.Design.Widget;
 using Android.Support.V4.Content;
 using Android.Views;
 using Android.Widget;
+using G_Mobile_Android_WMS.Common.BusinessLogicHelpers;
 using G_Mobile_Android_WMS.Controls;
 using G_Mobile_Android_WMS.Enums;
 using G_Mobile_Android_WMS.ExtendedModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using WMSServerAccess.Model;
-
-using G_Mobile_Android_WMS.Common.BusinessLogicHelpers;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, WindowSoftInputMode = SoftInput.AdjustNothing | SoftInput.StateHidden)]
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        MainLauncher = false,
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        WindowSoftInputMode = SoftInput.AdjustNothing | SoftInput.StateHidden
+    )]
     public class MultipickingActivity : ActivityWithScanner
     {
         FloatingActionButton Back;
@@ -32,7 +37,6 @@ namespace G_Mobile_Android_WMS
         FloatingActionButton EditPartia;
 
         ScrollView MultipickingView;
-
 
         LinearLayout PreviousLocLay;
         TextView PreviousLoc;
@@ -55,7 +59,6 @@ namespace G_Mobile_Android_WMS
 
         System.Timers.Timer ErrorTimer = new System.Timers.Timer() { Interval = 200 };
         int TimerErrorMessage = -1;
-       
 
         public DocTypes DocType = DocTypes.WZ;
         public DocumentStatusTypes Status = DocumentStatusTypes.Otwarty;
@@ -88,39 +91,60 @@ namespace G_Mobile_Android_WMS
 
             DocType = (DocTypes)Intent.GetIntExtra(EditingDocumentsActivity_Common.Vars.DocType, 0);
             BarcodeOrder = Globalne.CurrentSettings.BarcodeScanningOrder[DocType];
-            Status = (DocumentStatusTypes)Intent.GetIntExtra(EditingDocumentsActivity_Common.Vars.DocStatus, 5);
-            Documents = (List<DokumentVO>)Helpers.DeserializePassedJSON(Intent, EditingDocumentsActivity_Common.Vars.DocsJSON, typeof(List<DokumentVO>));
+            Status = (DocumentStatusTypes)
+                Intent.GetIntExtra(EditingDocumentsActivity_Common.Vars.DocStatus, 5);
+            Documents =
+                (List<DokumentVO>)
+                    Helpers.DeserializePassedJSON(
+                        Intent,
+                        EditingDocumentsActivity_Common.Vars.DocsJSON,
+                        typeof(List<DokumentVO>)
+                    );
 
             BarcodeOrder = Globalne.CurrentSettings.BarcodeScanningOrder[DocType];
 
             GetControls();
 
-            Task.Run(() =>   Next(true));
+            Task.Run(() => Next(true));
         }
 
         private void SetScanHintBasedOnCurrentScanStep()
         {
             switch (ScanningStep)
             {
-                case ScanningSteps.OUT: Helpers.SetTextOnTextView(this, ScanHint, GetString(Resource.String.multip_scanhint1));
+                case ScanningSteps.OUT:
+                    Helpers.SetTextOnTextView(
+                        this,
+                        ScanHint,
+                        GetString(Resource.String.multip_scanhint1)
+                    );
                     From.SetBackgroundColor(Color.Green);
                     To.SetBackgroundColor(Color.LightGray);
 
                     break;
-                case ScanningSteps.ART: Helpers.SetTextOnTextView(this, ScanHint, GetString(Resource.String.multip_scanhint2));
+                case ScanningSteps.ART:
+                    Helpers.SetTextOnTextView(
+                        this,
+                        ScanHint,
+                        GetString(Resource.String.multip_scanhint2)
+                    );
                     From.SetBackgroundColor(Color.LightGray);
-                    Article.SetBackgroundColor(Color.Green); 
+                    Article.SetBackgroundColor(Color.Green);
                     break;
 
-
-                case ScanningSteps.IN: Helpers.SetTextOnTextView(this, ScanHint, GetString(Resource.String.multip_scanhint3));
+                case ScanningSteps.IN:
+                    Helpers.SetTextOnTextView(
+                        this,
+                        ScanHint,
+                        GetString(Resource.String.multip_scanhint3)
+                    );
                     Article.SetBackgroundColor(Color.LightGray);
                     To.SetBackgroundColor(Color.Green);
                     break;
-                default: Helpers.SetTextOnTextView(this, ScanHint, ""); break;
-
+                default:
+                    Helpers.SetTextOnTextView(this, ScanHint, "");
+                    break;
             }
-
         }
 
         private void SetFirstScanAction()
@@ -141,10 +165,9 @@ namespace G_Mobile_Android_WMS
         {
             Helpers.SetActivityHeader(this, GetString(Resource.String.multipicking_activity_name));
 
-
-           // Back = FindViewById<FloatingActionButton>(Resource.Id.multipicking_back);
+            // Back = FindViewById<FloatingActionButton>(Resource.Id.multipicking_back);
             OK = FindViewById<FloatingActionButton>(Resource.Id.multipicking_ok);
-            Pause= FindViewById<FloatingActionButton>(Resource.Id.multipicking_pause);
+            Pause = FindViewById<FloatingActionButton>(Resource.Id.multipicking_pause);
             PreviousLocLay = FindViewById<LinearLayout>(Resource.Id.document_item_layout_prevloc);
             PreviousLoc = FindViewById<TextView>(Resource.Id.document_item_prevloc);
             Article = FindViewById<TextView>(Resource.Id.document_item_article);
@@ -175,8 +198,8 @@ namespace G_Mobile_Android_WMS
             // Kompatybilność z 5.0
             NumAmount.Initialize();
 
-          //  Back.Click += Back_Click;
-          // nie wiem dlaczego ale przycisk jest wylaczony bo sie nie podobal
+            //  Back.Click += Back_Click;
+            // nie wiem dlaczego ale przycisk jest wylaczony bo sie nie podobal
             OK.Click += OK_Click;
             EditFlog.Click += EditFlog_Click;
             EditPaleta.Click += EditPaleta_Click;
@@ -193,11 +216,14 @@ namespace G_Mobile_Android_WMS
             BestBefore.FocusChange += DateFields_FocusChange;
             Pause.Click += Pause_Click;
 
-
-
             ErrorTimer.Elapsed += Timer_Elapsed;
 
-            DocumentItemActivity_Common.SetVisibilityOfFields(this, DocType, true, ItemActivityMode.Split);
+            DocumentItemActivity_Common.SetVisibilityOfFields(
+                this,
+                DocType,
+                true,
+                ItemActivityMode.Split
+            );
         }
 
         private void EditPartia_Click(object sender, EventArgs e)
@@ -215,7 +241,10 @@ namespace G_Mobile_Android_WMS
                 i.PutExtra(PartieActivity.Vars.Rozchód, true);
                 i.PutExtra(PartieActivity.Vars.AskOnStart, false);
 
-                StartActivityForResult(i, (int)DocumentItemActivity_Common.ResultCodes.PartiaActivityResult);
+                StartActivityForResult(
+                    i,
+                    (int)DocumentItemActivity_Common.ResultCodes.PartiaActivityResult
+                );
             });
         }
 
@@ -234,7 +263,10 @@ namespace G_Mobile_Android_WMS
                 i.PutExtra(PaletyActivity.Vars.Rozchód, true);
                 i.PutExtra(PaletyActivity.Vars.AskOnStart, false);
 
-                StartActivityForResult(i, (int)DocumentItemActivity_Common.ResultCodes.PaletaActivityResult);
+                StartActivityForResult(
+                    i,
+                    (int)DocumentItemActivity_Common.ResultCodes.PaletaActivityResult
+                );
             });
         }
 
@@ -244,7 +276,11 @@ namespace G_Mobile_Android_WMS
 
             await RunIsBusyTaskAsync(() =>
             {
-                var Ret = BusinessLogicHelpers.Indexes.ShowLogisticFunctionsListAndSet(this, CurrentDoc.intMagazynW, Flog);
+                var Ret = BusinessLogicHelpers.Indexes.ShowLogisticFunctionsListAndSet(
+                    this,
+                    CurrentDoc.intMagazynW,
+                    Flog
+                );
                 SFlog = Ret.Result;
                 return Ret;
             });
@@ -257,14 +293,26 @@ namespace G_Mobile_Android_WMS
         {
             if ((sender as EditText).IsFocused)
             {
-                if (!DateTime.TryParseExact((sender as EditText).Text, Globalne.CurrentSettings.DateFormat, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime Current))
+                if (
+                    !DateTime.TryParseExact(
+                        (sender as EditText).Text,
+                        Globalne.CurrentSettings.DateFormat,
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        System.Globalization.DateTimeStyles.None,
+                        out DateTime Current
+                    )
+                )
                     Current = DateTime.Now;
 
                 RunIsBusyAction(() => Helpers.OpenDateEditor(this, (EditText)sender, Current));
             }
         }
 
-        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        protected override void OnActivityResult(
+            int requestCode,
+            [GeneratedEnum] Result resultCode,
+            Intent data
+        )
         {
             base.OnActivityResult(requestCode, resultCode, data);
 
@@ -275,26 +323,35 @@ namespace G_Mobile_Android_WMS
                     switch (requestCode)
                     {
                         case (int)DocumentItemActivity_Common.ResultCodes.PartiaActivityResult:
-                            {
-                                PartiaO Prt = (PartiaO)Helpers.DeserializePassedJSON(data, PartieActivity.Results.SelectedJSON, typeof(PartiaO));
+                        {
+                            PartiaO Prt = (PartiaO)
+                                Helpers.DeserializePassedJSON(
+                                    data,
+                                    PartieActivity.Results.SelectedJSON,
+                                    typeof(PartiaO)
+                                );
 
-                                if (Prt != null && Prt.ID >= 0)
-                                    Helpers.SetTextOnTextView(this, Partia, Prt.strKod);
+                            if (Prt != null && Prt.ID >= 0)
+                                Helpers.SetTextOnTextView(this, Partia, Prt.strKod);
 
-                                break;
-                            }
+                            break;
+                        }
                         case (int)DocumentItemActivity_Common.ResultCodes.PaletaActivityResult:
-                            {
-                                PaletaO Pal = (PaletaO)Helpers.DeserializePassedJSON(data, PartieActivity.Results.SelectedJSON, typeof(PaletaO));
+                        {
+                            PaletaO Pal = (PaletaO)
+                                Helpers.DeserializePassedJSON(
+                                    data,
+                                    PartieActivity.Results.SelectedJSON,
+                                    typeof(PaletaO)
+                                );
 
-                                if (Pal != null && Pal.ID >= 0)
-                                    Helpers.SetTextOnTextView(this, Paleta, Pal.strOznaczenie);
+                            if (Pal != null && Pal.ID >= 0)
+                                Helpers.SetTextOnTextView(this, Paleta, Pal.strOznaczenie);
 
-                                break;
-                            }
+                            break;
+                        }
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -343,11 +400,19 @@ namespace G_Mobile_Android_WMS
             {
                 Edited.NrKat = NrKat.Text;
             }
-            
+
             try
             {
-                Edited.dtDataProdukcji = DateTime.ParseExact(ProdDate.Text, Globalne.CurrentSettings.DateFormat, System.Globalization.CultureInfo.InvariantCulture);
-                Edited.dtDataPrzydatności = DateTime.ParseExact(BestBefore.Text, Globalne.CurrentSettings.DateFormat, System.Globalization.CultureInfo.InvariantCulture);
+                Edited.dtDataProdukcji = DateTime.ParseExact(
+                    ProdDate.Text,
+                    Globalne.CurrentSettings.DateFormat,
+                    System.Globalization.CultureInfo.InvariantCulture
+                );
+                Edited.dtDataPrzydatności = DateTime.ParseExact(
+                    BestBefore.Text,
+                    Globalne.CurrentSettings.DateFormat,
+                    System.Globalization.CultureInfo.InvariantCulture
+                );
             }
             catch (Exception)
             {
@@ -363,10 +428,16 @@ namespace G_Mobile_Android_WMS
 
         private async Task<bool> CheckSanity(PozycjaVO Edited)
         {
-            Color RequiredTextField = new Color(ContextCompat.GetColor(this, Resource.Color.required_text_field));
-            Color OkTextField = new Color(ContextCompat.GetColor(this, Resource.Color.ok_text_field));
+            Color RequiredTextField = new Color(
+                ContextCompat.GetColor(this, Resource.Color.required_text_field)
+            );
+            Color OkTextField = new Color(
+                ContextCompat.GetColor(this, Resource.Color.ok_text_field)
+            );
 
-            Dictionary<DocumentItemFields, bool> Dict = Globalne.CurrentSettings.RequiredDocItemFields[DocType];
+            Dictionary<DocumentItemFields, bool> Dict = Globalne
+                .CurrentSettings
+                .RequiredDocItemFields[DocType];
 
             bool OK = true;
 
@@ -374,28 +445,60 @@ namespace G_Mobile_Android_WMS
             {
                 switch (Key)
                 {
-                    case DocumentItemFields.Article: OK = (!Dict[Key] || Edited.idTowaru >= 0); break;
-                    case DocumentItemFields.Flog: OK = (!Dict[Key] || !Globalne.CurrentSettings.FunkcjeLogistyczne || Edited.idFunkcjiLogistycznejW >= 0); break;
-                    case DocumentItemFields.Location: OK = (!Dict[Key] || Edited.idLokalizacjaW >= 0); break;
+                    case DocumentItemFields.Article:
+                        OK = (!Dict[Key] || Edited.idTowaru >= 0);
+                        break;
+                    case DocumentItemFields.Flog:
+                        OK = (
+                            !Dict[Key]
+                            || !Globalne.CurrentSettings.FunkcjeLogistyczne
+                            || Edited.idFunkcjiLogistycznejW >= 0
+                        );
+                        break;
+                    case DocumentItemFields.Location:
+                        OK = (!Dict[Key] || Edited.idLokalizacjaW >= 0);
+                        break;
                     case DocumentItemFields.DataProdukcji:
-                        {
-                            DateTime ProdDateVal = DateTime.ParseExact(ProdDate.Text, Globalne.CurrentSettings.DateFormat, System.Globalization.CultureInfo.InvariantCulture);
-                            OK = (!Dict[Key] || ProdDateVal.Year < 2900);
-                            break;
-                        }
+                    {
+                        DateTime ProdDateVal = DateTime.ParseExact(
+                            ProdDate.Text,
+                            Globalne.CurrentSettings.DateFormat,
+                            System.Globalization.CultureInfo.InvariantCulture
+                        );
+                        OK = (!Dict[Key] || ProdDateVal.Year < 2900);
+                        break;
+                    }
                     case DocumentItemFields.DataPrzydatności:
-                        {
-                            DateTime BestBeforeVal = DateTime.ParseExact(BestBefore.Text, Globalne.CurrentSettings.DateFormat, System.Globalization.CultureInfo.InvariantCulture);
-                            OK = (!Dict[Key] || BestBeforeVal.Year < 2900);
-                            break;
-                        }
-                    case DocumentItemFields.Paleta: OK = (!Dict[Key] || !Globalne.CurrentSettings.Palety || Paleta.Text != ""); break;
-                    case DocumentItemFields.Partia: OK = (!Dict[Key] || !Globalne.CurrentSettings.Partie || Partia.Text != ""); break;
-                    case DocumentItemFields.Lot: OK = (!Dict[Key] || Lot.Text != ""); break;
-                    case DocumentItemFields.SerialNumber: OK = (!Dict[Key] || SerialNumber.Text != ""); break;
-                    case DocumentItemFields.Unit: OK = (!Dict[Key] || Edited.idJednostkaMiary >= 0); break;
-                    case DocumentItemFields.KodEAN: OK = (!Dict[Key] || Edited.kodean != ""); break;
-                    case DocumentItemFields.NrKat: OK = (!Dict[Key] || Edited.NrKat != ""); break;
+                    {
+                        DateTime BestBeforeVal = DateTime.ParseExact(
+                            BestBefore.Text,
+                            Globalne.CurrentSettings.DateFormat,
+                            System.Globalization.CultureInfo.InvariantCulture
+                        );
+                        OK = (!Dict[Key] || BestBeforeVal.Year < 2900);
+                        break;
+                    }
+                    case DocumentItemFields.Paleta:
+                        OK = (!Dict[Key] || !Globalne.CurrentSettings.Palety || Paleta.Text != "");
+                        break;
+                    case DocumentItemFields.Partia:
+                        OK = (!Dict[Key] || !Globalne.CurrentSettings.Partie || Partia.Text != "");
+                        break;
+                    case DocumentItemFields.Lot:
+                        OK = (!Dict[Key] || Lot.Text != "");
+                        break;
+                    case DocumentItemFields.SerialNumber:
+                        OK = (!Dict[Key] || SerialNumber.Text != "");
+                        break;
+                    case DocumentItemFields.Unit:
+                        OK = (!Dict[Key] || Edited.idJednostkaMiary >= 0);
+                        break;
+                    case DocumentItemFields.KodEAN:
+                        OK = (!Dict[Key] || Edited.kodean != "");
+                        break;
+                    case DocumentItemFields.NrKat:
+                        OK = (!Dict[Key] || Edited.NrKat != "");
+                        break;
                 }
 
                 View v = FindViewById<View>(DocumentItemActivity_Common.RequiredElementsDict[Key]);
@@ -411,7 +514,10 @@ namespace G_Mobile_Android_WMS
 
                 if (OK != true)
                 {
-                    await Helpers.AlertAsyncWithConfirm(this, Resource.String.documentitem_not_filled);
+                    await Helpers.AlertAsyncWithConfirm(
+                        this,
+                        Resource.String.documentitem_not_filled
+                    );
                     return false;
                 }
             }
@@ -432,27 +538,63 @@ namespace G_Mobile_Android_WMS
                 if (!await CheckSanity(Edited))
                     return false;
 
-                if (CurrentDoc.bZlecenie && Edited.numIloscZrealizowana > Edited.numIloscZlecona && !CurrentDoc.bDopuszczalnePrzekroczenieIlosci)
-                    AutoException.ThrowIfNotNull(this, Resource.String.documentitem_creationedition_toomuch);
+                if (
+                    CurrentDoc.bZlecenie
+                    && Edited.numIloscZrealizowana > Edited.numIloscZlecona
+                    && !CurrentDoc.bDopuszczalnePrzekroczenieIlosci
+                )
+                    AutoException.ThrowIfNotNull(
+                        this,
+                        Resource.String.documentitem_creationedition_toomuch
+                    );
 
                 if (Edited.numIloscZrealizowana >= Edited.numIloscZlecona)
                 {
-                    AutoException.ThrowIfNotNull(this, ErrorType.ItemCreationError, Globalne.dokumentBL.EdytujPozycję(Helpers.StringDocType(DocType), Edited, CurrentDoc.bIgnorujBlokadePartii));
+                    AutoException.ThrowIfNotNull(
+                        this,
+                        ErrorType.ItemCreationError,
+                        Globalne.dokumentBL.EdytujPozycję(
+                            Helpers.StringDocType(DocType),
+                            Edited,
+                            CurrentDoc.bIgnorujBlokadePartii
+                        )
+                    );
                 }
                 else
                 {
                     Edited.numIloscZlecona = NumAmount.Value;
 
-                    BusinessLogicHelpers.DocumentItems.EditSplitItem(this, Original, true, DocType, Operation.Out, Edited.numIloscZrealizowana);
+                    BusinessLogicHelpers.DocumentItems.EditSplitItem(
+                        this,
+                        Original,
+                        true,
+                        DocType,
+                        Operation.Out,
+                        Edited.numIloscZrealizowana
+                    );
 
                     try
                     {
-                        AutoException.ThrowIfNotNull(this, ErrorType.ItemCreationError, Globalne.dokumentBL.ZróbPozycję(Helpers.StringDocType(DocType), Edited, CurrentDoc.bIgnorujBlokadePartii));
+                        AutoException.ThrowIfNotNull(
+                            this,
+                            ErrorType.ItemCreationError,
+                            Globalne.dokumentBL.ZróbPozycję(
+                                Helpers.StringDocType(DocType),
+                                Edited,
+                                CurrentDoc.bIgnorujBlokadePartii
+                            )
+                        );
                     }
                     catch (Exception ex)
                     {
                         Helpers.HandleError(this, ex);
-                        BusinessLogicHelpers.DocumentItems.EditSplitItem(this, Original, false, DocType, Operation.Out);
+                        BusinessLogicHelpers.DocumentItems.EditSplitItem(
+                            this,
+                            Original,
+                            false,
+                            DocType,
+                            Operation.Out
+                        );
                         return false;
                     }
                 }
@@ -464,7 +606,6 @@ namespace G_Mobile_Android_WMS
                 Helpers.HandleError(this, ex);
                 return false;
             }
-
         }
 
         private async void OK_Click(object sender, EventArgs e)
@@ -481,22 +622,24 @@ namespace G_Mobile_Android_WMS
 
                 // Sprawdzamy, czy są jeszcze pozycje na liście które mają zaproponowaną tą samą lokalizację, która była proponowana dla obecnej pozycji, o innym towarze.
                 // Jeśli nie, lokalizacja dodawana jest do pomijanych.
-                DocumentItemRow ItemsNotYetDoneWithSameLocation = Items.Find(x => !IDItemsAlreadyDone.Contains(x.Base.ID) &&
-                                                                                   x.ExIDLokalizacjaW == CurrentItem.ExIDLokalizacjaW &&
-                                                                                   (
-                                                                                      x.Base.ID != CurrentItem.Base.ID || 
-                                                                                      x.Base.idTowaru != CurrentItem.Base.idTowaru ||
-                                                                                      x.Base.idPaletaW != CurrentItem.Base.idPaletaW ||
-                                                                                      x.Base.idPartia != CurrentItem.Base.idPartia ||
-                                                                                      x.Base.idFunkcjiLogistycznejW != CurrentItem.Base.idFunkcjiLogistycznejW
-                                                                                    )
-                                                                              );
+                DocumentItemRow ItemsNotYetDoneWithSameLocation = Items.Find(x =>
+                    !IDItemsAlreadyDone.Contains(x.Base.ID)
+                    && x.ExIDLokalizacjaW == CurrentItem.ExIDLokalizacjaW
+                    && (
+                        x.Base.ID != CurrentItem.Base.ID
+                        || x.Base.idTowaru != CurrentItem.Base.idTowaru
+                        || x.Base.idPaletaW != CurrentItem.Base.idPaletaW
+                        || x.Base.idPartia != CurrentItem.Base.idPartia
+                        || x.Base.idFunkcjiLogistycznejW != CurrentItem.Base.idFunkcjiLogistycznejW
+                    )
+                );
 
                 if (ItemsNotYetDoneWithSameLocation == null)
-                    LowestPathID = Globalne.lokalizacjaBL.PobierzNumerLokalizacjiNaŚcieżce(CurrentItem.ExIDLokalizacjaW);
+                    LowestPathID = Globalne.lokalizacjaBL.PobierzNumerLokalizacjiNaŚcieżce(
+                        CurrentItem.ExIDLokalizacjaW
+                    );
 
                 Res = await DoSaveCurrentItem();
-
             });
 
             if (Res)
@@ -508,23 +651,20 @@ namespace G_Mobile_Android_WMS
 
         private async void Pause_Click(object sender, EventArgs e)
         {
-         
-          bool choice= await BusinessLogicHelpers.Documents.AskYesOrNo(
-   this
-   , GetString(Resource.String.editingdocuments_rwzm_pause_multipick));
-
+            bool choice = await BusinessLogicHelpers.Documents.AskYesOrNo(
+                this,
+                GetString(Resource.String.editingdocuments_rwzm_pause_multipick)
+            );
 
             RunIsBusyAction(() =>
             {
-
-               
                 if (CallingActivity == null && choice)
                 {
                     Helpers.SwitchAndFinishCurrentActivity(this, typeof(ModulesActivity));
                 }
             });
-
         }
+
         private async Task<bool> End()
         {
             if (IsSwitchingActivity)
@@ -532,11 +672,22 @@ namespace G_Mobile_Android_WMS
 
             await Task.Delay(Globalne.TaskDelay);
 
-            Helpers.ShowProgressDialog(GetString(Resource.String.multipicking_activity_closing) + To.Text);
+            Helpers.ShowProgressDialog(
+                GetString(Resource.String.multipicking_activity_closing) + To.Text
+            );
 
             await Task.Delay(Globalne.CurrentSettings.MultipickingDelayBeforeClose);
 
-            if (await BusinessLogicHelpers.Documents.ShowAndApplyDocumentExitOptions(this, Documents, DocType, DocumentLeaveAction.Close, false, true))
+            if (
+                await BusinessLogicHelpers.Documents.ShowAndApplyDocumentExitOptions(
+                    this,
+                    Documents,
+                    DocType,
+                    DocumentLeaveAction.Close,
+                    false,
+                    true
+                )
+            )
             {
                 Helpers.HideProgressDialog();
                 IsSwitchingActivity = true;
@@ -563,7 +714,13 @@ namespace G_Mobile_Android_WMS
 
             IndexOf = 1;
 
-            while ((IDItemsAlreadyDone.Contains(CurrentItem.Base.ID) && LocationsAlreadyBeenTo.Contains(CurrentItem.ExIDLokalizacjaW)) || CurrentItem.ExIDLokalizacjaW < 0)
+            while (
+                (
+                    IDItemsAlreadyDone.Contains(CurrentItem.Base.ID)
+                    && LocationsAlreadyBeenTo.Contains(CurrentItem.ExIDLokalizacjaW)
+                )
+                || CurrentItem.ExIDLokalizacjaW < 0
+            )
             {
                 if (Items.Count == IndexOf)
                     return null;
@@ -578,7 +735,6 @@ namespace G_Mobile_Android_WMS
 
             return CurrentItem;
         }
-
 
         private async void SetControls()
         {
@@ -607,13 +763,24 @@ namespace G_Mobile_Android_WMS
             }
             else
                 Description.Visibility = ViewStates.Gone;
-            
-            decimal InWarehouse = Globalne.przychrozchBL.PobierzStanTowaruWJednostce(CurrentItem.Base.idTowaru, CurrentDoc.intMagazynW, CurrentItem.ExIDLokalizacjaW,
-                                                                                     CurrentItem.Base.idPartia, "", CurrentItem.Base.idPaletaW, "", CurrentItem.Base.idFunkcjiLogistycznejW, CurrentItem.Base.idJednostkaMiary, CurrentItem.Base.idNumerSeryjny);
-            
 
-            Amount.Text = $"{Math.Round(Math.Min(InWarehouse, CurrentItem.Base.numIloscZlecona - CurrentItem.Base.numIloscZrealizowana), Globalne.CurrentSettings.DecimalSpaces).ToString("F3")} {CurrentItem.Base.strNazwaJednostki}";
-            Article.Text = $"{CurrentItem.Base.strSymbolTowaru} - {CurrentItem.Base.strNazwaTowaru}";
+            decimal InWarehouse = Globalne.przychrozchBL.PobierzStanTowaruWJednostce(
+                CurrentItem.Base.idTowaru,
+                CurrentDoc.intMagazynW,
+                CurrentItem.ExIDLokalizacjaW,
+                CurrentItem.Base.idPartia,
+                "",
+                CurrentItem.Base.idPaletaW,
+                "",
+                CurrentItem.Base.idFunkcjiLogistycznejW,
+                CurrentItem.Base.idJednostkaMiary,
+                CurrentItem.Base.idNumerSeryjny
+            );
+
+            Amount.Text =
+                $"{Math.Round(Math.Min(InWarehouse, CurrentItem.Base.numIloscZlecona - CurrentItem.Base.numIloscZrealizowana), Globalne.CurrentSettings.DecimalSpaces).ToString("F3")} {CurrentItem.Base.strNazwaJednostki}";
+            Article.Text =
+                $"{CurrentItem.Base.strSymbolTowaru} - {CurrentItem.Base.strNazwaTowaru}";
             To.Text = DocLocNames[CurrentItem.Base.idDokumentu];
             From.Text = CurrentItem.ExLokalizacjaW;
             Partia.Text = CurrentItem.ExPartia;
@@ -621,58 +788,60 @@ namespace G_Mobile_Android_WMS
             SerialNumber.Text = CurrentItem.Base.strNumerySeryjne;
             kodean.Text = CurrentItem.Base.kodean;
 
-            if (NrKat != null )
+            if (NrKat != null)
                 NrKat.Text = CurrentItem.Base.NrKat;
 
             Lot.Text = CurrentItem.Base.strLoty;
             Flog.Text = CurrentItem.ExFunkcjaLogistycznaW;
-            ProdDate.Text = CurrentItem.Base.dtDataProdukcji.ToString(Globalne.CurrentSettings.DateFormat);
-            BestBefore.Text = CurrentItem.Base.dtDataPrzydatności.ToString(Globalne.CurrentSettings.DateFormat);
+            ProdDate.Text = CurrentItem.Base.dtDataProdukcji.ToString(
+                Globalne.CurrentSettings.DateFormat
+            );
+            BestBefore.Text = CurrentItem.Base.dtDataPrzydatności.ToString(
+                Globalne.CurrentSettings.DateFormat
+            );
 
-           Color TextField = new Color(ContextCompat.GetColor(this, Resource.Color.text_field));
-           Color NextLocLast = new Color(ContextCompat.GetColor(this, Resource.Color.next_loc_last));
-           
-           int CurrIndex = Items.IndexOf(CurrentItem);
+            Color TextField = new Color(ContextCompat.GetColor(this, Resource.Color.text_field));
+            Color NextLocLast = new Color(
+                ContextCompat.GetColor(this, Resource.Color.next_loc_last)
+            );
+
+            int CurrIndex = Items.IndexOf(CurrentItem);
 
             if (Items.Count > CurrIndex + 1)
             {
-                Color NextLocSame = new Color(ContextCompat.GetColor(this, Resource.Color.next_loc_same));
+                Color NextLocSame = new Color(
+                    ContextCompat.GetColor(this, Resource.Color.next_loc_same)
+                );
                 DocumentItemRow NextItem = Items[CurrIndex + 1];
 
                 // Koloryzujemy pola na zielono jeśli następna lokalizacja wydania bądź kuweta są takie same jak obecne, i na żółto jeśli to ostatnia pozycja.
                 if (NextItem.Base.numIloscZlecona == NextItem.Base.numIloscZrealizowana)
-                  //  From.SetBackgroundColor(NextLocLast)
-                  ;
-
+                    //  From.SetBackgroundColor(NextLocLast)
+                    ;
                 else if (NextItem.ExIDLokalizacjaW == NextItem.ExIDLokalizacjaW)
-
-                  //  From.SetBackgroundColor(NextLocSame)
-                        ;
-
+                    //  From.SetBackgroundColor(NextLocSame)
+                    ;
                 else
                     //  From.SetBackgroundColor(TextField)
                     ;
 
-
                 if (NextItem.Base.numIloscZlecona == NextItem.Base.numIloscZrealizowana)
-
-
-                           To.SetBackgroundColor(NextLocLast);
-
-                else if (DocLocNames[NextItem.Base.idDokumentu] == DocLocNames[CurrentItem.Base.idDokumentu])
-
+                    To.SetBackgroundColor(NextLocLast);
+                else if (
+                    DocLocNames[NextItem.Base.idDokumentu]
+                    == DocLocNames[CurrentItem.Base.idDokumentu]
+                )
                     //       To.SetBackgroundColor(NextLocSame)
                     ;
                 else
                     To.SetBackgroundColor(TextField);
             }
-
             else
             {
-              //  From.SetBackgroundColor(NextLocLast);
+                //  From.SetBackgroundColor(NextLocLast);
                 To.SetBackgroundColor(NextLocLast);
             }
-           
+
             // Wyłączamy pola które były uzupełnione w desktopie
             if (true)
             {
@@ -713,7 +882,6 @@ namespace G_Mobile_Android_WMS
                 else
                     kodean.Enabled = true;
 
-
                 if (NrKat != null && CurrentItem.Base.NrKat != "")
                     NrKat.Enabled = false;
                 else
@@ -723,20 +891,21 @@ namespace G_Mobile_Android_WMS
                     EditFlog.Visibility = ViewStates.Gone;
                 else
                     EditFlog.Visibility = ViewStates.Visible;
-
             }
 
-            decimal New = Math.Min(InWarehouse, CurrentItem.Base.numIloscZlecona - CurrentItem.Base.numIloscZrealizowana);
+            decimal New = Math.Min(
+                InWarehouse,
+                CurrentItem.Base.numIloscZlecona - CurrentItem.Base.numIloscZrealizowana
+            );
             NumAmount.Max = New;
             NumAmount.Value = New;
         }
 
-
-//       async void Back_Click(object sender, EventArgs e)
-//       {
-//           await RunIsBusyTaskAsync(() => Do_Exit());
-//       }
-//
+        //       async void Back_Click(object sender, EventArgs e)
+        //       {
+        //           await RunIsBusyTaskAsync(() => Do_Exit());
+        //       }
+        //
         async Task Do_Exit()
         {
             try
@@ -744,7 +913,13 @@ namespace G_Mobile_Android_WMS
                 if (IsSwitchingActivity)
                     return;
 
-                if (await BusinessLogicHelpers.Documents.ShowAndApplyDocumentExitOptions(this, Documents, DocType))
+                if (
+                    await BusinessLogicHelpers.Documents.ShowAndApplyDocumentExitOptions(
+                        this,
+                        Documents,
+                        DocType
+                    )
+                )
                 {
                     IsSwitchingActivity = true;
 
@@ -801,14 +976,41 @@ namespace G_Mobile_Android_WMS
                 if (First)
                 {
                     foreach (DokumentVO Doc in Documents)
-                        DocLocNames[Doc.ID] = (string)Helpers.HiveInvoke(typeof(WMSServerAccess.Lokalizacja.LokalizacjaBL), "PobierzNazwęLokalizacji", Doc.intLokalizacja);
+                        DocLocNames[Doc.ID] = (string)
+                            Helpers.HiveInvoke(
+                                typeof(WMSServerAccess.Lokalizacja.LokalizacjaBL),
+                                "PobierzNazwęLokalizacji",
+                                Doc.intLokalizacja
+                            );
 
-                    Items = await Task.Factory.StartNew(() => EditingDocumentsActivity_Common.GetData(Documents, DocType, ZLMMMode.None, Operation.Out, -1,
-                                                                                                                     DefaultLocType.None, -1, "Ścieżka", new List<int>(), LowestPathID));
-                    if (Items.Find(x => (x.Base.numIloscZlecona > x.Base.numIloscZrealizowana) && x.ExIDLokalizacjaW >= 0) == null)
+                    Items = await Task.Factory.StartNew(
+                        () =>
+                            EditingDocumentsActivity_Common.GetData(
+                                Documents,
+                                DocType,
+                                ZLMMMode.None,
+                                Operation.Out,
+                                -1,
+                                DefaultLocType.None,
+                                -1,
+                                "Ścieżka",
+                                new List<int>(),
+                                LowestPathID
+                            )
+                    );
+                    if (
+                        Items.Find(x =>
+                            (x.Base.numIloscZlecona > x.Base.numIloscZrealizowana)
+                            && x.ExIDLokalizacjaW >= 0
+                        ) == null
+                    )
                     {
                         Helpers.HideProgressDialog();
-                        await Helpers.AlertAsyncWithConfirm(this, Resource.String.multip_docs_done, Resource.Raw.sound_message);
+                        await Helpers.AlertAsyncWithConfirm(
+                            this,
+                            Resource.String.multip_docs_done,
+                            Resource.Raw.sound_message
+                        );
                         await Do_Exit_Without_Asking();
                         return;
                     }
@@ -817,9 +1019,18 @@ namespace G_Mobile_Android_WMS
                 {
                     foreach (var item in Items)
                     {
-                        item.Status = EditingDocumentsActivity_Common.GetStatusForItem(item.Base, DocType, ZLMMMode.None, Operation.Out);
+                        item.Status = EditingDocumentsActivity_Common.GetStatusForItem(
+                            item.Base,
+                            DocType,
+                            ZLMMMode.None,
+                            Operation.Out
+                        );
                     }
-                    Items = Items.OrderBy(x => x.Status).ThenBy(x => x.KolejnośćNaŚcieżce).ThenBy(x => x.EXIDLokalizacjaDokumentu).ToList();
+                    Items = Items
+                        .OrderBy(x => x.Status)
+                        .ThenBy(x => x.KolejnośćNaŚcieżce)
+                        .ThenBy(x => x.EXIDLokalizacjaDokumentu)
+                        .ToList();
                 }
 
                 RunOnUiThread(() =>
@@ -830,7 +1041,6 @@ namespace G_Mobile_Android_WMS
                 });
 
                 Helpers.HideProgressDialog();
-
             }
             catch (Exception ex)
             {
@@ -844,7 +1054,6 @@ namespace G_Mobile_Android_WMS
             }
         }
 
-
         private void NextScanStepAction()
         {
             Helpers.PlaySound(this, Resource.Raw.sound_ok);
@@ -852,42 +1061,45 @@ namespace G_Mobile_Android_WMS
             switch (ScanningStep)
             {
                 case ScanningSteps.OUT:
+                {
+                    if (Globalne.CurrentSettings.MultipickingConfirmArticle)
                     {
-                        if (Globalne.CurrentSettings.MultipickingConfirmArticle)
-                        {
-                            ScanningStep = ScanningSteps.ART;
-                            SetScanHintBasedOnCurrentScanStep();
-                        }
-                        else if (!Globalne.CurrentSettings.MultipickingConfirmArticle && Globalne.CurrentSettings.MultipickingConfirmInLocation)
-                        {
-                            ScanningStep = ScanningSteps.IN;
-                            SetScanHintBasedOnCurrentScanStep();
-                        }
-                        else
-                        {
-                            OK_Click(null, null);
-                        }
-
-                        break;
+                        ScanningStep = ScanningSteps.ART;
+                        SetScanHintBasedOnCurrentScanStep();
                     }
-                case ScanningSteps.ART:
+                    else if (
+                        !Globalne.CurrentSettings.MultipickingConfirmArticle
+                        && Globalne.CurrentSettings.MultipickingConfirmInLocation
+                    )
                     {
-                        if (Globalne.CurrentSettings.MultipickingConfirmInLocation)
-                        {
-                            ScanningStep = ScanningSteps.IN;
-                            SetScanHintBasedOnCurrentScanStep();
-                        }
-                        else
-                        {
-                            OK_Click(null, null);
-                        }
-                        break;
+                        ScanningStep = ScanningSteps.IN;
+                        SetScanHintBasedOnCurrentScanStep();
                     }
-                case ScanningSteps.IN:
+                    else
                     {
                         OK_Click(null, null);
-                        break;
                     }
+
+                    break;
+                }
+                case ScanningSteps.ART:
+                {
+                    if (Globalne.CurrentSettings.MultipickingConfirmInLocation)
+                    {
+                        ScanningStep = ScanningSteps.IN;
+                        SetScanHintBasedOnCurrentScanStep();
+                    }
+                    else
+                    {
+                        OK_Click(null, null);
+                    }
+                    break;
+                }
+                case ScanningSteps.IN:
+                {
+                    OK_Click(null, null);
+                    break;
+                }
             }
         }
 
@@ -904,53 +1116,53 @@ namespace G_Mobile_Android_WMS
             switch (ScanningStep)
             {
                 case ScanningSteps.OUT:
+                {
+                    LokalizacjaVO Loc = Barcodes.GetLocationFromBarcode(BarcodesL[0], true);
+
+                    if (CurrentItem.ExIDLokalizacjaW != Loc.ID)
                     {
-                        LokalizacjaVO Loc = Barcodes.GetLocationFromBarcode(BarcodesL[0], true);
+                        TimerErrorMessage = Resource.String.multip_wrong_loc;
+                        ErrorTimer.Start();
 
-                        if (CurrentItem.ExIDLokalizacjaW != Loc.ID)
-                        {
-                            TimerErrorMessage = Resource.String.multip_wrong_loc;
-                            ErrorTimer.Start();
-
-                            LastScanData = null;
-                            return false;
-                        }
-                        else
-                        {
-                            LastScanData = null;
-                            NextScanStepAction();
-                            return false;
-                        }
+                        LastScanData = null;
+                        return false;
                     }
+                    else
+                    {
+                        LastScanData = null;
+                        NextScanStepAction();
+                        return false;
+                    }
+                }
                 case ScanningSteps.ART:
-                    {
-                        return true;
-                    }
+                {
+                    return true;
+                }
                 case ScanningSteps.IN:
+                {
+                    LokalizacjaVO Loc = Barcodes.GetLocationFromBarcode(BarcodesL[0], false);
+
+                    if (CurrentDoc.intLokalizacja != Loc.ID)
                     {
-                        LokalizacjaVO Loc = Barcodes.GetLocationFromBarcode(BarcodesL[0], false);
+                        TimerErrorMessage = Resource.String.multip_wrong_loc;
+                        ErrorTimer.Start();
 
-                        if (CurrentDoc.intLokalizacja != Loc.ID)
-                        {
-                            TimerErrorMessage = Resource.String.multip_wrong_loc;
-                            ErrorTimer.Start();
-
-                            LastScanData = null;
-                            return false;
-                        }
-                        else
-                        {
-                            LastScanData = null;
-                            NextScanStepAction();
-                            return false;
-                        }
+                        LastScanData = null;
+                        return false;
                     }
+                    else
+                    {
+                        LastScanData = null;
+                        NextScanStepAction();
+                        return false;
+                    }
+                }
                 default:
                     return false;
             }
         }
 
-        async protected override void OnScan(object sender, System.Timers.ElapsedEventArgs e)
+        protected override async void OnScan(object sender, System.Timers.ElapsedEventArgs e)
         {
             base.OnScan(sender, e);
             await RunIsBusyTaskAsync(() => DoBarcode());
@@ -962,10 +1174,16 @@ namespace G_Mobile_Android_WMS
 
             try
             {
-                KodKreskowyZSzablonuO Kod = Helpers.ParseBarcodesAccordingToOrder(LastScanData, DocType);
+                KodKreskowyZSzablonuO Kod = Helpers.ParseBarcodesAccordingToOrder(
+                    LastScanData,
+                    DocType
+                );
 
                 // Sprawdzamy czy zeskanowano ten sam artykuł
-                if (Kod.TowaryJednostkiWBazie.Count == 0 || (Kod.TowaryJednostkiWBazie[0].IDTowaru != CurrentItem.Base.idTowaru))
+                if (
+                    Kod.TowaryJednostkiWBazie.Count == 0
+                    || (Kod.TowaryJednostkiWBazie[0].IDTowaru != CurrentItem.Base.idTowaru)
+                )
                 {
                     Helpers.HideProgressDialog();
 
@@ -980,7 +1198,10 @@ namespace G_Mobile_Android_WMS
                 {
                     if (CurrentItem.Base.idPartia >= 0)
                     {
-                        if (Globalne.partiaBL.PobierzIDPartii(Kod.Partia) != CurrentItem.Base.idPartia)
+                        if (
+                            Globalne.partiaBL.PobierzIDPartii(Kod.Partia)
+                            != CurrentItem.Base.idPartia
+                        )
                         {
                             Helpers.HideProgressDialog();
 
@@ -997,13 +1218,15 @@ namespace G_Mobile_Android_WMS
                 {
                     if (CurrentItem.Base.idPaletaW >= 0)
                     {
-                        if (Globalne.paletaBL.PobierzIDPalety(Kod.Paleta) != CurrentItem.Base.idPartia)
+                        if (
+                            Globalne.paletaBL.PobierzIDPalety(Kod.Paleta)
+                            != CurrentItem.Base.idPartia
+                        )
                         {
                             Helpers.HideProgressDialog();
 
                             TimerErrorMessage = Resource.String.multip_wrong_paleta;
                             ErrorTimer.Start();
-
 
                             return;
                         }
@@ -1013,13 +1236,15 @@ namespace G_Mobile_Android_WMS
                 {
                     if (CurrentItem.Base.idNumerSeryjny >= 0)
                     {
-                        if (Globalne.numerSeryjnyBL.PobierzIDNumeruSeryjnego(Kod.NrSeryjny) != CurrentItem.Base.idNumerSeryjny)
+                        if (
+                            Globalne.numerSeryjnyBL.PobierzIDNumeruSeryjnego(Kod.NrSeryjny)
+                            != CurrentItem.Base.idNumerSeryjny
+                        )
                         {
                             Helpers.HideProgressDialog();
 
                             TimerErrorMessage = Resource.String.multip_wrong_serialnum;
                             ErrorTimer.Start();
-
 
                             return;
                         }
@@ -1027,7 +1252,18 @@ namespace G_Mobile_Android_WMS
                 }
                 //todo: rzyjrzec sie czy dziala poprawnie
                 // Sprawdzamy, czy towar który zeskanowano występuje faktycznie w takiej ilości w lokalizacji
-                decimal Stan = Globalne.przychrozchBL.PobierzStanTowaru(CurrentItem.Base.idTowaru, CurrentDoc.intMagazynW, CurrentItem.ExIDLokalizacjaW, -1, Kod.Partia, -1, Kod.Paleta, (int)Flog.Tag, CurrentItem.Base.idNumerSeryjny, true);
+                decimal Stan = Globalne.przychrozchBL.PobierzStanTowaru(
+                    CurrentItem.Base.idTowaru,
+                    CurrentDoc.intMagazynW,
+                    CurrentItem.ExIDLokalizacjaW,
+                    -1,
+                    Kod.Partia,
+                    -1,
+                    Kod.Paleta,
+                    (int)Flog.Tag,
+                    CurrentItem.Base.idNumerSeryjny,
+                    true
+                );
 
                 if (Stan > NumAmount.Value)
                 {
@@ -1054,10 +1290,14 @@ namespace G_Mobile_Android_WMS
                     RunOnUiThread(() =>
                     {
                         if (Kod.DataProdukcji != EmptyDate)
-                            ProdDate.Text = Kod.DataProdukcji.ToString(Globalne.CurrentSettings.DateFormat);
+                            ProdDate.Text = Kod.DataProdukcji.ToString(
+                                Globalne.CurrentSettings.DateFormat
+                            );
 
                         if (Kod.DataPrzydatności != EmptyDate)
-                            BestBefore.Text = Kod.DataPrzydatności.ToString(Globalne.CurrentSettings.DateFormat);
+                            BestBefore.Text = Kod.DataPrzydatności.ToString(
+                                Globalne.CurrentSettings.DateFormat
+                            );
                     });
 
                     Helpers.HideProgressDialog();
@@ -1073,4 +1313,3 @@ namespace G_Mobile_Android_WMS
         }
     }
 }
-

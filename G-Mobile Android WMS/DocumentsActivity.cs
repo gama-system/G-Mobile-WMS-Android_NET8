@@ -1,33 +1,37 @@
-﻿using Acr.UserDialogs;
-using Android.App;
-using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Widget;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Linq;
-
-using WMSServerAccess.Model;
-using Android.Content;
-using Android.Runtime;
-using Android.Views;
-using System.Timers;
-using System.Threading.Tasks;
-using Android.Graphics;
-using WMSServerAccess.FunkcjaLogistyczna;
-using Android.Support.V7.Widget;
-using Xamarin.Essentials;
 using System.Runtime.CompilerServices;
-using Android.Systems;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
 using System.Xml.Serialization;
+using Acr.UserDialogs;
+using Android.App;
+using Android.Content;
+using Android.Drm;
+using Android.Graphics;
+using Android.OS;
+using Android.Runtime;
+using Android.Support.Design.Widget;
+using Android.Support.V7.Widget;
+using Android.Systems;
+using Android.Views;
+using Android.Widget;
 using Java.Nio.Channels;
 using Java.Util;
-using Android.Drm;
+using WMSServerAccess.FunkcjaLogistyczna;
+using WMS_Model.ModeleDanych;
+using Xamarin.Essentials;
+
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, MainLauncher = false)]
-
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        MainLauncher = false
+    )]
     public class DocumentsActivity : ActivityWithScanner
     {
         FloatingActionButton Back;
@@ -37,8 +41,6 @@ namespace G_Mobile_Android_WMS
         FloatingActionButton Refresh;
         FloatingActionButton Search;
         FloatingActionButton Confirm;
-
-  
 
         LinearLayout DocumentsListHeader;
         ListView ListView;
@@ -52,7 +54,7 @@ namespace G_Mobile_Android_WMS
         public bool ShowCheckboxes = false;
         public List<int> CheckedItems = new List<int>();
         List<LokalizacjaRow> LokGru; // list of location for multipicking
-        GrupaLokalizacjiO Gru=null; //scanned group location
+        GrupaLokalizacjiO Gru = null; //scanned group location
 
         List<int> _StatsusFilters = null;
         public List<int> StatsusFilters
@@ -62,9 +64,9 @@ namespace G_Mobile_Android_WMS
             {
                 _StatsusFilters = value;
                 (ListView.Adapter as DocumentsListAdapter).StatsusFilters = _StatsusFilters;
-
             }
         }
+
         internal static class Vars
         {
             public const string DocType = "DocType";
@@ -85,7 +87,6 @@ namespace G_Mobile_Android_WMS
             if (DocType == Enums.DocTypes.ZLDistribution || DocType == Enums.DocTypes.ZLGathering)
                 DocType = Enums.DocTypes.ZL;
 
-
             GetAndSetControls();
 
             Task.Run(() => InsertData());
@@ -93,7 +94,12 @@ namespace G_Mobile_Android_WMS
 
         private void GetAndSetControls()
         {
-            Helpers.SetActivityHeader(this, GetString(Resource.String.documents_activity_name) + " " + Helpers.StringDocType(DocType));
+            Helpers.SetActivityHeader(
+                this,
+                GetString(Resource.String.documents_activity_name)
+                    + " "
+                    + Helpers.StringDocType(DocType)
+            );
 
             Back = FindViewById<FloatingActionButton>(Resource.Id.documents_btn_back);
             Add = FindViewById<FloatingActionButton>(Resource.Id.documents_btn_add);
@@ -128,15 +134,12 @@ namespace G_Mobile_Android_WMS
                 Delete.Visibility = ViewStates.Gone;
             }
 
-            if (!Globalne.CurrentUserSettings.CanDeleteOwnDocuments && !Globalne.CurrentUserSettings.CanDeleteAllDocuments)
+            if (
+                !Globalne.CurrentUserSettings.CanDeleteOwnDocuments
+                && !Globalne.CurrentUserSettings.CanDeleteAllDocuments
+            )
                 Delete.Visibility = ViewStates.Gone;
-
-
-        
         }
-
-
-
 
         private void Add_LongClick(object sender, View.LongClickEventArgs e)
         {
@@ -148,23 +151,54 @@ namespace G_Mobile_Android_WMS
             RunIsBusyAction(() =>
             {
                 ActionSheetConfig Conf = new ActionSheetConfig()
-                                       .SetCancel(GetString(Resource.String.global_cancel))
-                                       .SetTitle("Utwórz dokument ZL z bufora:");
+                    .SetCancel(GetString(Resource.String.global_cancel))
+                    .SetTitle("Utwórz dokument ZL z bufora:");
 
-                foreach (var item in Globalne.lokalizacjaBL.PobierzListęDostępnychLokalizacjiBuforowych(Globalne.Magazyn.ID, true))
+                foreach (
+                    var item in Globalne.lokalizacjaBL.PobierzListęDostępnychLokalizacjiBuforowych(
+                        Globalne.Magazyn.ID,
+                        true
+                    )
+                )
                 {
+                    var przychod = Globalne
+                        .przychrozchBL.PobierzListęPrzychodów(
+                            -1,
+                            Globalne.Magazyn.ID,
+                            item.ID,
+                            -1,
+                            "",
+                            -1,
+                            "",
+                            -1,
+                            -1,
+                            -1,
+                            true
+                        )
+                        .ToList();
 
-                    var przychod = Globalne.przychrozchBL.PobierzListęPrzychodów(-1, Globalne.Magazyn.ID, item.ID, -1, "", -1, "", -1, -1, -1, true).ToList();
-                    
                     foreach (var przych in przychod.GroupBy(x => x.idDokumentP))
                     {
-                        var dokument = Globalne.dokumentBL.PobierzDokument(przych.Key, "", "", -1, item.ID, "");
-                        var pozycjeCount = Globalne.dokumentBL.PobierzListęPozycji(dokument.ID).Distinct().Count();
+                        var dokument = Globalne.dokumentBL.PobierzDokument(
+                            przych.Key,
+                            "",
+                            "",
+                            -1,
+                            item.ID,
+                            ""
+                        );
+                        var pozycjeCount = Globalne
+                            .dokumentBL.PobierzListęPozycji(dokument.ID)
+                            .Distinct()
+                            .Count();
                         // dla dokumentow PW ze statusem "Zamknięty"
                         if (dokument.idStatusDokumentu == 1039)
-                            Conf.Add(item.strNazwa.ToUpper() + $" [pozycje: {pozycjeCount}, {dokument.strNazwa}]", () => CreateDocumentFromBuffor(item.ID));
+                            Conf.Add(
+                                item.strNazwa.ToUpper()
+                                    + $" [pozycje: {pozycjeCount}, {dokument.strNazwa}]",
+                                () => CreateDocumentFromBuffor(item.ID)
+                            );
                     }
-                   
                 }
 
                 if (Conf.Options.Count > 0)
@@ -176,13 +210,16 @@ namespace G_Mobile_Android_WMS
                     Conf.SetTitle("Brak pozycji buforowych");
                     UserDialogs.Instance.ActionSheet(Conf);
                 }
-
             });
         }
+
         void CreateDocumentFromBuffor(int idBuffor)
         {
-            var Rejestr = Globalne.rejestrBL.PobierzPierwszyRejestrDlaDokumentu("ZL", Globalne.Magazyn.ID);
-            
+            var Rejestr = Globalne.rejestrBL.PobierzPierwszyRejestrDlaDokumentu(
+                "ZL",
+                Globalne.Magazyn.ID
+            );
+
             DokumentVO Dokument = Globalne.dokumentBL.PustyDokumentVO();
             Dokument.intLokalizacjaPozycji = idBuffor;
             Dokument.intEdytowany = Globalne.Operator.ID;
@@ -199,9 +236,11 @@ namespace G_Mobile_Android_WMS
             Dokument.strDokumentDostawcy = "";
             Dokument.idKontrahent = -1;
 
-            StatusDokumentuO Status = Globalne.dokumentBL.PobierzPierwszyStatusDokumentuOTypie("ZL", 1);
+            StatusDokumentuO Status = Globalne.dokumentBL.PobierzPierwszyStatusDokumentuOTypie(
+                "ZL",
+                1
+            );
             Dokument.idStatusDokumentu = Status.ID;
-
 
             Dokument.intMagazynP = Globalne.Magazyn.ID;
             Dokument.intMagazynW = Globalne.Magazyn.ID;
@@ -216,17 +255,35 @@ namespace G_Mobile_Android_WMS
                 bool ZabieranieCałegoBufora = true;
                 if (ZabieranieCałegoBufora)
                 {
-                   Globalne.dokumentBL.WypełnijTowaramiZBufora(DodanyDok, idBuffor, "ZL", true, Globalne.Operator.ID);
+                    Globalne.dokumentBL.WypełnijTowaramiZBufora(
+                        DodanyDok,
+                        idBuffor,
+                        "ZL",
+                        true,
+                        Globalne.Operator.ID
+                    );
                 }
             }
             Helpers.HideProgressDialog();
 
-            BusinessLogicHelpers.Documents.EditDocuments(this, new List<int>() {DodanyDok }, Enums.DocTypes.ZLDistribution, Enums.ZLMMMode.TwoStep, -1);
+            BusinessLogicHelpers.Documents.EditDocuments(
+                this,
+                new List<int>() { DodanyDok },
+                Enums.DocTypes.ZLDistribution,
+                Enums.ZLMMMode.TwoStep,
+                -1
+            );
         }
-        
+
         private async void Search_Click(object sender, EventArgs e)
         {
-            var Res = await Helpers.AlertAsyncWithPrompt(this, Resource.String.documents_filter, null, FilterText, InputType.Default);
+            var Res = await Helpers.AlertAsyncWithPrompt(
+                this,
+                Resource.String.documents_filter,
+                null,
+                FilterText,
+                InputType.Default
+            );
 
             if (Res.Ok)
             {
@@ -261,6 +318,7 @@ namespace G_Mobile_Android_WMS
             CheckedItems = new List<int>();
             (ListView.Adapter as DocumentsListAdapter).NotifyDataSetChanged();
         }
+
         /// <summary>
         /// Otwarty       0
         /// Do realizacji 1
@@ -278,17 +336,31 @@ namespace G_Mobile_Android_WMS
             {
                 if (CheckedItems.Contains(e.Position))
                 {
-
-                    
                     // jezeli wlaczony podglad dokumentów wykonywanych przez innych operatorow to pokaz wszystkie w statusie "W realizacji"
-                    if (true && ListView.Adapter != null && (ListView.Adapter is DocumentsListAdapter))
+                    if (
+                        true
+                        && ListView.Adapter != null
+                        && (ListView.Adapter is DocumentsListAdapter)
+                    )
                     {
                         var row = (ListView.Adapter as DocumentsListAdapter)[e.Position];
                         int idDok = Convert.ToInt32(row[0]);
                         string nazwaDok = row[1].ToString();
 
-                        var dokument = Task.Factory.StartNew(() => Globalne.dokumentBL.PobierzDokument(idDok, "", nazwaDok, -1, -1, "")).Result;
-                        
+                        var dokument = Task
+                            .Factory.StartNew(
+                                () =>
+                                    Globalne.dokumentBL.PobierzDokument(
+                                        idDok,
+                                        "",
+                                        nazwaDok,
+                                        -1,
+                                        -1,
+                                        ""
+                                    )
+                            )
+                            .Result;
+
                         /// Statusy Dokumentów (W realizacji)
                         /// ID      TypDok
                         /// 1036	PW
@@ -297,10 +369,22 @@ namespace G_Mobile_Android_WMS
                         /// 1057    WZ
                         var statusy = new[] { 1036, 1043, 1050, 1057 };
                         /// sprawdzamy czy dokument jest w statusie "W realizacji" i wsyswietlamy informacje kto go edytuje
-                        if (statusy.Contains(dokument.idStatusDokumentu) && dokument.intEdytowany != Globalne.Operator.ID && dokument.intEdytowany != -1)
+                        if (
+                            statusy.Contains(dokument.idStatusDokumentu)
+                            && dokument.intEdytowany != Globalne.Operator.ID
+                            && dokument.intEdytowany != -1
+                        )
                         {
-                            var nazwaOperatora = Task.Factory.StartNew(() => Globalne.operatorBL.PobierzOperatora(dokument.intEdytowany)).Result.Nazwa;
-                            Helpers.CenteredToast("Dokument jest edytowany przez operatora: " + nazwaOperatora, ToastLength.Long);
+                            var nazwaOperatora = Task
+                                .Factory.StartNew(
+                                    () =>
+                                        Globalne.operatorBL.PobierzOperatora(dokument.intEdytowany)
+                                )
+                                .Result.Nazwa;
+                            Helpers.CenteredToast(
+                                "Dokument jest edytowany przez operatora: " + nazwaOperatora,
+                                ToastLength.Long
+                            );
                             return;
                         }
                     }
@@ -309,10 +393,7 @@ namespace G_Mobile_Android_WMS
                 }
             }
 
-            CheckedItems = new List<int>
-            {
-                e.Position
-            };
+            CheckedItems = new List<int> { e.Position };
         }
 
         private void Edit_Click(object sender, EventArgs e)
@@ -320,13 +401,16 @@ namespace G_Mobile_Android_WMS
             RunIsBusyAction(() => DoEdit());
         }
 
-        private async void DoEdit(List<int> SelectedDocIDs = null, List<DokumentVO> Docs = null, bool Multipicking = false)
+        private async void DoEdit(
+            List<int> SelectedDocIDs = null,
+            List<DokumentVO> Docs = null,
+            bool Multipicking = false
+        )
         {
             try
             {
                 if (CheckedItems.Count == 0 && SelectedDocIDs == null && Docs == null)
                     return;
-
 
                 await RunIsBusyTaskAsync(async () =>
                 {
@@ -342,7 +426,7 @@ namespace G_Mobile_Android_WMS
                 // if (DocType == Enums.DocTypes.MM || DocType == Enums.DocTypes.ZL)
                 //
                 //     if (ZLMMMode == Enums.ZLMMMode.None)
-                //     
+                //
                 //         return;
 
                 if (SelectedDocIDs == null && Docs == null)
@@ -352,7 +436,9 @@ namespace G_Mobile_Android_WMS
                     foreach (int Pos in CheckedItems)
                     {
                         object[] Selected = (ListView.Adapter as DocumentsListAdapter)[Pos];
-                        int IDDoc = Convert.ToInt32(Selected[(int)SQL.Documents.Documents_Results.idDokumentu]);
+                        int IDDoc = Convert.ToInt32(
+                            Selected[(int)SQL.Documents.Documents_Results.idDokumentu]
+                        );
                         SelectedDocIDs.Add(IDDoc);
                     }
                 }
@@ -360,13 +446,20 @@ namespace G_Mobile_Android_WMS
                 Helpers.ShowProgressDialog(GetString(Resource.String.documents_opening));
                 await Task.Delay(100);
 
-                if(ZLMMMode == Enums.ZLMMMode.None)
-                    ZLMMMode = Globalne.CurrentSettings.DefaultZLMode;//Enums.ZLMMMode.TwoStep;
+                if (ZLMMMode == Enums.ZLMMMode.None)
+                    ZLMMMode = Globalne.CurrentSettings.DefaultZLMode; //Enums.ZLMMMode.TwoStep;
 
-                BusinessLogicHelpers.Documents.EditDocuments(this, SelectedDocIDs, DocType, ZLMMMode, -1, Docs, Multipicking);
+                BusinessLogicHelpers.Documents.EditDocuments(
+                    this,
+                    SelectedDocIDs,
+                    DocType,
+                    ZLMMMode,
+                    -1,
+                    Docs,
+                    Multipicking
+                );
 
                 Helpers.HideProgressDialog();
-
             }
             catch (Exception ex)
             {
@@ -376,7 +469,6 @@ namespace G_Mobile_Android_WMS
                 return;
             }
         }
-
 
         async void Delete_Click(object sender, EventArgs e)
         {
@@ -397,9 +489,17 @@ namespace G_Mobile_Android_WMS
                     {
                         object[] Selected = (ListView.Adapter as DocumentsListAdapter)[Pos];
 
-                        Docs.Add(new int[2] { Convert.ToInt32(Selected[(int)SQL.Documents.Documents_Results.intUtworzonyPrzez]),
-                                              Convert.ToInt32(Selected[(int)SQL.Documents.Documents_Results.idDokumentu])
-                                            });
+                        Docs.Add(
+                            new int[2]
+                            {
+                                Convert.ToInt32(
+                                    Selected[(int)SQL.Documents.Documents_Results.intUtworzonyPrzez]
+                                ),
+                                Convert.ToInt32(
+                                    Selected[(int)SQL.Documents.Documents_Results.idDokumentu]
+                                )
+                            }
+                        );
                     }
 
                     bool OK = await BusinessLogicHelpers.Documents.DeleteDocuments(this, Docs);
@@ -462,34 +562,63 @@ namespace G_Mobile_Android_WMS
         private void DoBarcode(List<string> Barcodes)
         {
             if (Barcodes == null || Barcodes.Count == 0)
-            
                 return;
 
-                Helpers.ShowProgressDialog(GetString(Resource.String.global_searching_barcode));
-            
+            Helpers.ShowProgressDialog(GetString(Resource.String.global_searching_barcode));
+
             try
             {
                 IsBusy = false;
 
-                DokumentVO Dok = Globalne.dokumentBL.PobierzDokument(-1, "", "", -1, -1, Barcodes[0]);
+                DokumentVO Dok = Globalne.dokumentBL.PobierzDokument(
+                    -1,
+                    "",
+                    "",
+                    -1,
+                    -1,
+                    Barcodes[0]
+                );
                 var rejestr = Globalne.rejestrBL.PobierzRejestr(Dok.idRejestr);
 
                 // dokument WZ - podkreslenie " _ " przed numerem zamowienia
-                DokumentVO _Dok = Globalne.dokumentBL.PobierzDokument(-1, "", "", -1, -1, "_" + Barcodes[0]);
+                DokumentVO _Dok = Globalne.dokumentBL.PobierzDokument(
+                    -1,
+                    "",
+                    "",
+                    -1,
+                    -1,
+                    "_" + Barcodes[0]
+                );
                 var _rejestr = Globalne.rejestrBL.PobierzRejestr(_Dok.idRejestr);
-                
+
                 // Sprawdzanie czy pobrany dokument jest o typie w ktorym znajduje sie oparator (np. dokument to WZ i znajdujemy sie na WZ)
-                if ((_Dok.ID >= 0 && _rejestr.strTyp == DocType.ToString()) || (Dok.ID >= 0 && rejestr.strTyp == DocType.ToString()))
+                if (
+                    (_Dok.ID >= 0 && _rejestr.strTyp == DocType.ToString())
+                    || (Dok.ID >= 0 && rejestr.strTyp == DocType.ToString())
+                )
                 {
                     if (_Dok.ID >= 0 && _rejestr.strTyp == DocType.ToString())
                         Dok = _Dok;
                 }
-                else if ((_rejestr.ID > -1 && (_rejestr.strTyp != DocType.ToString())) || (rejestr.ID > -1 && ((rejestr.strTyp != DocType.ToString()))))
+                else if (
+                    (_rejestr.ID > -1 && (_rejestr.strTyp != DocType.ToString()))
+                    || (rejestr.ID > -1 && ((rejestr.strTyp != DocType.ToString())))
+                )
                 {
                     AutoException.ThrowIfNotNull(this, Resource.String.documents_docfound_barcode);
                 }
-                else if(!Globalne.lokalizacjaBL.SprawdźCzyGrupaLokalizacjiIstnieje(Barcodes[0], Barcodes[0], -1, Globalne.Magazyn.ID))
-                    AutoException.ThrowIfNotNull(this, Resource.String.documents_didnotfound_barcode);
+                else if (
+                    !Globalne.lokalizacjaBL.SprawdźCzyGrupaLokalizacjiIstnieje(
+                        Barcodes[0],
+                        Barcodes[0],
+                        -1,
+                        Globalne.Magazyn.ID
+                    )
+                )
+                    AutoException.ThrowIfNotNull(
+                        this,
+                        Resource.String.documents_didnotfound_barcode
+                    );
 
                 if (Dok.ID >= 0)
                 {
@@ -498,20 +627,39 @@ namespace G_Mobile_Android_WMS
                 }
 
                 // Multipicking działa tylko dla WZ i RW
-                if ((DocType != Enums.DocTypes.WZ && DocType != Enums.DocTypes.RW) || !Globalne.CurrentSettings.Multipicking)
-                    AutoException.ThrowIfNotNull(this, Resource.String.documents_didnotfound_barcode);
+                if (
+                    (DocType != Enums.DocTypes.WZ && DocType != Enums.DocTypes.RW)
+                    || !Globalne.CurrentSettings.Multipicking
+                )
+                    AutoException.ThrowIfNotNull(
+                        this,
+                        Resource.String.documents_didnotfound_barcode
+                    );
                 else
                 {
-                    
                     // Pobranie dokumentu przypisanego już do lokalizacji
-                    LokalizacjaVO Lok = Globalne.lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(Barcodes[0], Globalne.Magazyn.ID, true);
+                    LokalizacjaVO Lok = Globalne.lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(
+                        Barcodes[0],
+                        Globalne.Magazyn.ID,
+                        true
+                    );
 
                     if (Lok.ID >= 0)
                     {
                         if (Lok.idMagazyn != Globalne.Magazyn.ID)
-                            AutoException.ThrowIfNotNull(this, Resource.String.documents_loc_fromdifferent_warehouse);
+                            AutoException.ThrowIfNotNull(
+                                this,
+                                Resource.String.documents_loc_fromdifferent_warehouse
+                            );
 
-                        DokumentVO DokLok = Globalne.dokumentBL.PobierzDokument(-1, "", "", -1, Lok.ID, "");
+                        DokumentVO DokLok = Globalne.dokumentBL.PobierzDokument(
+                            -1,
+                            "",
+                            "",
+                            -1,
+                            Lok.ID,
+                            ""
+                        );
 
                         if (DokLok.ID >= 0)
                         {
@@ -519,7 +667,10 @@ namespace G_Mobile_Android_WMS
                             return;
                         }
                         else
-                            AutoException.ThrowIfNotNull(this, Resource.String.documents_didnotfound_assignedtoloc);
+                            AutoException.ThrowIfNotNull(
+                                this,
+                                Resource.String.documents_didnotfound_assignedtoloc
+                            );
                     }
 
                     // Przypisanie dokumentów do grupy lokalizacji
@@ -527,16 +678,25 @@ namespace G_Mobile_Android_WMS
 
                     if (this.Gru.ID < 0)
                     {
-                        AutoException.ThrowIfNotNull(this, Resource.String.documents_didnotfound_barcode);
+                        AutoException.ThrowIfNotNull(
+                            this,
+                            Resource.String.documents_didnotfound_barcode
+                        );
                     }
                     else if (this.Gru.idMagazyn != Globalne.Magazyn.ID)
                     {
-                        AutoException.ThrowIfNotNull(this, Resource.String.documents_locgroup_fromdifferent_warehouse);
+                        AutoException.ThrowIfNotNull(
+                            this,
+                            Resource.String.documents_locgroup_fromdifferent_warehouse
+                        );
                     }
                     else
                     {
                         // Jeśli do grupy przypisane są już dokumenty...
-                        List<int> Docs = Globalne.dokumentBL.PobierzListęIDDokumentówPrzypisanychDoGrupyLokalizacji(this.Gru.ID);
+                        List<int> Docs =
+                            Globalne.dokumentBL.PobierzListęIDDokumentówPrzypisanychDoGrupyLokalizacji(
+                                this.Gru.ID
+                            );
 
                         if (Docs.Count != 0)
                         {
@@ -545,38 +705,41 @@ namespace G_Mobile_Android_WMS
                         }
                         else
                         {
-
-                            List<int> idForMultipicking = getIdOfDocumentsInProcessingOnLocation(this.Gru.ID);
+                            List<int> idForMultipicking = getIdOfDocumentsInProcessingOnLocation(
+                                this.Gru.ID
+                            );
                             Enums.WZRWContMode continueMode = Enums.WZRWContMode.NewMul;
-                            if (idForMultipicking.Count>0)
+                            if (idForMultipicking.Count > 0)
                             {
-                                continueMode = BusinessLogicHelpers.Documents.AskWZRWContinuation(this, DocType).Result;
+                                continueMode = BusinessLogicHelpers
+                                    .Documents.AskWZRWContinuation(this, DocType)
+                                    .Result;
                                 if (continueMode == Enums.WZRWContMode.None)
                                 {
                                     Helpers.HideProgressDialog();
                                     return;
                                 }
                             }
-                            
-                         
 
-                            Enums.WZRWMode selectionMode= Enums.WZRWMode.AllDocuments;
+                            Enums.WZRWMode selectionMode = Enums.WZRWMode.AllDocuments;
                             if (continueMode != Enums.WZRWContMode.ContinueMul)
                             {
-                                selectionMode = BusinessLogicHelpers.Documents.AskWZRWMode(this, DocType).Result;
+                                selectionMode = BusinessLogicHelpers
+                                    .Documents.AskWZRWMode(this, DocType)
+                                    .Result;
                                 if (selectionMode == Enums.WZRWMode.None)
                                 {
                                     Helpers.HideProgressDialog();
                                     return;
                                 }
                             }
-            
 
+                            this.LokGru =
+                                Globalne.lokalizacjaBL.PobierzListęLokalizacjaRowZGrupyLokalizacji(
+                                    this.Gru.ID
+                                );
 
-                            this.LokGru = Globalne.lokalizacjaBL.PobierzListęLokalizacjaRowZGrupyLokalizacji(this.Gru.ID);
-
-
-                            if (selectionMode == Enums.WZRWMode.AllDocuments   )
+                            if (selectionMode == Enums.WZRWMode.AllDocuments)
                             {
                                 if (continueMode == Enums.WZRWContMode.NewMul)
                                 {
@@ -589,61 +752,65 @@ namespace G_Mobile_Android_WMS
                             {
                                 SwitchIntoMultiPickSelection();
                             }
-                            
                         }
                     }
                 }
-
             }
             catch (Exception ex)
             {
                 Helpers.HandleError(this, ex);
                 Helpers.HideProgressDialog();
                 return;
-
             }
-
 
             Helpers.HideProgressDialog();
         }
 
-
         List<int> getIdOfDocumentsInProcessingOnLocation(int idLok)
-        { 
-                #warning HiveInvoke
-                ZapytanieZTabeliO Zap = (ZapytanieZTabeliO)Helpers.HiveInvoke(typeof(WMSServerAccess.Ogólne.OgólneBL), "ZapytanieSQL",
-                                $@"SELECT d.idDokumentu
+        {
+#warning HiveInvoke
+            ZapytanieZTabeliO Zap = (ZapytanieZTabeliO)
+                Helpers.HiveInvoke(
+                    typeof(WMSServerAccess.Ogólne.OgólneBL),
+                    "ZapytanieSQL",
+                    $@"SELECT d.idDokumentu
 FROM Dokumenty d
 WHERE d.intLokalizacja IN
     (SELECT l.idLokalizacja
      FROM Lokalizacja l
      LEFT JOIN LokalizacjeWGrupie lwg ON lwg.idLokalizacja=l.idLokalizacja
      WHERE lwg.idGrupaLokalizacji={idLok} )
-  AND d.idStatusDokumentu=1057 ;");
+  AND d.idStatusDokumentu=1057 ;"
+                );
             ;
-            return Zap.ListaWierszy.Select(x => Convert.ToInt32( x[0])).ToList();
-
+            return Zap.ListaWierszy.Select(x => Convert.ToInt32(x[0])).ToList();
         }
 
         void GoIntoMultiPicking(List<int> numerki)
         {
             try
             {
-              
-
-                Helpers.ShowProgressDialog(GetString(Resource.String.global_setting_documents_to_group));
+                Helpers.ShowProgressDialog(
+                    GetString(Resource.String.global_setting_documents_to_group)
+                );
 
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    Helpers.ShowProgressDialog(GetString(Resource.String.global_setting_documents_to_group));
-
+                    Helpers.ShowProgressDialog(
+                        GetString(Resource.String.global_setting_documents_to_group)
+                    );
                 });
                 List<int> DocsToEdit = new List<int>();
-                DocsToEdit=DocsToEdit.Concat(getIdOfDocumentsInProcessingOnLocation(this.Gru.ID)).ToList();
+                DocsToEdit = DocsToEdit
+                    .Concat(getIdOfDocumentsInProcessingOnLocation(this.Gru.ID))
+                    .ToList();
 
 #warning HiveInvoke
-                ZapytanieZTabeliO Zap = (ZapytanieZTabeliO)Helpers.HiveInvoke(typeof(WMSServerAccess.Ogólne.OgólneBL), "ZapytanieSQL",
-                                @"select
+                ZapytanieZTabeliO Zap = (ZapytanieZTabeliO)
+                    Helpers.HiveInvoke(
+                        typeof(WMSServerAccess.Ogólne.OgólneBL),
+                        "ZapytanieSQL",
+                        @"select
                                         	d.idDokumentu,
                                         	sum(pd.numIloscZlecona) as numZlecona,
                                         	sum(pd.numIloscZrealizowana) as numZrealizowana
@@ -669,7 +836,8 @@ WHERE d.intLokalizacja IN
                                             l.strKod,
                                             l.strNazwa
                                         ORDER BY
-                                            d.intLokalizacja ASC;");
+                                            d.intLokalizacja ASC;"
+                    );
 
                 foreach (int numerek in numerki)
                 {
@@ -677,7 +845,6 @@ WHERE d.intLokalizacja IN
                         break;
 
                     int IDDoc = numerek;
-
 
                     // usuniecie lokalizacji w ktorych są przypisane dokumenty do grupy lokalizacji
                     // dodanie tego wpisu ma na celu przyspieszenie wyszukiwania wonych kuwet do zamówień (dokumnetów)
@@ -696,7 +863,9 @@ WHERE d.intLokalizacja IN
                     //    }
                     //}
 
-                    decimal SumaPoz = Globalne.dokumentBL.PobierzWykonanąSumęPozycjiDokumentu(IDDoc);
+                    decimal SumaPoz = Globalne.dokumentBL.PobierzWykonanąSumęPozycjiDokumentu(
+                        IDDoc
+                    );
 
                     if (SumaPoz == 0)
                     {
@@ -705,19 +874,22 @@ WHERE d.intLokalizacja IN
 
                         foreach (LokalizacjaRow LG in this.LokGru)
                         {
-                            int Wynik = Globalne.dokumentBL.SprawdźCzyDokumentMożeByćPrzypisanyDoLokalizacji(IDDoc, LG.ID, true);
+                            int Wynik =
+                                Globalne.dokumentBL.SprawdźCzyDokumentMożeByćPrzypisanyDoLokalizacji(
+                                    IDDoc,
+                                    LG.ID,
+                                    true
+                                );
 
-                            if(Wynik != 0
-                                &&
-                                    Zap.ListaWierszy
-                                    .Where(x => Convert.ToInt32(x[0]) == IDDoc)
+                            if (
+                                Wynik != 0
+                                && Zap.ListaWierszy.Where(x => Convert.ToInt32(x[0]) == IDDoc)
                                     .Select(X => X[1] != X[2])
                                     .FirstOrDefault()
-                                )
+                            )
                             {
                                 Wynik = 0;
                             }
-
 
                             if (Wynik == 0)
                             {
@@ -733,7 +905,6 @@ WHERE d.intLokalizacja IN
                                     AutoException.ThrowIfNotNull(ex);
                                     break;
                                 }
-
                             }
                         }
                     }
@@ -750,7 +921,6 @@ WHERE d.intLokalizacja IN
                 Helpers.HandleError(this, ex);
                 Helpers.HideProgressDialog();
                 return;
-
             }
         }
 
@@ -765,20 +935,26 @@ WHERE d.intLokalizacja IN
                 Back.Click += SwitchBackFromMultiPickSelection;
                 DocumentsListHeader.Click += SwitchBackFromMultiPickSelection;
                 Confirm.Click += doMultiPickingOnSelected;
-                Helpers.SetTextOnTextView(this, ScanHint, this.Gru.strNazwa + " ("+ GetString(Resource.String.documents_number_postion) + this.LokGru.Count +")");
+                Helpers.SetTextOnTextView(
+                    this,
+                    ScanHint,
+                    this.Gru.strNazwa
+                        + " ("
+                        + GetString(Resource.String.documents_number_postion)
+                        + this.LokGru.Count
+                        + ")"
+                );
                 Confirm.Show();
                 Delete.Hide();
                 Add.Hide();
                 Edit.Hide();
                 //Search.Hide();
                 //Refresh.Hide();
-               this.StatsusFilters = new List<int> { 1};
+                this.StatsusFilters = new List<int> { 1 };
                 updateAmountOfPostions();
                 (ListView.Adapter as DocumentsListAdapter).NotifyDataSetChanged();
             });
-       
         }
-
 
         // this mehtod should have reverse responsibilty of SwitchIntoMultiPickSelection
         void SwitchBackFromMultiPickSelection(object sender, EventArgs e)
@@ -787,7 +963,11 @@ WHERE d.intLokalizacja IN
             Back.Click += Back_Click;
             DocumentsListHeader.Click -= SwitchBackFromMultiPickSelection;
             Confirm.Click -= doMultiPickingOnSelected;
-            Helpers.SetTextOnTextView(this, ScanHint, GetString(Resource.String.documents_activity_scanhint) );
+            Helpers.SetTextOnTextView(
+                this,
+                ScanHint,
+                GetString(Resource.String.documents_activity_scanhint)
+            );
             ShowCheckboxes = false;
             CheckedItems = new List<int>();
             Confirm.Hide();
@@ -803,41 +983,41 @@ WHERE d.intLokalizacja IN
 
         void doMultiPickingOnSelected(object sender, EventArgs e)
         {
-
             try
             {
                 if (CheckedItems == null || CheckedItems.Count == 0)
                 {
-
                     throw new Exception(GetString(Resource.String.documentitem_cant_be_zero));
                 }
                 if (CheckedItems.Count > LokGru.Count)
                 {
-                    throw new Exception(GetString(Resource.String.documentitem_cant_be_less_than_location));
+                    throw new Exception(
+                        GetString(Resource.String.documentitem_cant_be_less_than_location)
+                    );
                 }
 
-                
                 object obj = ListView.Adapter.GetItem(0);
 
                 GoIntoMultiPicking(
-                    CheckedItems.Select(
-                    (int x) =>
-                    {
-                        object[] Selected = (ListView.Adapter as DocumentsListAdapter)[x];
-                        return Convert.ToInt32(Selected[(int)SQL.Documents.Documents_Results.idDokumentu]);
-                    }
-                    )
-                    .ToList()
-                    );
+                    CheckedItems
+                        .Select(
+                            (int x) =>
+                            {
+                                object[] Selected = (ListView.Adapter as DocumentsListAdapter)[x];
+                                return Convert.ToInt32(
+                                    Selected[(int)SQL.Documents.Documents_Results.idDokumentu]
+                                );
+                            }
+                        )
+                        .ToList()
+                );
             }
             catch (Exception ex)
             {
                 Helpers.HandleError(this, ex);
                 Helpers.HideProgressDialog();
                 return;
-
             }
-
         }
 
         async Task<bool> InsertData()
@@ -855,7 +1035,7 @@ WHERE d.intLokalizacja IN
                 if (Dokumenty.Poprawność != null && Dokumenty.Poprawność != "")
                     throw new Exception(Dokumenty.Poprawność);
 
-                if (Dokumenty.ListaWierszy != null )
+                if (Dokumenty.ListaWierszy != null)
                 {
                     RunOnUiThread(() =>
                     {
@@ -888,11 +1068,14 @@ WHERE d.intLokalizacja IN
         {
             string Rejestry = "(";
 
-            List<RejestrRow> DostępneRejestry = Globalne.rejestrBL.PobierzListęRejestrówDostępnychDlaOperatora(Helpers.StringDocType(DocType),
-                                                                                                               (Helpers.StringDocType(DocType) == Enums.DocTypes.MM.ToString())
-                                                                                                               ?
-                                                                                                               -1 : Globalne.Magazyn.ID,
-                                                                                                               Globalne.Operator.ID);
+            List<RejestrRow> DostępneRejestry =
+                Globalne.rejestrBL.PobierzListęRejestrówDostępnychDlaOperatora(
+                    Helpers.StringDocType(DocType),
+                    (Helpers.StringDocType(DocType) == Enums.DocTypes.MM.ToString())
+                        ? -1
+                        : Globalne.Magazyn.ID,
+                    Globalne.Operator.ID
+                );
 
             if (DostępneRejestry.Count == 0)
                 return new ZapytanieZTabeliO();
@@ -902,22 +1085,40 @@ WHERE d.intLokalizacja IN
 
             Rejestry += "-1)";
 
-            
-
             string Komenda;
 
-             Komenda = SQL.Documents.GetDocs
-                                    .Replace("<<IDOPERATORA>>", Globalne.Operator.ID.ToString())// Globalne.Operator.ID.ToString())\
-                                    .Replace("<<ID_EDYTOWANY>>",Globalne.CurrentUserSettings.ShowHidenDocumentsEditingByOthers ?  "-1" : Globalne.Operator.ID.ToString())
-                                    .Replace("<<REJESTRY>>", Rejestry)
-                                    .Replace("<<DATAPOCZĄTKOWA>>", Globalne.ogólneBL.GetSQLDate().AddDays(-Globalne.CurrentSettings.DocumentsDaysDisplayThreshhold-30).ToString("yyyy-MM-dd"));
-            
+            Komenda = SQL
+                .Documents.GetDocs.Replace("<<IDOPERATORA>>", Globalne.Operator.ID.ToString()) // Globalne.Operator.ID.ToString())\
+                .Replace(
+                    "<<ID_EDYTOWANY>>",
+                    Globalne.CurrentUserSettings.ShowHidenDocumentsEditingByOthers
+                        ? "-1"
+                        : Globalne.Operator.ID.ToString()
+                )
+                .Replace("<<REJESTRY>>", Rejestry)
+                .Replace(
+                    "<<DATAPOCZĄTKOWA>>",
+                    Globalne
+                        .ogólneBL.GetSQLDate()
+                        .AddDays(-Globalne.CurrentSettings.DocumentsDaysDisplayThreshhold - 30)
+                        .ToString("yyyy-MM-dd")
+                );
 
-
-            if (DocType == Enums.DocTypes.PW || DocType == Enums.DocTypes.PZ || DocType == Enums.DocTypes.ZL || DocType == Enums.DocTypes.IN)
-                Komenda += SQL.Documents.GetDocs_Where_Przychód.Replace("<<IDMAGAZYNU>>", Globalne.Magazyn.ID.ToString());
+            if (
+                DocType == Enums.DocTypes.PW
+                || DocType == Enums.DocTypes.PZ
+                || DocType == Enums.DocTypes.ZL
+                || DocType == Enums.DocTypes.IN
+            )
+                Komenda += SQL.Documents.GetDocs_Where_Przychód.Replace(
+                    "<<IDMAGAZYNU>>",
+                    Globalne.Magazyn.ID.ToString()
+                );
             else
-                Komenda += SQL.Documents.GetDocs_Where_Rozchód.Replace("<<IDMAGAZYNU>>", Globalne.Magazyn.ID.ToString());
+                Komenda += SQL.Documents.GetDocs_Where_Rozchód.Replace(
+                    "<<IDMAGAZYNU>>",
+                    Globalne.Magazyn.ID.ToString()
+                );
 
             if (DocType == Enums.DocTypes.IN)
                 Komenda += SQL.Documents.GetDocs_Where_SubDoc;
@@ -928,27 +1129,40 @@ WHERE d.intLokalizacja IN
             Komenda += SQL.Documents.GetDocs_OrderBy;
 
             // #warning HiveInvoke
-            ZapytanieZTabeliO Zap = (ZapytanieZTabeliO)Helpers.HiveInvoke(typeof(WMSServerAccess.Ogólne.OgólneBL), "ZapytanieSQL", Komenda);
+            ZapytanieZTabeliO Zap = (ZapytanieZTabeliO)
+                Helpers.HiveInvoke(
+                    typeof(WMSServerAccess.Ogólne.OgólneBL),
+                    "ZapytanieSQL",
+                    Komenda
+                );
             //ZapytanieZTabeliO Zap = Globalne.ogólneBL.WykonajZapytanieWidokuZFiltrem(Komenda);
             return Zap;
         }
-    
+
         public void updateAmountOfPostions()
         {
             if (ShowCheckboxes)
             {
-                Helpers.SetTextOnTextView(this, ItemCount, GetString(Resource.String.global_liczba_pozycji) + " " + this.CheckedItems.Count+"/" + ListView.Adapter?.Count.ToString());
-
+                Helpers.SetTextOnTextView(
+                    this,
+                    ItemCount,
+                    GetString(Resource.String.global_liczba_pozycji)
+                        + " "
+                        + this.CheckedItems.Count
+                        + "/"
+                        + ListView.Adapter?.Count.ToString()
+                );
             }
             else
-            Helpers.SetTextOnTextView(this, ItemCount, GetString(Resource.String.global_liczba_pozycji) + " " + ListView.Adapter?.Count.ToString());
-
+                Helpers.SetTextOnTextView(
+                    this,
+                    ItemCount,
+                    GetString(Resource.String.global_liczba_pozycji)
+                        + " "
+                        + ListView.Adapter?.Count.ToString()
+                );
         }
     }
-
-
-  
-
 
     internal class DocumentsListAdapter : BaseAdapter<object[]>
     {
@@ -959,19 +1173,17 @@ WHERE d.intLokalizacja IN
         public List<int> StatsusFilters
         {
             get { return _StatsusFilters; }
-            set { 
-                _StatsusFilters= value;
+            set
+            {
+                _StatsusFilters = value;
                 peferomFiltering();
-            
             }
         }
 
         readonly DocumentsActivity Ctx;
 
-
-
-
-        public DocumentsListAdapter(DocumentsActivity Ctx, List<object[]> Items) : base()
+        public DocumentsListAdapter(DocumentsActivity Ctx, List<object[]> Items)
+            : base()
         {
             this.Ctx = Ctx;
             this.AllItems = Items;
@@ -980,21 +1192,22 @@ WHERE d.intLokalizacja IN
 
         private void peferomFiltering()
         {
-            this.Items = this.AllItems.FindAll((object[] item ) =>
-            {
-                return
-                StatsusFilters == null
-                || this.StatsusFilters.Contains(Convert.ToInt32 (item[5]));
-            }
-            )
+            this.Items = this
+                .AllItems.FindAll(
+                    (object[] item) =>
+                    {
+                        return StatsusFilters == null
+                            || this.StatsusFilters.Contains(Convert.ToInt32(item[5]));
+                    }
+                )
                 .ToList();
-    
         }
 
         public override long GetItemId(int position)
         {
             return position;
         }
+
         public override object[] this[int position]
         {
             get { return Items[position]; }
@@ -1012,9 +1225,13 @@ WHERE d.intLokalizacja IN
             if (view == null)
                 view = Ctx.LayoutInflater.Inflate(Resource.Layout.list_item_documents, null);
 
-            view.FindViewById<TextView>(Resource.Id.documents_list_number).Text = (string)Pos[(int)SQL.Documents.Documents_Results.strNazwaDokumentu];
-            view.FindViewById<TextView>(Resource.Id.documents_list_contractor).Text = (string)Pos[(int)SQL.Documents.Documents_Results.strNazwaKontrahenta];
-            view.FindViewById<TextView>(Resource.Id.documents_list_date).Text = ((DateTime)Pos[(int)SQL.Documents.Documents_Results.dtDataDokumentu]).ToString(Globalne.CurrentSettings.DateFormat);
+            view.FindViewById<TextView>(Resource.Id.documents_list_number).Text = (string)
+                Pos[(int)SQL.Documents.Documents_Results.strNazwaDokumentu];
+            view.FindViewById<TextView>(Resource.Id.documents_list_contractor).Text = (string)
+                Pos[(int)SQL.Documents.Documents_Results.strNazwaKontrahenta];
+            view.FindViewById<TextView>(Resource.Id.documents_list_date).Text = (
+                (DateTime)Pos[(int)SQL.Documents.Documents_Results.dtDataDokumentu]
+            ).ToString(Globalne.CurrentSettings.DateFormat);
 
             List<string> Infos = new List<string>()
             {
@@ -1022,9 +1239,6 @@ WHERE d.intLokalizacja IN
                 (string)Pos[(int)SQL.Documents.Documents_Results.strDokumentDostawcy],
                 (string)Pos[(int)SQL.Documents.Documents_Results.strNazwaERP]
             };
-
-            
-
 
             string Description = String.Join(", ", Infos.Where(s => !String.IsNullOrEmpty(s)));
 
@@ -1040,7 +1254,8 @@ WHERE d.intLokalizacja IN
 
             TextView Status = view.FindViewById<TextView>(Resource.Id.documents_list_status);
 
-            Enums.DocumentStatusTypes DocStatus = (Enums.DocumentStatusTypes)Convert.ToInt32(Pos[(int)SQL.Documents.Documents_Results.intTypStatusu]);
+            Enums.DocumentStatusTypes DocStatus = (Enums.DocumentStatusTypes)
+                Convert.ToInt32(Pos[(int)SQL.Documents.Documents_Results.intTypStatusu]);
             bool DocAssigned = (bool)Pos[(int)SQL.Documents.Documents_Results.bZlecenie];
 
             Status.SetBackgroundColor(Helpers.GetDocStatusColorForStatus(DocStatus));
@@ -1054,16 +1269,30 @@ WHERE d.intLokalizacja IN
             // to pobieramy liste pozycji i szukamy w ilosciach zleconych i zrealizowanych
             // czy ktorakolwiek pozycja jest zrealizowana czyli ilosc zlecona = ilosci zrealizowanej
             // jezeli jest to oznaczamy taki dokument kolorem wybranym przez uzytkownika => ColorForEditedPositionsOnDocument
-            if (Globalne.CurrentUserSettings.ShowDifferenceColorOnDocumentsWhenAnyPositionIsComplete && DocStatus == Enums.DocumentStatusTypes.DoRealizacji)
+            if (
+                Globalne.CurrentUserSettings.ShowDifferenceColorOnDocumentsWhenAnyPositionIsComplete
+                && DocStatus == Enums.DocumentStatusTypes.DoRealizacji
+            )
             {
                 int idDok = Convert.ToInt32(Pos[(int)SQL.Documents.Documents_Results.idDokumentu]);
-                var pozycje = Task.Factory.StartNew(() => Globalne.dokumentBL.PobierzListęPozycji(idDok)).Result;
+                var pozycje = Task
+                    .Factory.StartNew(() => Globalne.dokumentBL.PobierzListęPozycji(idDok))
+                    .Result;
 
                 if (pozycje.ToList().Any(x => x.numIloscZlecona == x.numIloscZrealizowana))
                 {
-                    Status.SetBackgroundColor(Android.Graphics.Color.ParseColor("#FF" + Globalne.CurrentUserSettings.ColorForEditedPositionsOnDocument));
+                    Status.SetBackgroundColor(
+                        Android.Graphics.Color.ParseColor(
+                            "#FF" + Globalne.CurrentUserSettings.ColorForEditedPositionsOnDocument
+                        )
+                    );
                     if (!DocAssigned)
-                        Status.SetTextColor(Android.Graphics.Color.ParseColor("#FF" + Globalne.CurrentUserSettings.ColorForEditedPositionsOnDocument));
+                        Status.SetTextColor(
+                            Android.Graphics.Color.ParseColor(
+                                "#FF"
+                                    + Globalne.CurrentUserSettings.ColorForEditedPositionsOnDocument
+                            )
+                        );
                     else
                         Status.SetTextColor(Android.Graphics.Color.Black);
                 }
@@ -1087,12 +1316,10 @@ WHERE d.intLokalizacja IN
             return view;
         }
 
-
-
         private void Chb_Click(object sender, EventArgs e)
         {
             CheckBox Chb = (sender as CheckBox);
-            
+
             if (Ctx.CheckedItems.Contains((int)Chb.Tag))
             {
                 Ctx.CheckedItems.Remove((int)Chb.Tag);
@@ -1105,12 +1332,5 @@ WHERE d.intLokalizacja IN
             }
             Ctx.updateAmountOfPostions();
         }
-
-       
     }
-
-
-
-
 }
-

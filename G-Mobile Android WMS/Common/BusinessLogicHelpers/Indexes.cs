@@ -2,32 +2,38 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
+using Acr.UserDialogs;
 using Android.App;
 using Android.Content;
+using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-
-using System.Threading.Tasks;
-using WMSServerAccess.Model;
-using Acr.UserDialogs;
-using Android.Graphics;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS.BusinessLogicHelpers
 {
     class Indexes
     {
-        public static async Task<FunkcjaLogistycznaO> ShowLogisticFunctionsListAndSet(Activity ctx, int WarehouseID, TextView v = null)
+        public static async Task<FunkcjaLogistycznaO> ShowLogisticFunctionsListAndSet(
+            Activity ctx,
+            int WarehouseID,
+            TextView v = null
+        )
         {
-            List<FunkcjaLogistycznaO> FLogs = Globalne.funklogBL.PobierzListęFunkcjiLogistycznych(WarehouseID);
+            List<FunkcjaLogistycznaO> FLogs = Globalne.funklogBL.PobierzListęFunkcjiLogistycznych(
+                WarehouseID
+            );
 
-            string Res = await UserDialogs.Instance.ActionSheetAsync(ctx.GetString(Resource.String.select_flog), 
-                                                                     ctx.GetString(Resource.String.global_cancel), 
-                                                                     "", 
-                                                                     null,
-                                                                     FLogs.Select(x => x.strNazwa).ToArray());
+            string Res = await UserDialogs.Instance.ActionSheetAsync(
+                ctx.GetString(Resource.String.select_flog),
+                ctx.GetString(Resource.String.global_cancel),
+                "",
+                null,
+                FLogs.Select(x => x.strNazwa).ToArray()
+            );
 
             if (Res == ctx.GetString(Resource.String.global_cancel))
                 return null;
@@ -45,18 +51,30 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
             }
         }
 
-        public static async Task<RejestrRow> ShowRegistryListAndSet(Activity ctx, Enums.DocTypes DocType, int WarehouseID, TextView v = null)
+        public static async Task<RejestrRow> ShowRegistryListAndSet(
+            Activity ctx,
+            Enums.DocTypes DocType,
+            int WarehouseID,
+            TextView v = null
+        )
         {
-            List<RejestrRow> Regs = Globalne.rejestrBL.PobierzListęRejestrówDostępnychDlaOperatoraNaTerminalu(Helpers.StringDocType(DocType), WarehouseID, Globalne.Operator.ID);
+            List<RejestrRow> Regs =
+                Globalne.rejestrBL.PobierzListęRejestrówDostępnychDlaOperatoraNaTerminalu(
+                    Helpers.StringDocType(DocType),
+                    WarehouseID,
+                    Globalne.Operator.ID
+                );
 
             if (Regs == null)
                 return new RejestrRow() { ID = -1 };
 
-            string Res = await UserDialogs.Instance.ActionSheetAsync(ctx.GetString(Resource.String.select_reg), 
-                                                                     ctx.GetString(Resource.String.global_cancel), 
-                                                                     "", 
-                                                                     null,
-                                                                     Regs.Select(x => x.strNazwaRej).ToArray());
+            string Res = await UserDialogs.Instance.ActionSheetAsync(
+                ctx.GetString(Resource.String.select_reg),
+                ctx.GetString(Resource.String.global_cancel),
+                "",
+                null,
+                Regs.Select(x => x.strNazwaRej).ToArray()
+            );
 
             if (Res == ctx.GetString(Resource.String.global_cancel))
                 return null;
@@ -75,15 +93,23 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
             }
         }
 
-        public static async Task<JednostkaPrzeliczO> ShowUnitListAndSet(Activity ctx, int ArticleID, TextView v = null)
+        public static async Task<JednostkaPrzeliczO> ShowUnitListAndSet(
+            Activity ctx,
+            int ArticleID,
+            TextView v = null
+        )
         {
-            List<JednostkaPrzeliczO> Units = Globalne.towarBL.PobierzWszystkieJednostkiTowaru(ArticleID);
+            List<JednostkaPrzeliczO> Units = Globalne.towarBL.PobierzWszystkieJednostkiTowaru(
+                ArticleID
+            );
 
-            string Res = await UserDialogs.Instance.ActionSheetAsync(ctx.GetString(Resource.String.select_unit),
-                                                                     ctx.GetString(Resource.String.global_cancel), 
-                                                                     "", 
-                                                                     null, 
-                                                                     Units.Select(x => x.strNazwaJednostkiPrzel).ToArray());
+            string Res = await UserDialogs.Instance.ActionSheetAsync(
+                ctx.GetString(Resource.String.select_unit),
+                ctx.GetString(Resource.String.global_cancel),
+                "",
+                null,
+                Units.Select(x => x.strNazwaJednostkiPrzel).ToArray()
+            );
 
             if (Res == ctx.GetString(Resource.String.global_cancel))
                 return null;
@@ -101,32 +127,50 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
             }
         }
 
-        public async static Task<TowarJednostkaO> SelectOneArticleFromMany(Activity ctx, List<TowarJednostkaO> ToChooseFrom)
+        public static async Task<TowarJednostkaO> SelectOneArticleFromMany(
+            Activity ctx,
+            List<TowarJednostkaO> ToChooseFrom
+        )
         {
             try
             {
                 List<string> Tow = new List<string>();
 
-                Dictionary<string, TowarJednostkaO> ResDict = new Dictionary<string, TowarJednostkaO>();
+                Dictionary<string, TowarJednostkaO> ResDict =
+                    new Dictionary<string, TowarJednostkaO>();
 
                 foreach (TowarJednostkaO TowarJedn in ToChooseFrom)
                 {
 #warning HiveInvoke
-                    string T = Helpers.HiveInvoke(typeof(WMSServerAccess.Towar.TowarBL), "PobierzNazwęTowaru", TowarJedn.IDTowaru).ToString();
+                    string T = Helpers
+                        .HiveInvoke(
+                            typeof(WMSServerAccess.Towar.TowarBL),
+                            "PobierzNazwęTowaru",
+                            TowarJedn.IDTowaru
+                        )
+                        .ToString();
                     string S = Globalne.towarBL.PobierzTowar(TowarJedn.IDTowaru).strSymbol;
-                    string J = Helpers.HiveInvoke(typeof(WMSServerAccess.JednostkaMiary.JednostkaMiaryBL), "PobierzNazwęJednostki", TowarJedn.IDJednostki).ToString();
-                    
+                    string J = Helpers
+                        .HiveInvoke(
+                            typeof(WMSServerAccess.JednostkaMiary.JednostkaMiaryBL),
+                            "PobierzNazwęJednostki",
+                            TowarJedn.IDJednostki
+                        )
+                        .ToString();
+
                     string ResE = string.Format("{0} - {1} ({2}) ", S, T, J);
 
                     Tow.Add(ResE);
                     ResDict[ResE] = TowarJedn;
                 }
 
-                string Res = await UserDialogs.Instance.ActionSheetAsync(ctx.GetString(Resource.String.articles_many),
-                                                                         ctx.GetString(Resource.String.global_cancel),
-                                                                         "",
-                                                                         null,
-                                                                         Tow.ToArray());
+                string Res = await UserDialogs.Instance.ActionSheetAsync(
+                    ctx.GetString(Resource.String.articles_many),
+                    ctx.GetString(Resource.String.global_cancel),
+                    "",
+                    null,
+                    Tow.ToArray()
+                );
 
                 if (Res == ctx.GetString(Resource.String.global_cancel))
                     return new TowarJednostkaO() { IDTowaru = -2, IDJednostki = -2 };

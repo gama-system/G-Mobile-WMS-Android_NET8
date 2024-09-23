@@ -68,7 +68,6 @@
     <BundleAssemblies>false</BundleAssemblies>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidSupportedAbis />
-    <AndroidLinkSkip>Hive;WMSServerAccess</AndroidLinkSkip>
     <MandroidI18n />
     <AndroidStoreUncompressedFileExtensions>.png;.wav</AndroidStoreUncompressedFileExtensions>
     <AndroidDexTool>d8</AndroidDexTool>
@@ -77,9 +76,6 @@
     <AndroidUseAapt2>true</AndroidUseAapt2>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hive">
-      <HintPath>..\Hive.dll</HintPath>
-    </Reference>
     <Reference Include="Mono.Android" />
     <Reference Include="System" />
     <Reference Include="System.IO.Compression.FileSystem" />
@@ -87,9 +83,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors" />
-    <Reference Include="WMSServerAccess">
-      <HintPath>..\..\G-Mobile-WMS-Serwer\WMSServerHive\bin\Debug\portable\WMSServerAccess.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BarcodeOrderActivity.cs" />

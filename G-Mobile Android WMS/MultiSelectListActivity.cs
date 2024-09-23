@@ -1,25 +1,27 @@
-﻿using Acr.UserDialogs;
-using Android.App;
-using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Widget;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Linq;
-
-using WMSServerAccess.Model;
-using Android.Content;
-using Android.Runtime;
-using Android.Views;
-using System.Timers;
+using System.Threading;
 using System.Threading.Tasks;
-
+using System.Timers;
+using Acr.UserDialogs;
+using Android.App;
+using Android.Content;
+using Android.OS;
+using Android.Runtime;
+using Android.Support.Design.Widget;
+using Android.Views;
+using Android.Widget;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, MainLauncher = false)]
-
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        MainLauncher = false
+    )]
     public class MultiSelectListActivity : BaseWMSActivity
     {
         ListView ListView;
@@ -47,7 +49,13 @@ namespace G_Mobile_Android_WMS
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_genericlist);
 
-            Dictionary<string, bool> Items = (Dictionary<string, bool>)Helpers.DeserializePassedJSON(Intent, Vars.Items, typeof(Dictionary<string, bool>));
+            Dictionary<string, bool> Items =
+                (Dictionary<string, bool>)
+                    Helpers.DeserializePassedJSON(
+                        Intent,
+                        Vars.Items,
+                        typeof(Dictionary<string, bool>)
+                    );
             CheckedItems = GetCheckableItemsList(Items);
 
             Header = Intent.GetStringExtra(Vars.Header);
@@ -101,7 +109,10 @@ namespace G_Mobile_Android_WMS
         private void OK_Click(object sender, EventArgs e)
         {
             Intent i = new Intent();
-            i.PutExtra(Results.CheckedItems, Helpers.SerializeJSON(GetCheckableItemsDict(CheckedItems)));
+            i.PutExtra(
+                Results.CheckedItems,
+                Helpers.SerializeJSON(GetCheckableItemsDict(CheckedItems))
+            );
             i.PutExtra(Results.Variable, Variable);
 
             SetResult(Result.Ok, i);
@@ -113,7 +124,8 @@ namespace G_Mobile_Android_WMS
             public List<CheckableItem> Items;
             readonly MultiSelectListActivity Ctx;
 
-            public MultiSelectListAdapter(MultiSelectListActivity Ctx, List<CheckableItem> Items) : base()
+            public MultiSelectListAdapter(MultiSelectListActivity Ctx, List<CheckableItem> Items)
+                : base()
             {
                 this.Ctx = Ctx;
                 this.Items = Items;
@@ -123,6 +135,7 @@ namespace G_Mobile_Android_WMS
             {
                 return position;
             }
+
             public override CheckableItem this[int position]
             {
                 get { return Items[position]; }
@@ -161,7 +174,6 @@ namespace G_Mobile_Android_WMS
             }
         }
 
-
         public class CheckableItem
         {
             public string Text { get; set; }
@@ -175,4 +187,3 @@ namespace G_Mobile_Android_WMS
         }
     }
 }
-

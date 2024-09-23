@@ -15,7 +15,7 @@ using Android.Support.V7.Content.Res;
 using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
-using WMSServerAccess.Model;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {

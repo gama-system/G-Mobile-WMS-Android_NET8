@@ -1,4 +1,8 @@
-﻿using Acr.UserDialogs;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Timers;
+using Acr.UserDialogs;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -6,16 +10,16 @@ using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Views;
 using Android.Widget;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Timers;
-using WMSServerAccess.Model;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, MainLauncher = false)]
-
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        MainLauncher = false
+    )]
     public class StocksActivity : ActivityWithScanner
     {
         FloatingActionButton Back;
@@ -37,6 +41,7 @@ namespace G_Mobile_Android_WMS
             ArticlesActivityResult = 10,
             LocationsActivityResult = 20,
         }
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -48,15 +53,16 @@ namespace G_Mobile_Android_WMS
 
             IDLokalizacji = Intent.GetIntExtra("IDLokalizacji", -1);
             IDTowaru = Intent.GetIntExtra("IDTowaru", -1);
-            
+
             if (IDTowaru != -1)
             {
                 Kod = new KodKreskowyZSzablonuO();
 
                 Kod.TowaryJednostkiWBazie = new List<TowarJednostkaO>();
 
-                Kod.TowaryJednostkiWBazie.Add(new TowarJednostkaO() { IDTowaru = IDTowaru, IDJednostki = 0 });
-
+                Kod.TowaryJednostkiWBazie.Add(
+                    new TowarJednostkaO() { IDTowaru = IDTowaru, IDJednostki = 0 }
+                );
             }
 
             // robimy odczyt z bazy wtedy gdy został wybrany towar i nie nastapila 'blokadaTowaru'
@@ -68,7 +74,7 @@ namespace G_Mobile_Android_WMS
             }
             IsBusy = false;
         }
-       
+
         private void GetAndSetControls()
         {
             Helpers.SetActivityHeader(this, GetString(Resource.String.stocks_activity_name));
@@ -97,11 +103,17 @@ namespace G_Mobile_Android_WMS
             RunIsBusyAction(() =>
             {
                 ActionSheetConfig Conf = new ActionSheetConfig()
-                                       .SetCancel(GetString(Resource.String.global_cancel))
-                                       .SetTitle(GetString(Resource.String.stocks_search_by_what));
+                    .SetCancel(GetString(Resource.String.global_cancel))
+                    .SetTitle(GetString(Resource.String.stocks_search_by_what));
 
-                Conf.Add(GetString(Resource.String.stocks_search_by_article), () => SelectArticle());
-                Conf.Add(GetString(Resource.String.stocks_search_by_location), () => SelectLocation());
+                Conf.Add(
+                    GetString(Resource.String.stocks_search_by_article),
+                    () => SelectArticle()
+                );
+                Conf.Add(
+                    GetString(Resource.String.stocks_search_by_location),
+                    () => SelectLocation()
+                );
 
                 UserDialogs.Instance.ActionSheet(Conf);
             });
@@ -130,17 +142,27 @@ namespace G_Mobile_Android_WMS
             Intent i = new Intent(this, typeof(LocationsActivity));
             i.PutExtra(LocationsActivity.Vars.AskOnStart, true);
 
-            RunOnUiThread(() => StartActivityForResult(i, (int)ResultCodes.LocationsActivityResult));
+            RunOnUiThread(
+                () => StartActivityForResult(i, (int)ResultCodes.LocationsActivityResult)
+            );
         }
 
         int IDWybraneArticlesActivityResult = -1;
-        async protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+
+        protected override async void OnActivityResult(
+            int requestCode,
+            [GeneratedEnum] Result resultCode,
+            Intent data
+        )
         {
             base.OnActivityResult(requestCode, resultCode, data);
 
             if (requestCode == (int)ResultCodes.ArticlesActivityResult && resultCode == Result.Ok)
             {
-                IDWybraneArticlesActivityResult = data.GetIntExtra(ArticlesActivity.Results.SelectedID.ToString(), -1);
+                IDWybraneArticlesActivityResult = data.GetIntExtra(
+                    ArticlesActivity.Results.SelectedID.ToString(),
+                    -1
+                );
 
                 if (IDWybraneArticlesActivityResult != -1)
                 {
@@ -148,17 +170,24 @@ namespace G_Mobile_Android_WMS
 
                     Kod.TowaryJednostkiWBazie = new List<TowarJednostkaO>();
 
-                    Kod.TowaryJednostkiWBazie.Add(new TowarJednostkaO() { IDTowaru = IDWybraneArticlesActivityResult, IDJednostki = 0 });
+                    Kod.TowaryJednostkiWBazie.Add(
+                        new TowarJednostkaO()
+                        {
+                            IDTowaru = IDWybraneArticlesActivityResult,
+                            IDJednostki = 0
+                        }
+                    );
 
                     IDLokalizacji = -1;
                     if (IDWybraneArticlesActivityResult > -1)
                         // istnieje takze w OnCreate
                         await System.Threading.Tasks.Task.Run(() => InsertData());
-                    
-
                 }
             }
-            else if (requestCode == (int)ResultCodes.LocationsActivityResult && resultCode == Result.Ok)
+            else if (
+                requestCode == (int)ResultCodes.LocationsActivityResult
+                && resultCode == Result.Ok
+            )
             {
                 int IDWybrane = data.GetIntExtra(LocationsActivity.Results.SelectedID, -1);
 
@@ -202,8 +231,8 @@ namespace G_Mobile_Android_WMS
             }
         }
 
-        async protected override void OnScan(object sender, ElapsedEventArgs e)
-        { 
+        protected override async void OnScan(object sender, ElapsedEventArgs e)
+        {
             //IDTowaru = -1;
             //IDLokalizacji = -1;
             base.OnScan(sender, e);
@@ -222,10 +251,14 @@ namespace G_Mobile_Android_WMS
 
                 if (Ret == 0)
                 {
-                    await Helpers.AlertAsyncWithConfirm(this, Resource.String.stocks_article_or_location_not_found, Resource.Raw.sound_error);
+                    await Helpers.AlertAsyncWithConfirm(
+                        this,
+                        Resource.String.stocks_article_or_location_not_found,
+                        Resource.Raw.sound_error
+                    );
                     return;
                 }
-                
+
                 await System.Threading.Tasks.Task.Run(() => InsertData());
             }
             catch (Exception ex)
@@ -237,7 +270,11 @@ namespace G_Mobile_Android_WMS
 
         private async System.Threading.Tasks.Task<int> ParseBarcode(List<string> Data)
         {
-            LokalizacjaVO KodL = Globalne.lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(Data[0], Globalne.Magazyn.ID, true);
+            LokalizacjaVO KodL = Globalne.lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(
+                Data[0],
+                Globalne.Magazyn.ID,
+                true
+            );
 
             if (KodL.ID >= 0)
             {
@@ -247,7 +284,10 @@ namespace G_Mobile_Android_WMS
             }
             else
             {
-                KodKreskowyZSzablonuO KodT = Helpers.ParseBarcodesAccordingToOrder(Data, Enums.DocTypes.RW);
+                KodKreskowyZSzablonuO KodT = Helpers.ParseBarcodesAccordingToOrder(
+                    Data,
+                    Enums.DocTypes.RW
+                );
 
                 if (Globalne.CurrentSettings.GetDataFromFirstSSCCEntry && KodT.Paleta != "")
                     BusinessLogicHelpers.DocumentItems.InsertSSCCData(ref KodT);
@@ -256,7 +296,11 @@ namespace G_Mobile_Android_WMS
 
                 if (KodT.TowaryJednostkiWBazie != null && KodT.TowaryJednostkiWBazie.Count > 1)
                 {
-                    TowarJednostkaO TowarJedn = await BusinessLogicHelpers.Indexes.SelectOneArticleFromMany(this, KodT.TowaryJednostkiWBazie);
+                    TowarJednostkaO TowarJedn =
+                        await BusinessLogicHelpers.Indexes.SelectOneArticleFromMany(
+                            this,
+                            KodT.TowaryJednostkiWBazie
+                        );
 
                     if (TowarJedn.IDTowaru < 0)
                         return 1;
@@ -279,6 +323,7 @@ namespace G_Mobile_Android_WMS
                 return 1;
             }
         }
+
         async System.Threading.Tasks.Task<bool> InsertData()
         {
             try
@@ -287,23 +332,36 @@ namespace G_Mobile_Android_WMS
                 await Task.Delay(Globalne.TaskDelay);
 
                 Helpers.ShowProgressDialog(GetString(Resource.String.stocks_loading));
-                
+
                 ZapytanieZTabeliO PozStan = await Task.Factory.StartNew(() => GetData());
                 await Task.Factory.StartNew(() => GetDataBufor(PozStan));
 
                 if (PozStan.Poprawność != null && PozStan.Poprawność != "")
                     throw new Exception(PozStan.Poprawność);
 
-                
-
                 RunOnUiThread(() =>
                 {
                     StocksList.Adapter = new StocksListAdapter(this, PozStan.ListaWierszy);
-                    Helpers.SetTextOnTextView(this, ItemCount, GetString(Resource.String.global_liczba_pozycji) + " " + StocksList.Adapter.Count.ToString());
+                    Helpers.SetTextOnTextView(
+                        this,
+                        ItemCount,
+                        GetString(Resource.String.global_liczba_pozycji)
+                            + " "
+                            + StocksList.Adapter.Count.ToString()
+                    );
 
-                    Helpers.SetTextOnTextView(this, ItemSum, GetString(Resource.String.global_suma_pozycji) + " " + Math.Round((StocksList.Adapter as StocksListAdapter).Sum, Globalne.CurrentSettings.DecimalSpaces).ToString("F3"));
+                    Helpers.SetTextOnTextView(
+                        this,
+                        ItemSum,
+                        GetString(Resource.String.global_suma_pozycji)
+                            + " "
+                            + Math.Round(
+                                    (StocksList.Adapter as StocksListAdapter).Sum,
+                                    Globalne.CurrentSettings.DecimalSpaces
+                                )
+                                .ToString("F3")
+                    );
                     ItemSum.Visibility = ViewStates.Visible;
-
                 });
 
                 Helpers.HideProgressDialog();
@@ -323,7 +381,6 @@ namespace G_Mobile_Android_WMS
             }
         }
 
-
         private ZapytanieZTabeliO GetData()
         {
             string Komenda;
@@ -331,8 +388,10 @@ namespace G_Mobile_Android_WMS
             string Pal = "";
             string Par = "";
 
-            var idTow = Kod?.TowaryJednostkiWBazie[0]?.IDTowaru == null ? "-1" : Kod?.TowaryJednostkiWBazie[0]?.IDTowaru.ToString();
-
+            var idTow =
+                Kod?.TowaryJednostkiWBazie[0]?.IDTowaru == null
+                    ? "-1"
+                    : Kod?.TowaryJednostkiWBazie[0]?.IDTowaru.ToString();
 
             if (Kod != null && Kod.Paleta != null && Kod.Paleta != "")
                 Pal = Globalne.paletaBL.PobierzIDPalety(Kod.Paleta).ToString();
@@ -340,80 +399,123 @@ namespace G_Mobile_Android_WMS
             if (Kod != null && Kod.Partia != null && Kod.Partia != "")
                 Par = Globalne.partiaBL.PobierzIDPartii(Kod.Partia).ToString();
 
-
             string Sum =
-                SQL.Stocks.GetStocks_Where_Mag.Replace("<<ID_MAG>>", Globalne.Magazyn.ID.ToString()) + 
-
-                (
-                
-                (Kod != null && Kod.TowaryJednostkiWBazie != null && Kod.TowaryJednostkiWBazie.Count != 0) 
-                    ? 
-                        SQL.Stocks.GetStocks_Where_Article.Replace("<<IDTOWARU>>", idTow) 
-                    : 
-                    
-                        ""
-                ) +
-
-                ((IDLokalizacji >= 0) ? SQL.Stocks.GetStocks_Where_Location.Replace("<<IDLOKALIZACJA>>", IDLokalizacji.ToString()) : "") +
-                ((Kod != null && Kod.Paleta != null && Kod.Paleta != "") ? SQL.Stocks.GetStocks_Where_Pal.Replace("<<ID_PAL>>", Pal) : "") +
-                ((Kod != null && Kod.Partia != null && Kod.Partia != "") ? SQL.Stocks.GetStocks_Where_Part.Replace("<<ID_PART>>", Par) : "");
+                SQL.Stocks.GetStocks_Where_Mag.Replace("<<ID_MAG>>", Globalne.Magazyn.ID.ToString())
+                + (
+                    (
+                        Kod != null
+                        && Kod.TowaryJednostkiWBazie != null
+                        && Kod.TowaryJednostkiWBazie.Count != 0
+                    )
+                        ? SQL.Stocks.GetStocks_Where_Article.Replace("<<IDTOWARU>>", idTow)
+                        : ""
+                )
+                + (
+                    (IDLokalizacji >= 0)
+                        ? SQL.Stocks.GetStocks_Where_Location.Replace(
+                            "<<IDLOKALIZACJA>>",
+                            IDLokalizacji.ToString()
+                        )
+                        : ""
+                )
+                + (
+                    (Kod != null && Kod.Paleta != null && Kod.Paleta != "")
+                        ? SQL.Stocks.GetStocks_Where_Pal.Replace("<<ID_PAL>>", Pal)
+                        : ""
+                )
+                + (
+                    (Kod != null && Kod.Partia != null && Kod.Partia != "")
+                        ? SQL.Stocks.GetStocks_Where_Part.Replace("<<ID_PART>>", Par)
+                        : ""
+                );
 
             string Where =
-                SQL.Stocks.GetStocks_Where_Mag_Where.Replace("<<ID_MAG>>", Globalne.Magazyn.ID.ToString()) +
+                SQL.Stocks.GetStocks_Where_Mag_Where.Replace(
+                    "<<ID_MAG>>",
+                    Globalne.Magazyn.ID.ToString()
+                )
+                + (
+                    (
+                        Kod != null
+                        && Kod.TowaryJednostkiWBazie != null
+                        && Kod.TowaryJednostkiWBazie.Count != 0
+                    )
+                        ? SQL.Stocks.GetStocks_Where_Article_Where.Replace("<<IDTOWARU>>", idTow)
+                        : ""
+                )
+                + (
+                    (IDLokalizacji >= 0)
+                        ? SQL.Stocks.GetStocks_Where_Location_Where.Replace(
+                            "<<IDLOKALIZACJA>>",
+                            IDLokalizacji.ToString()
+                        )
+                        : ""
+                )
+                + (
+                    (Kod != null && Kod.Paleta != null && Kod.Paleta != "")
+                        ? SQL.Stocks.GetStocks_Where_Pal_Where.Replace("<<ID_PAL>>", Pal)
+                        : ""
+                )
+                + (
+                    (Kod != null && Kod.Partia != null && Kod.Partia != "")
+                        ? SQL.Stocks.GetStocks_Where_Part_Where.Replace("<<ID_PART>>", Par)
+                        : ""
+                );
 
-                (
-                
-                (Kod != null && Kod.TowaryJednostkiWBazie != null && Kod.TowaryJednostkiWBazie.Count != 0) 
-                    ? 
-                        SQL.Stocks.GetStocks_Where_Article_Where.Replace("<<IDTOWARU>>", idTow) 
-                    : 
-                        ""
-                ) +
-
-                ((IDLokalizacji >= 0) ? SQL.Stocks.GetStocks_Where_Location_Where.Replace("<<IDLOKALIZACJA>>", IDLokalizacji.ToString()) : "") +
-                ((Kod != null && Kod.Paleta != null && Kod.Paleta != "") ? SQL.Stocks.GetStocks_Where_Pal_Where.Replace("<<ID_PAL>>", Pal) : "") +
-                ((Kod != null && Kod.Partia != null && Kod.Partia != "") ? SQL.Stocks.GetStocks_Where_Part_Where.Replace("<<ID_PART>>", Par) : "");
-
-            Komenda =
-                SQL.Stocks.GetStocks.Replace("<<IDJEDNOSTKI>>", Globalne.CurrentUserSettings.DisplayUnit.ToString()).
-                                    Replace("<<SUM>>", Sum).
-                                    Replace("<<WHERE>>", Where).
-                                    Replace("<<ROZNOSZENIE>>", "0");
-                                    //Replace("<<ROZNOSZENIE>>", SQL.Stocks.W_Roznoszeniu.Replace("<<IDTOWARU>>", idTow).Replace("<<IDJEDNOSTKI>>", Globalne.CurrentUserSettings.DisplayUnit.ToString()));
+            Komenda = SQL
+                .Stocks.GetStocks.Replace(
+                    "<<IDJEDNOSTKI>>",
+                    Globalne.CurrentUserSettings.DisplayUnit.ToString()
+                )
+                .Replace("<<SUM>>", Sum)
+                .Replace("<<WHERE>>", Where)
+                .Replace("<<ROZNOSZENIE>>", "0");
+            //Replace("<<ROZNOSZENIE>>", SQL.Stocks.W_Roznoszeniu.Replace("<<IDTOWARU>>", idTow).Replace("<<IDJEDNOSTKI>>", Globalne.CurrentUserSettings.DisplayUnit.ToString()));
 
             try
             {
-                #warning HiveInvoke
-                ZapytanieZTabeliO Zap = (ZapytanieZTabeliO)Helpers.HiveInvoke(typeof(WMSServerAccess.Ogólne.OgólneBL), "ZapytanieSQL", Komenda);
+#warning HiveInvoke
+                ZapytanieZTabeliO Zap = (ZapytanieZTabeliO)
+                    Helpers.HiveInvoke(
+                        typeof(WMSServerAccess.Ogólne.OgólneBL),
+                        "ZapytanieSQL",
+                        Komenda
+                    );
                 // usuniecie pozycji gdzie ilosc rowna sie zeru.. nalezaloby zmienic SQL GetStocks, rozwiazanie tymczasowe i zarazem docelowe
                 Zap.ListaWierszy?.RemoveAll(x => x[3]?.ToString() == "0");
                 return Zap;
             }
             catch (Exception ex)
             {
-
                 return new ZapytanieZTabeliO() { Poprawność = ex.Message };
             }
-            
-
         }
+
         private void GetDataBufor(ZapytanieZTabeliO zap)
         {
             if (zap == null)
                 return;
 
-            var idTow = Kod?.TowaryJednostkiWBazie[0]?.IDTowaru == null ? "-1" : Kod?.TowaryJednostkiWBazie[0]?.IDTowaru.ToString();
+            var idTow =
+                Kod?.TowaryJednostkiWBazie[0]?.IDTowaru == null
+                    ? "-1"
+                    : Kod?.TowaryJednostkiWBazie[0]?.IDTowaru.ToString();
 
-            var sqlRoznoszoneZBufora = SQL.Stocks.GetStocks_RoznoszoneZBufora.Replace("<<IDTOWARU>>", idTow).Replace("<<IDJEDNOSTKI>>", Globalne.CurrentUserSettings.DisplayUnit.ToString());
+            var sqlRoznoszoneZBufora = SQL
+                .Stocks.GetStocks_RoznoszoneZBufora.Replace("<<IDTOWARU>>", idTow)
+                .Replace("<<IDJEDNOSTKI>>", Globalne.CurrentUserSettings.DisplayUnit.ToString());
             try
             {
-
 #warning HiveInvoke
-                var roznoszoneZBufora = (ZapytanieZTabeliO)Helpers.HiveInvoke(typeof(WMSServerAccess.Ogólne.OgólneBL), "ZapytanieSQL", sqlRoznoszoneZBufora);
+                var roznoszoneZBufora = (ZapytanieZTabeliO)
+                    Helpers.HiveInvoke(
+                        typeof(WMSServerAccess.Ogólne.OgólneBL),
+                        "ZapytanieSQL",
+                        sqlRoznoszoneZBufora
+                    );
 
                 // usuniecie pozycji gdzie ilosc rowna sie zeru.. nalezaloby zmienic SQL GetStocks, rozwiazanie tymczasowe i zarazem docelowe
                 zap.ListaWierszy.AddRange(roznoszoneZBufora.ListaWierszy);
-
             }
             catch (Exception ex)
             {
@@ -427,7 +529,8 @@ namespace G_Mobile_Android_WMS
         readonly List<object[]> Items;
         readonly Activity Ctx;
 
-        public StocksListAdapter(Activity Ctx, List<object[]> Items) : base()
+        public StocksListAdapter(Activity Ctx, List<object[]> Items)
+            : base()
         {
             this.Ctx = Ctx;
             this.Items = Items;
@@ -437,6 +540,7 @@ namespace G_Mobile_Android_WMS
         {
             return position;
         }
+
         public override object[] this[int position]
         {
             get { return Items[position]; }
@@ -463,10 +567,9 @@ namespace G_Mobile_Android_WMS
                 {
                     return -1;
                 }
-
             }
-
         }
+
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
             var Pos = Items[position];
@@ -475,13 +578,22 @@ namespace G_Mobile_Android_WMS
             if (view == null)
                 view = Ctx.LayoutInflater.Inflate(Resource.Layout.list_item_stocks, null);
 
-            view.FindViewById<TextView>(Resource.Id.stocks_list_articlename).Text = (string)Pos[(int)SQL.Stocks.Stocks_Results.strNazwaTowaru];
-            view.FindViewById<TextView>(Resource.Id.stocks_list_locationsname).Text = (string)Pos[(int)SQL.Stocks.Stocks_Results.strNazwaLok];
-            view.FindViewById<TextView>(Resource.Id.stocks_list_amount).Text = (Math.Round(Convert.ToDecimal(Pos[(int)SQL.Stocks.Stocks_Results.numStan]), Globalne.CurrentSettings.DecimalSpaces)).ToString() +
-                                                                               " (" + (string)Pos[(int)SQL.Stocks.Stocks_Results.strNazwaJednostki] + ") ";
+            view.FindViewById<TextView>(Resource.Id.stocks_list_articlename).Text = (string)
+                Pos[(int)SQL.Stocks.Stocks_Results.strNazwaTowaru];
+            view.FindViewById<TextView>(Resource.Id.stocks_list_locationsname).Text = (string)
+                Pos[(int)SQL.Stocks.Stocks_Results.strNazwaLok];
+            view.FindViewById<TextView>(Resource.Id.stocks_list_amount).Text =
+                (
+                    Math.Round(
+                        Convert.ToDecimal(Pos[(int)SQL.Stocks.Stocks_Results.numStan]),
+                        Globalne.CurrentSettings.DecimalSpaces
+                    )
+                ).ToString()
+                + " ("
+                + (string)Pos[(int)SQL.Stocks.Stocks_Results.strNazwaJednostki]
+                + ") ";
 
             return view;
         }
     }
 }
-

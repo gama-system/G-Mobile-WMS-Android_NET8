@@ -1,32 +1,36 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
+using Acr.UserDialogs;
 using Android.App;
+using Android.Content;
+using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
-using Android.Views;
-using Android.Widget;
 using Android.Util;
-using System.Collections.Generic;
-using System.Threading;
-using Android.Media;
+using Android.Views;
 using Android.Views.InputMethods;
-
+using Android.Widget;
+using G_Mobile_Android_WMS.Enums;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
-
-using Acr.UserDialogs;
-
-using WMSServerAccess.Model;
-using Android.Content;
-using System.Timers;
-using System.Threading.Tasks;
-using G_Mobile_Android_WMS.Enums;
-using System.Linq;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, WindowSoftInputMode = Android.Views.SoftInput.AdjustPan | Android.Views.SoftInput.StateHidden)]
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        MainLauncher = false,
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        WindowSoftInputMode = Android.Views.SoftInput.AdjustPan
+            | Android.Views.SoftInput.StateHidden
+    )]
     public class InventoryLocationsActivity : ActivityWithScanner
     {
         FloatingActionButton Back;
@@ -42,7 +46,6 @@ namespace G_Mobile_Android_WMS
         int LastSelectedItemPos = -1;
         int SelectedItemPos = -1;
 
-
         internal static class Vars
         {
             public const string InventoryDoc = "InventoryDoc";
@@ -54,13 +57,13 @@ namespace G_Mobile_Android_WMS
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_inventorylocations);
 
-            Doc = (DokumentVO)Helpers.DeserializePassedJSON(Intent, Vars.InventoryDoc, typeof(DokumentVO));
+            Doc = (DokumentVO)
+                Helpers.DeserializePassedJSON(Intent, Vars.InventoryDoc, typeof(DokumentVO));
 
             GetAndSetControls();
 
             Task.Run(() => InsertData());
         }
-
 
         private void GetAndSetControls()
         {
@@ -108,7 +111,9 @@ namespace G_Mobile_Android_WMS
                 if (SelectedItemPos < 0)
                     return;
 
-                LokalizacjaInwentaryzacji SelectedItem = (LocationsList.Adapter as InventoryLocationsAdapter)[SelectedItemPos];
+                LokalizacjaInwentaryzacji SelectedItem = (
+                    LocationsList.Adapter as InventoryLocationsAdapter
+                )[SelectedItemPos];
 
                 if (SelectedItem == null)
                     return;
@@ -123,12 +128,18 @@ namespace G_Mobile_Android_WMS
             if (Status != DocumentStatusTypes.Zamknięty)
                 Globalne.dokumentBL.UstawStatusLokInwentaryzacji(IDLoc, Doc.ID, false);
 
-            BusinessLogicHelpers.Documents.EditDocuments(this, new List<int>() { Doc.ID }, Enums.DocTypes.IN, Enums.ZLMMMode.None, IDLoc);
+            BusinessLogicHelpers.Documents.EditDocuments(
+                this,
+                new List<int>() { Doc.ID },
+                Enums.DocTypes.IN,
+                Enums.ZLMMMode.None,
+                IDLoc
+            );
 
             Helpers.HideProgressDialog();
         }
 
-        async protected override void OnScan(object sender, ElapsedEventArgs e)
+        protected override async void OnScan(object sender, ElapsedEventArgs e)
         {
             base.OnScan(sender, e);
             await RunIsBusyTaskAsync(() => ShowProgressAndDecodeBarcode(LastScanData[0]));
@@ -153,15 +164,31 @@ namespace G_Mobile_Android_WMS
 
         private async Task ParseBarcode(string Data)
         {
-            LokalizacjaVO lokalizacja = Globalne.lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(Data, Globalne.Magazyn.ID, true);
-            
+            LokalizacjaVO lokalizacja = Globalne.lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(
+                Data,
+                Globalne.Magazyn.ID,
+                true
+            );
+
             // dodawanie nowej lokalizacji do dokumentu inwentaryzacjyjnego IN na uprawnienie
-            if (lokalizacja.ID > 0 && (Locs.Find(x => x.idLokalizacja == lokalizacja.ID) == null) && Globalne.Operator.dodawanieLokalizacjiDoDokumentuIN)
+            if (
+                lokalizacja.ID > 0
+                && (Locs.Find(x => x.idLokalizacja == lokalizacja.ID) == null)
+                && Globalne.Operator.dodawanieLokalizacjiDoDokumentuIN
+            )
             {
-                var res = Helpers.AlertAsyncWithConfirm(this, $"Lokalizacja '{lokalizacja.strNazwa}' nie jest przypisana do dokumentu.\nCzy chcesz dodać lokalizację do dokumentu inwentaryzacyjnego?").Result;
+                var res = Helpers
+                    .AlertAsyncWithConfirm(
+                        this,
+                        $"Lokalizacja '{lokalizacja.strNazwa}' nie jest przypisana do dokumentu.\nCzy chcesz dodać lokalizację do dokumentu inwentaryzacyjnego?"
+                    )
+                    .Result;
                 if (res.Value)
                 {
-                    Globalne.dokumentBL.WstawLokalizacjęDoDokumentuInwentaryzacji(Doc.ID, lokalizacja.ID);
+                    Globalne.dokumentBL.WstawLokalizacjęDoDokumentuInwentaryzacji(
+                        Doc.ID,
+                        lokalizacja.ID
+                    );
                     Do_Edit(lokalizacja.ID);
                 }
                 return;
@@ -169,7 +196,12 @@ namespace G_Mobile_Android_WMS
 
             if (lokalizacja.ID < 0 || (Locs.Find(x => x.idLokalizacja == lokalizacja.ID) == null))
             {
-                await Helpers.AlertAsyncWithConfirm(this, Resource.String.inventorylocations_not_found, Resource.Raw.sound_error, Resource.String.global_alert);
+                await Helpers.AlertAsyncWithConfirm(
+                    this,
+                    Resource.String.inventorylocations_not_found,
+                    Resource.Raw.sound_error,
+                    Resource.String.global_alert
+                );
                 return;
             }
             else
@@ -206,12 +238,19 @@ namespace G_Mobile_Android_WMS
 
                 Locs = await Task.Factory.StartNew(() => GetData());
 
-                Status = (DocumentStatusTypes)Globalne.dokumentBL.PobierzTypStatusuDokumentu(Doc.ID, "", "", -1, -1, "");
+                Status = (DocumentStatusTypes)
+                    Globalne.dokumentBL.PobierzTypStatusuDokumentu(Doc.ID, "", "", -1, -1, "");
 
                 RunOnUiThread(() =>
                 {
                     LocationsList.Adapter = new InventoryLocationsAdapter(this, Locs);
-                    Helpers.SetTextOnTextView(this, ItemCount, GetString(Resource.String.global_liczba_pozycji) + " " + LocationsList.Adapter.Count.ToString());
+                    Helpers.SetTextOnTextView(
+                        this,
+                        ItemCount,
+                        GetString(Resource.String.global_liczba_pozycji)
+                            + " "
+                            + LocationsList.Adapter.Count.ToString()
+                    );
                 });
 
                 Helpers.HideProgressDialog();
@@ -233,7 +272,8 @@ namespace G_Mobile_Android_WMS
 
         private List<LokalizacjaInwentaryzacji> GetData()
         {
-            List<LokalizacjaInwentaryzacji> Lokalizacje = Globalne.dokumentBL.PobierzListęLokalizacjiInwentaryzacji(Doc.ID);
+            List<LokalizacjaInwentaryzacji> Lokalizacje =
+                Globalne.dokumentBL.PobierzListęLokalizacjiInwentaryzacji(Doc.ID);
             return Lokalizacje;
         }
 
@@ -252,7 +292,13 @@ namespace G_Mobile_Android_WMS
                 if (IsSwitchingActivity)
                     return;
 
-                if (await BusinessLogicHelpers.Documents.ShowAndApplyDocumentExitOptions(this, new List<DokumentVO>() { Doc }, DocTypes.IN))
+                if (
+                    await BusinessLogicHelpers.Documents.ShowAndApplyDocumentExitOptions(
+                        this,
+                        new List<DokumentVO>() { Doc },
+                        DocTypes.IN
+                    )
+                )
                 {
                     IsSwitchingActivity = true;
 
@@ -272,7 +318,7 @@ namespace G_Mobile_Android_WMS
         }
 
         async Task Do_Exit_Without_Asking()
-        { 
+        {
             try
             {
                 if (IsSwitchingActivity)
@@ -301,7 +347,8 @@ namespace G_Mobile_Android_WMS
         readonly Activity Ctx;
         readonly int ArticleID;
 
-        public InventoryLocationsAdapter(Activity Ctx, List<LokalizacjaInwentaryzacji> Items) : base()
+        public InventoryLocationsAdapter(Activity Ctx, List<LokalizacjaInwentaryzacji> Items)
+            : base()
         {
             this.Ctx = Ctx;
             this.Items = Items;
@@ -311,6 +358,7 @@ namespace G_Mobile_Android_WMS
         {
             return position;
         }
+
         public override LokalizacjaInwentaryzacji this[int position]
         {
             get { return Items[position]; }
@@ -319,6 +367,7 @@ namespace G_Mobile_Android_WMS
         {
             get { return Items.Count; }
         }
+
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
             var Lokalizacja = Items[position];
@@ -327,13 +376,17 @@ namespace G_Mobile_Android_WMS
             if (view == null)
                 view = Ctx.LayoutInflater.Inflate(Resource.Layout.list_item_inventorylocs, null);
 
-            view.FindViewById<TextView>(Resource.Id.locations_list_locationname).Text = Lokalizacja.NazwaLokalizacji;
+            view.FindViewById<TextView>(Resource.Id.locations_list_locationname).Text =
+                Lokalizacja.NazwaLokalizacji;
 
-            view.FindViewById<TextView>(Resource.Id.locations_list_status).SetBackgroundColor(Lokalizacja.bZakonczona ? Android.Graphics.Color.DarkGreen : Android.Graphics.Color.Yellow);
+            view.FindViewById<TextView>(Resource.Id.locations_list_status)
+                .SetBackgroundColor(
+                    Lokalizacja.bZakonczona
+                        ? Android.Graphics.Color.DarkGreen
+                        : Android.Graphics.Color.Yellow
+                );
 
             return view;
         }
-
     }
 }
-

@@ -1,24 +1,23 @@
-﻿using Acr.UserDialogs;
-using Android.App;
-using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Widget;
-using System;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading;
 using System.Linq;
-
-using WMSServerAccess.Model;
-using Android.Content;
-using Android.Runtime;
-using Android.Views;
-using System.Timers;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
+using Acr.UserDialogs;
+using Android.App;
+using Android.Content;
+using Android.OS;
+using Android.Runtime;
+using Android.Support.Design.Widget;
+using Android.Views;
+using Android.Widget;
 using G_Mobile_Android_WMS.BusinessLogicHelpers;
-using G_Mobile_Android_WMS.ExtendedModel;
 using G_Mobile_Android_WMS.Common.BusinessLogicHelpers;
 using G_Mobile_Android_WMS.Enums;
-using System.Collections.Concurrent;
+using G_Mobile_Android_WMS.ExtendedModel;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
@@ -40,7 +39,6 @@ namespace G_Mobile_Android_WMS
 
         public static void ChangeDefaultLocDialog(BaseWMSActivity Ctx, int IDMag)
         {
-
             Ctx.RunIsBusyAction(() =>
             {
                 Ctx.IsSwitchingActivity = true;
@@ -49,9 +47,12 @@ namespace G_Mobile_Android_WMS
                 i.PutExtra(LocationsActivity.Vars.Bufor, true);
                 i.PutExtra(LocationsActivity.Vars.IDMagazynu, IDMag);
 
-                Ctx.RunOnUiThread(() => Ctx.StartActivityForResult(i, (int)ResultCodes.LocationsActivityResult));
+                Ctx.RunOnUiThread(
+                    () => Ctx.StartActivityForResult(i, (int)ResultCodes.LocationsActivityResult)
+                );
             });
         }
+
         public static void ShowLocDialog(BaseWMSActivity Ctx, int idTow)
         {
             //Intent i = new Intent(Ctx, typeof(StocksActivity));
@@ -66,7 +67,13 @@ namespace G_Mobile_Android_WMS
                 i.PutExtra("IDTowaru", idTow);
                 i.PutExtra(ArticlesActivity.Vars.AskOnStart, false);
 
-                Ctx.RunOnUiThread(() => Ctx.StartActivityForResult(i, (int)StocksActivity.ResultCodes.ArticlesActivityResult));
+                Ctx.RunOnUiThread(
+                    () =>
+                        Ctx.StartActivityForResult(
+                            i,
+                            (int)StocksActivity.ResultCodes.ArticlesActivityResult
+                        )
+                );
             });
         }
 
@@ -80,12 +87,20 @@ namespace G_Mobile_Android_WMS
                 else
                     View.Visibility = ViewStates.Gone;
             }
-
         }
 
-        public static DocItemStatus GetStatusForItem(PozycjaRow R, DocTypes DocType, ZLMMMode Mode, Operation CurrentOperation)
+        public static DocItemStatus GetStatusForItem(
+            PozycjaRow R,
+            DocTypes DocType,
+            ZLMMMode Mode,
+            Operation CurrentOperation
+        )
         {
-            if (Mode == ZLMMMode.OneStep || !DocumentItems.IsGatheringMode(DocType, CurrentOperation) || !DocumentItems.IsDistributionMode(DocType, CurrentOperation))
+            if (
+                Mode == ZLMMMode.OneStep
+                || !DocumentItems.IsGatheringMode(DocType, CurrentOperation)
+                || !DocumentItems.IsDistributionMode(DocType, CurrentOperation)
+            )
             {
                 if (R.numIloscZlecona == R.numIloscZrealizowana)
                     return DocItemStatus.Complete;
@@ -117,17 +132,29 @@ namespace G_Mobile_Android_WMS
             }
         }
 
-        public static List<DocumentItemRow> GetData(List<DokumentVO> Documents, DocTypes DocType, ZLMMMode Mode, Operation CurrentOperation,
-                                                    int SelectedDefaultLoc, DefaultLocType DefLocType, int InventoryLoc = -1, string OutType = "", List<int> SkipLocs = null, int LowestPathID = -1)
+        public static List<DocumentItemRow> GetData(
+            List<DokumentVO> Documents,
+            DocTypes DocType,
+            ZLMMMode Mode,
+            Operation CurrentOperation,
+            int SelectedDefaultLoc,
+            DefaultLocType DefLocType,
+            int InventoryLoc = -1,
+            string OutType = "",
+            List<int> SkipLocs = null,
+            int LowestPathID = -1
+        )
         {
             ConcurrentBag<DocumentItemRow> Items = new ConcurrentBag<DocumentItemRow>();
 
             foreach (DokumentVO Doc in Documents)
             {
-                if (Doc.bZlecenie || 
-                    (Mode == ZLMMMode.TwoStep && CurrentOperation == Operation.In) || 
-                    Mode == ZLMMMode.OneStep || 
-                    DocType == DocTypes.IN)
+                if (
+                    Doc.bZlecenie
+                    || (Mode == ZLMMMode.TwoStep && CurrentOperation == Operation.In)
+                    || Mode == ZLMMMode.OneStep
+                    || DocType == DocTypes.IN
+                )
                 {
                     bool? DefLoc = null;
 
@@ -137,87 +164,111 @@ namespace G_Mobile_Android_WMS
                         DefLoc = false;
 
                     // decyduja czy maja byc podpowiadane/pobierane lokalizacje dla przychodu i rozchodu
-                    bool lokPrzychodu = ((CurrentOperation == Operation.In || CurrentOperation == Operation.OutIn) 
-                                        && !(DocType == DocTypes.ZLDistribution && !Globalne.CurrentSettings.LocationPositionsSuggestedZL));
+                    bool lokPrzychodu = (
+                        (CurrentOperation == Operation.In || CurrentOperation == Operation.OutIn)
+                        && !(
+                            DocType == DocTypes.ZLDistribution
+                            && !Globalne.CurrentSettings.LocationPositionsSuggestedZL
+                        )
+                    );
 
-                    bool lokRozchodu = (DocumentItems.IsDistributionMode(DocType, CurrentOperation) 
-                                        || CurrentOperation == Operation.Out 
-                                        || CurrentOperation == Operation.OutIn);
+                    bool lokRozchodu = (
+                        DocumentItems.IsDistributionMode(DocType, CurrentOperation)
+                        || CurrentOperation == Operation.Out
+                        || CurrentOperation == Operation.OutIn
+                    );
 
-                    List<PozycjaRowZPodpowiedzią> Res = Globalne.
-                                                        dokumentBL.
-                                                        PobierzPozycjeIZaproponujLokalizacjeDlaDokumentu
-                                                                                        (
-                                                                                            Doc.ID,
-                                                                                            lokPrzychodu,
-                                                                                            lokRozchodu,
-                                                                                             SelectedDefaultLoc,
-                                                                                             DefLoc,
-                                                                                             InventoryLoc,
-                                                                                             DocumentItems.IsDistributionMode(DocType, CurrentOperation), 
-                                                                                             OutType,
-                                                                                             SkipLocs == null ? new List<int>() : SkipLocs,
-                                                                                             LowestPathID
-                                                                                        );
-                    Parallel.ForEach(Res, Pzp =>
-                    {
-                        DocumentItemRow DocItem = new DocumentItemRow(Pzp.Pozycja)
+                    List<PozycjaRowZPodpowiedzią> Res =
+                        Globalne.dokumentBL.PobierzPozycjeIZaproponujLokalizacjeDlaDokumentu(
+                            Doc.ID,
+                            lokPrzychodu,
+                            lokRozchodu,
+                            SelectedDefaultLoc,
+                            DefLoc,
+                            InventoryLoc,
+                            DocumentItems.IsDistributionMode(DocType, CurrentOperation),
+                            OutType,
+                            SkipLocs == null ? new List<int>() : SkipLocs,
+                            LowestPathID
+                        );
+                    Parallel.ForEach(
+                        Res,
+                        Pzp =>
                         {
-                            Status = GetStatusForItem(Pzp.Pozycja, DocType, Mode, CurrentOperation)
-                        };
+                            DocumentItemRow DocItem = new DocumentItemRow(Pzp.Pozycja)
+                            {
+                                Status = GetStatusForItem(
+                                    Pzp.Pozycja,
+                                    DocType,
+                                    Mode,
+                                    CurrentOperation
+                                )
+                            };
 
-                        if (Pzp.PodpowiedźPrzychód != null)
-                        {
-                            DocItem.ExIDLokalizacjaP = Pzp.PodpowiedźPrzychód.ID;
-                            DocItem.ExLokalizacjaP = Pzp.PodpowiedźPrzychód.strNazwa;
-                            DocItem.KolejnośćNaŚcieżce = Pzp.PodpowiedźPrzychód.intPozycjaNaŚcieżce;
+                            if (Pzp.PodpowiedźPrzychód != null)
+                            {
+                                DocItem.ExIDLokalizacjaP = Pzp.PodpowiedźPrzychód.ID;
+                                DocItem.ExLokalizacjaP = Pzp.PodpowiedźPrzychód.strNazwa;
+                                DocItem.KolejnośćNaŚcieżce =
+                                    Pzp.PodpowiedźPrzychód.intPozycjaNaŚcieżce;
+                            }
+                            if (Pzp.PodpowiedźRozchód != null)
+                            {
+                                DocItem.ExIDLokalizacjaW = Pzp.PodpowiedźRozchód.ID;
+                                DocItem.ExLokalizacjaW = Pzp.PodpowiedźRozchód.strNazwa;
+                                DocItem.KolejnośćNaŚcieżce =
+                                    Pzp.PodpowiedźRozchód.intPozycjaNaŚcieżce;
+                            }
 
+                            DocItem.EXIDLokalizacjaDokumentu = Doc.intLokalizacja;
+                            Items.Add(DocItem);
                         }
-                        if (Pzp.PodpowiedźRozchód != null)
-                        {
-                            DocItem.ExIDLokalizacjaW = Pzp.PodpowiedźRozchód.ID;
-                            DocItem.ExLokalizacjaW = Pzp.PodpowiedźRozchód.strNazwa;
-                            DocItem.KolejnośćNaŚcieżce = Pzp.PodpowiedźRozchód.intPozycjaNaŚcieżce;
-                        }
-
-                        DocItem.EXIDLokalizacjaDokumentu = Doc.intLokalizacja;
-                        Items.Add(DocItem);
-                    });
+                    );
                 }
                 else
                 {
                     List<PozycjaRow> Pozycje = Globalne.dokumentBL.PobierzListęPozycjiRow(Doc.ID);
 
-                    Parallel.ForEach(Pozycje, R =>
-                    {
-                        DocumentItemRow DocItem = new DocumentItemRow(R)
+                    Parallel.ForEach(
+                        Pozycje,
+                        R =>
                         {
-                            Status = GetStatusForItem(R, DocType, Mode, CurrentOperation)
-                        };
+                            DocumentItemRow DocItem = new DocumentItemRow(R)
+                            {
+                                Status = GetStatusForItem(R, DocType, Mode, CurrentOperation)
+                            };
 
-                        if (CurrentOperation == Operation.In || CurrentOperation == Operation.OutIn)
-                        {
-                            DocItem.ExIDLokalizacjaP = DocItem.Base.idLokalizacjaP;
-                            DocItem.ExLokalizacjaP = DocItem.Base.strLokalizacjaP;
+                            if (
+                                CurrentOperation == Operation.In
+                                || CurrentOperation == Operation.OutIn
+                            )
+                            {
+                                DocItem.ExIDLokalizacjaP = DocItem.Base.idLokalizacjaP;
+                                DocItem.ExLokalizacjaP = DocItem.Base.strLokalizacjaP;
+                            }
+                            if (
+                                CurrentOperation == Operation.Out
+                                || CurrentOperation == Operation.OutIn
+                            )
+                            {
+                                DocItem.ExIDLokalizacjaW = DocItem.Base.idLokalizacjaW;
+                                DocItem.ExLokalizacjaW = DocItem.Base.strLokalizacjaW;
+                            }
+
+                            DocItem.KolejnośćNaŚcieżce = 0;
+                            DocItem.EXIDLokalizacjaDokumentu = Doc.intLokalizacja;
+                            Items.Add(DocItem);
                         }
-                        if (CurrentOperation == Operation.Out || CurrentOperation == Operation.OutIn)
-                        {
-                            DocItem.ExIDLokalizacjaW = DocItem.Base.idLokalizacjaW;
-                            DocItem.ExLokalizacjaW = DocItem.Base.strLokalizacjaW;
-                        }
-                        
-                        DocItem.KolejnośćNaŚcieżce = 0;
-                        DocItem.EXIDLokalizacjaDokumentu = Doc.intLokalizacja;
-                        Items.Add(DocItem);
-                    });
+                    );
                 }
             }
             var docs = Items
-                .OrderBy(x => x.Status).ThenBy(x => x.KolejnośćNaŚcieżce).ThenBy(x=>x.EXIDLokalizacjaDokumentu).ToList();
-           
+                .OrderBy(x => x.Status)
+                .ThenBy(x => x.KolejnośćNaŚcieżce)
+                .ThenBy(x => x.EXIDLokalizacjaDokumentu)
+                .ToList();
+
             return docs;
         }
-
     }
 }
-

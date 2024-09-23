@@ -1,0 +1,211 @@
+﻿
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:gravity="top|center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Header aligned to top -->
+    <include
+        layout="@layout/header" />
+
+    <!-- Content below header and above footer -->
+
+    <ScrollView
+        android:fillViewport="true"
+        android:id="@+id/activity_info_scrollcontent"
+        android:layout_above="@id/footer"
+        android:layout_below="@id/header"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <RelativeLayout
+            android:paddingVertical="10dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/header"
+            android:gravity="top">
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:rowCount="2"
+                android:columnCount="2"
+                android:id="@+id/InfoGridTop">
+
+                <ImageView
+                    android:layout_row="0"
+                    android:layout_column="0"
+                    android:layout_rowSpan="2"
+                    android:src="@drawable/logo_gama"
+                    android:layout_width="190dp"
+                    android:layout_height="100dp"
+                    android:padding="5dp"/>
+
+                <TextView
+                    android:layout_row="0"
+                    android:layout_column="1"
+                    android:text="@string/app_name"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:text="@string/info_activity_wersja"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/InfoWersja"/>
+
+            </GridLayout>
+
+            <TextView
+                android:text="ul. Maleckiego 1"
+                android:textSize="18sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity = "center_horizontal"
+                android:layout_below="@id/InfoGridTop"
+                android:id="@+id/InfoUlica"/>
+
+            <TextView
+                android:text="25-448 Kielce"
+                android:textSize="18sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity = "center_horizontal"
+                android:layout_below="@id/InfoUlica"
+                android:id="@+id/InfoMiasto"/>
+
+            <TextView
+                android:text="tel: (+ 48) 41 368 33 68, 41 348 08 64"
+                android:textSize="18sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity = "center_horizontal"
+                android:layout_below="@id/InfoMiasto"
+                android:id="@+id/InfoTelefon"/>
+
+            <TextView
+                android:text="fax: (+ 48) 41 368 33 68"
+                android:textSize="18sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity = "center_horizontal"
+                android:layout_below="@id/InfoTelefon"
+                android:id="@+id/InfoFax"/>
+
+            <TextView
+                android:text="w w w . g a m a s y s t e m . p l"
+                android:textSize="18sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity = "center_horizontal"
+                android:textStyle="bold"
+                android:layout_below="@id/InfoFax"
+                android:id="@+id/InfoWWW"/>
+
+            <TextView
+                android:text="@string/info_activity_zarejestrowano"
+                android:textSize="18sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity = "center_horizontal"
+                android:layout_marginTop="10dp"
+                android:textStyle="bold"
+                android:layout_below="@id/InfoWWW"
+                android:id="@+id/InfoZarejestrowanoDla"/>
+
+            <TextView
+                android:text=""
+                android:background="@color/text_field"
+                android:textSize="18sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity = "center_horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="20dp"
+                android:textStyle="bold"
+                android:layout_below="@id/InfoZarejestrowanoDla"
+                android:id="@+id/InfoZarejestrowanoDlaX"/>
+
+            <TextView
+                android:text="@string/info_activity_czaslicencji"
+                android:textSize="18sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity = "center_horizontal"
+                android:layout_marginTop="10dp"
+                android:textStyle="bold"
+                android:layout_below="@id/InfoZarejestrowanoDlaX"
+                android:id="@+id/InfoCzasLicencji"/>
+
+            <TextView
+                android:text=""
+                android:background="@color/text_field"
+                android:textSize="18sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity = "center_horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="20dp"
+                android:textStyle="bold"
+                android:layout_below="@id/InfoCzasLicencji"
+                android:id="@+id/InfoCzasLicencjiX"/>
+
+
+
+        </RelativeLayout>
+
+
+    </ScrollView>
+
+    <!-- Footer -->
+
+    <RelativeLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/footer_size"
+        android:layout_alignParentBottom="true"
+        android:background="#e3e3e3"
+        android:gravity="left">
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:backgroundTint="@color/floating_button_blue"
+            android:src="@drawable/arrow_prev"
+            app:fabCustomSize="@dimen/floating_button_size"
+            app:maxImageSize="@dimen/floating_button_maximagesize"
+            android:layout_marginLeft="@dimen/floating_button_margin_left"
+            android:id="@+id/InfoBtnPrev" />
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/InfoBtnPrev"
+            android:gravity="right">
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:backgroundTint="@color/floating_button_blue"
+                android:src="@drawable/settings"
+                app:fabCustomSize="@dimen/floating_button_size"
+                app:maxImageSize="@dimen/floating_button_maximagesize"
+                android:layout_marginRight="@dimen/floating_button_margin_right"
+                android:id="@+id/InfoBtnSettings" />
+
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

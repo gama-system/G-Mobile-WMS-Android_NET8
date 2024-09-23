@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#2c3e50</color>
+    <color name="colorPrimaryDark">#1B3147</color>
+    <color name="colorAccent">#3498db</color>
+    <color name="list_bands_a">#750099</color>
+    <color name="list_bands_b">#4934eb</color>
+    <color name="list_bands_c">#cf0000</color>
+    <color name="list_bands_d">#009e22</color>
+    <color name="floating_button_red">#cf0000</color>
+    <color name="floating_button_blue">#3498db</color>
+    <color name="floating_button_green">#009e22</color>
+    <color name="color_white">#ffffff</color>
+    <color name="color_black">#000000</color>
+    <color name="color_scanbutton">#fcba03</color>
+    <color name="color_footer">#e3e3e3</color>
+    <color name="text_field">#c2c2c2</color>
+    <color name="required_text_field">#ff4242</color>
+    <color name="ok_text_field">#009e22</color>
+    <color name="button_blue">#4934eb</color>
+	<color name="next_loc_same">#00ce22</color>
+	<color name="next_loc_last">#fcba03</color>
+</resources>

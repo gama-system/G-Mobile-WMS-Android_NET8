@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><!--This is an auto generated document. Changes to this document may cause incorrect behavior.--><wap-provisioningdoc>
+<characteristic type="ProfileInfo">
+<parm name="created_wizard_version" value="7.3.2"/>
+</characteristic>
+<characteristic type="Profile">
+<parm name="ProfileName" value="DisableNavigationBar"/>
+<parm name="ModifiedDate" value="2020-03-20 08:50:39"/>
+<parm name="TargetSystemVersion" value="8.2"/>
+<characteristic type="UiMgr" version="8.2">
+<parm name="emdk_name" value=""/>
+<parm name="NotificationPullDown" value="2"/>
+<parm name="NavigationBarUsage" value="2"/>
+</characteristic>
+</characteristic>
+<characteristic type="Profile">
+<parm name="ProfileName" value="EnableNavigationBar"/>
+<parm name="ModifiedDate" value="2020-03-20 08:50:50"/>
+<parm name="TargetSystemVersion" value="8.2"/>
+<characteristic type="UiMgr" version="8.2">
+<parm name="emdk_name" value=""/>
+<parm name="NotificationPullDown" value="1"/>
+<parm name="NavigationBarUsage" value="1"/>
+</characteristic>
+</characteristic>
+</wap-provisioningdoc>

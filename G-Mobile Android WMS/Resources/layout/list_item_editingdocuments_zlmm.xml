@@ -1,0 +1,343 @@
+﻿
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/editingdocuments_list_status"
+        android:layout_width="10dp"
+        android:gravity="center"
+        android:layout_height="match_parent"
+        android:textColor="@color/color_black"
+        android:background="#0e0"
+        android:textStyle="bold"/>
+
+<LinearLayout
+            android:animateLayoutChanges="true"
+            android:id="@+id/editingdocuments_list_header"
+            android:layout_weight="180"
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@id/editingdocuments_list_symbol"
+            android:textStyle="bold"
+            android:text="@string/editingdocuments_symbol"
+            android:layout_marginLeft="@dimen/list_margin_left"
+            android:textColor="@color/color_black"
+            android:lines="1"
+            android:autoSizeTextType="uniform"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content "/>
+
+            <TextView
+                android:id="@+id/editingdocuments_list_articlename"
+                android:textStyle="bold"
+                android:text="@string/editingdocuments_articlename"
+                android:layout_marginLeft="@dimen/list_margin_left"
+                android:textColor="@color/color_black"
+            android:lines="1"
+            android:autoSizeTextType="uniform"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content "/>
+                      <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+        <TextView
+            
+            android:id="@id/editingdocuments_listheader_NrKat"
+            android:textStyle="bold"
+            android:text="@string/editingdocuments_nrkat"
+            android:layout_marginLeft="@dimen/list_margin_left"
+            android:textColor="@color/color_black"
+            android:lines="1"
+            android:autoSizeTextType="uniform"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+            <LinearLayout
+                android:animateLayoutChanges="true"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/editingdocuments_list_partia"
+                    android:textStyle="bold"
+                    android:gravity="left"
+                    android:lines="1"
+                    android:text="@string/editingdocuments_partia"
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:textColor="@color/color_black"
+                    android:autoSizeTextType="uniform"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content "/>
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:animateLayoutChanges="true"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/editingdocuments_list_serialnumber"
+                    android:textStyle="bold"
+                    android:text="@string/editingdocuments_serialnumber"
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:textColor="@color/color_black"
+                    android:autoSizeTextType="uniform"
+                    android:layout_weight="2"
+                    android:lines="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content "/>
+
+                <TextView
+                    android:id="@+id/editingdocuments_list_lot"
+                    android:textStyle="bold"
+                    android:gravity="right"
+                    android:text="@string/editingdocuments_lot"
+                    android:layout_marginRight="@dimen/list_margin_right"
+                    android:textColor="@color/color_black"
+                    android:autoSizeTextType="uniform"
+                    android:layout_weight="1"
+                    android:lines="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content "/>
+
+            </LinearLayout>
+        <LinearLayout
+                    android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/editingdocuments_list_kodean"
+                android:textStyle="bold"
+                android:text="@string/editingdocuments_kodean"
+                android:layout_marginLeft="@dimen/list_margin_left"
+                android:textColor="@color/color_black"
+                android:autoSizeTextType="uniform"
+                android:layout_weight="2"
+                android:lines="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content "/>
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:animateLayoutChanges="true"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/editingdocuments_list_proddate"
+                    android:textStyle="bold"
+                    android:text="@string/editingdocuments_productiondate"
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:textColor="@color/color_black"
+                    android:autoSizeTextType="uniform"
+                    android:layout_weight="2"
+                    android:lines="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content "/>
+
+                <TextView
+                    android:id="@+id/editingdocuments_list_bestbefore"
+                    android:textStyle="bold"
+                    android:gravity="right"
+                    android:text="@string/editingdocuments_bestbefore"
+                    android:layout_marginRight="@dimen/list_margin_right"
+                    android:textColor="@color/color_black"
+                    android:autoSizeTextType="uniform"
+                    android:layout_weight="1"
+                    android:lines="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content "/>
+
+            </LinearLayout>
+
+
+    <!--    <LinearLayout
+            android:animateLayoutChanges="true"
+            android:id="@+id/editingdocuments_splitter"
+            android:background="@android:color/darker_gray"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:layout_marginRight="20.0dp"
+            android:layout_marginLeft="@dimen/list_margin_left"
+            android:layout_marginBottom="3dp"
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"/>-->
+
+
+            <LinearLayout
+                android:animateLayoutChanges="true"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/editingdocuments_list_paleta_out"
+                    android:textStyle="bold"
+                    android:gravity="left"
+                    android:lines="1"
+                    android:text="@string/editingdocuments_paletaP"
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:textColor="@color/color_black"
+                    android:autoSizeTextType="uniform"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content "/>
+
+
+                <TextView
+                    android:id="@+id/editingdocuments_list_paleta_in"
+                    android:textStyle="bold"
+                    android:gravity="right"
+                    android:text="@string/editingdocuments_paletaW"
+                    android:layout_marginRight="@dimen/list_margin_right"
+                    android:textColor="@color/color_black"
+                    android:autoSizeTextType="uniform"
+                    android:layout_weight="1"
+                    android:lines="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content "/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:animateLayoutChanges="true"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/editingdocuments_list_flog_out"
+                    android:textStyle="bold"
+                    android:text="@string/editingdocuments_flogP"
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:textColor="@color/color_black"
+                    android:lines="1"
+                    android:layout_weight="1"
+                    android:autoSizeTextType="uniform"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content "/>
+
+                <TextView
+                    android:id="@+id/editingdocuments_list_flog_in"
+                    android:textStyle="bold"
+                    android:text="@string/editingdocuments_flogW"
+                    android:layout_marginRight="@dimen/list_margin_left"
+                    android:textColor="@color/color_black"
+                    android:lines="1"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:autoSizeTextType="uniform"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content "/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:animateLayoutChanges="true"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/editingdocuments_list_location_out"
+                    android:gravity="left"
+                    android:textStyle="bold"
+                    android:text="@string/editingdocuments_locationP"
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:textColor="@color/color_black"
+                    android:autoSizeTextType="uniform"
+                    android:layout_weight="1"
+                    android:lines="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content "/>
+
+                <TextView
+                    android:id="@+id/editingdocuments_list_location_in"
+                    android:gravity="right"
+                    android:textStyle="bold"
+                    android:text="@string/editingdocuments_locationW"
+                    android:layout_marginRight="@dimen/list_margin_left"
+                    android:textColor="@color/color_black"
+                    android:autoSizeTextType="uniform"
+                    android:layout_weight="1"
+                    android:lines="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content "/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:animateLayoutChanges="true"
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/editingdocuments_list_setamount"
+                    android:gravity="left"
+                    android:textStyle="bold"
+                    android:text="@string/editingdocuments_amountset"
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:textColor="@color/color_black"
+                    android:autoSizeTextType="uniform"
+                    android:layout_weight="1"
+                    android:lines="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content "/>
+
+                <TextView
+                    android:id="@+id/editingdocuments_list_gotamount"
+                    android:gravity="left"
+                    android:textStyle="bold"
+                    android:text="@string/editingdocuments_amountgot"
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:textColor="@color/color_black"
+                    android:autoSizeTextType="uniform"
+                    android:layout_weight="1"
+                    android:lines="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content "/>
+
+                <TextView
+                    android:id="@+id/editingdocuments_list_amount"
+                    android:textStyle="bold"
+                    android:gravity="right"
+                    android:lines="1"
+                    android:text="@string/editingdocuments_amountfulfilled"
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:layout_marginRight="@dimen/list_margin_right"
+                    android:textColor="@color/color_black"
+                    android:autoSizeTextType="uniform"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content "/>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+</LinearLayout>

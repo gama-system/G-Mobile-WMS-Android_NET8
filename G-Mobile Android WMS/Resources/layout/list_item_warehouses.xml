@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+
+    <TextView
+        android:id="@+id/warehouses_list_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.25"
+        android:autoSizeTextType="uniform"
+        android:textColor="@color/color_black"
+        android:textStyle="bold"
+        android:padding="@dimen/listv_padding">
+
+    </TextView>
+
+    <TextView
+        android:autoSizeTextType="uniform"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textStyle="italic"
+        android:padding="@dimen/listv_padding">
+
+    </TextView>
+
+</LinearLayout>

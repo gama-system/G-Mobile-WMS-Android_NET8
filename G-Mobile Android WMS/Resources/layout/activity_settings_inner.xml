@@ -1,0 +1,643 @@
+﻿
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:focusableInTouchMode="true"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="top|center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Header aligned to top -->
+    <include
+        layout="@layout/header" />
+
+    <!-- Content below header and above footer -->
+    
+    <ScrollView
+        android:descendantFocusability="beforeDescendants"
+        android:fillViewport="true"
+        android:id="@+id/activity_settings_scrollcontent"
+        android:layout_above="@id/footer"
+        android:layout_below="@id/header"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:descendantFocusability="beforeDescendants"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <CheckBox
+                android:id="@+id/settings_can_close_app_global"
+                android:text="@string/settings_can_close_app_global"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <CheckBox
+				android:id="@+id/only_one_SSCC_on_document"
+                android:text="Tylko jedna paleta SSCC w systemie"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <CheckBox
+				android:id="@+id/disable_edit_sscc"
+                android:text="Blokada edycji pola paleta (SSCC)"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <CheckBox
+                android:id="@+id/settings_getfromsscc"
+                android:text="@string/settings_getfromsscc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <CheckBox
+                android:id="@+id/settings_AutoDetal"
+                android:text="@string/settings_AutoDetal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+                    
+            <TextView
+                android:text="@string/settings_SetRejestrForDetal"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <EditText
+                android:id="@+id/settings_SetRejestrForDetal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+                      
+            <TextView
+                android:text="@string/settings_SetContrahForDetal"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <EditText
+                android:id="@+id/settings_SetContrahForDetal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
+             <CheckBox
+                android:id="@+id/settings_QuickMM"
+                android:text="@string/settings_QuickMM"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+                    
+            <TextView
+                android:text="@string/settings_SetRejestrForMM"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <EditText
+                android:id="@+id/settings_SetRejestrForMM"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+                      
+            <TextView
+                android:text="@string/settings_SetMagazineForMM"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <EditText
+                android:id="@+id/settings_SetMagazineForMM"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <CheckBox
+                android:id="@+id/settings_disable_navigationbar"
+                android:text="@string/settings_disable_navigationbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            
+            <CheckBox
+                android:id="@+id/settings_enable_cameracapture"
+                android:text="@string/settings_enable_cameracapture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <CheckBox
+                android:id="@+id/settings_barcodelogin"
+                android:text="@string/settings_barcodelogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <CheckBox
+                android:id="@+id/settings_locationChange"
+                android:text="@string/settings_locationChange"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <CheckBox
+                android:id="@+id/settings_location_suggested_ZL"
+                android:text="Proponuj lokalizacje dla pozycji na dok. ZL (Roznoszenie)"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <CheckBox
+                android:id="@+id/settings_disableHandLocationsChange"
+                android:text="@string/settings_disableHandLocationsChange"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+             
+            <TextView
+                android:text="Wyłącz potwierdzanie kolejnym towarem na dokumentach:"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+             <CheckBox
+                android:id="@+id/tow_skip_pw"
+                android:text="@string/doc_pw"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="@dimen/abc_action_bar_stacked_max_height"
+                android:layout_height="wrap_content"/>
+              <CheckBox
+                android:id="@+id/tow_skip_rw"
+                android:text="@string/doc_rw"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="@dimen/abc_action_bar_stacked_max_height"
+                android:layout_height="wrap_content"/>
+              <CheckBox
+                android:id="@+id/tow_skip_pz"
+                android:text="@string/modules_PZ"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="@dimen/abc_action_bar_stacked_max_height"
+                android:layout_height="wrap_content"/>
+            <CheckBox
+                android:id="@+id/tow_skip_wz"
+                android:text="@string/modules_WZ"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="@dimen/abc_action_bar_stacked_max_height"
+                android:layout_height="wrap_content"/>
+            
+            <CheckBox
+                android:id="@+id/settings_autoclose_one_invent"
+                android:text="@string/settings_autoclose_one_invent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="@string/settings_confirm_only_location"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+             <CheckBox
+                android:id="@+id/doc_pw"
+                android:text="@string/doc_pw"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="@dimen/abc_action_bar_stacked_max_height"
+                android:layout_height="wrap_content"/>
+              <CheckBox
+                android:id="@+id/doc_rw"
+                android:text="@string/doc_rw"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="@dimen/abc_action_bar_stacked_max_height"
+                android:layout_height="wrap_content"/>
+              <CheckBox
+                android:id="@+id/doc_zl"
+                android:text="@string/doc_zl"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="@dimen/abc_action_bar_stacked_max_height"
+                android:layout_height="wrap_content"/>
+
+            <CheckBox
+                android:id="@+id/allow_multipicking"
+                android:text="@string/settings_allow_multipicking"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <CheckBox
+                android:id="@+id/multipicking_confirmoutloc"
+                android:text="@string/settings_multipicking_confirmoutloc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <CheckBox
+                android:id="@+id/multipicking_confirmart"
+                android:text="@string/settings_multipicking_confirmart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <CheckBox
+                android:id="@+id/multipicking_confirminloc"
+                android:text="@string/settings_multipicking_confirminloc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+             <CheckBox
+                android:id="@+id/multipicking_set_status_close_after_finish"
+                android:text="@string/settings_multipicking_set_status_close_after_finish"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+             
+             <CheckBox
+                android:id="@+id/multipicking_auto_kompletacja_after_finish"
+                android:text="@string/settings_multipicking_auto_kompletacja_after_finish"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+             <CheckBox
+                android:id="@+id/multipicking_document_selection"
+                android:text="@string/settings_multipicking_modechoice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+
+
+            <TextView
+                android:text="@string/settings_multipicking_closedelay"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <G_Mobile_Android_WMS.Controls.NumericUpDown
+                android:id="@+id/settings_multipicking_closedelay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            
+            <TextView
+                android:text="Domyślne ilości na dokumnetach typu (-1 to ilość z dokumentu):"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+             <TextView
+                android:text="@string/settings_set_value_on_doc_pw"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+               <G_Mobile_Android_WMS.Controls.NumericUpDown
+                android:id="@+id/settings_set_value_on_doc_pw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Zlecone"/>
+                <G_Mobile_Android_WMS.Controls.NumericUpDown
+                android:id="@+id/settings_set_value_on_order_doc_pw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="@string/settings_set_value_on_doc_pz"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+               <G_Mobile_Android_WMS.Controls.NumericUpDown
+                android:id="@+id/settings_set_value_on_doc_pz"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Zlecone"/>
+                <G_Mobile_Android_WMS.Controls.NumericUpDown
+                android:id="@+id/settings_set_value_on_order_doc_pz"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
+            <TextView
+                android:text="@string/settings_set_value_on_doc_rw"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+               <G_Mobile_Android_WMS.Controls.NumericUpDown
+                android:id="@+id/settings_set_value_on_doc_rw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Zlecone"/>
+                <G_Mobile_Android_WMS.Controls.NumericUpDown
+                android:id="@+id/settings_set_value_on_order_doc_rw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="@string/settings_set_value_on_doc_wz"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <G_Mobile_Android_WMS.Controls.NumericUpDown
+                android:id="@+id/settings_set_value_on_doc_wz"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Zlecone"/>
+            <G_Mobile_Android_WMS.Controls.NumericUpDown
+                android:id="@+id/settings_set_value_on_order_doc_wz"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+             <TextView
+                android:text="@string/settings_set_value_on_doc_zl"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <G_Mobile_Android_WMS.Controls.NumericUpDown
+                android:id="@+id/settings_set_value_on_doc_zl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Zlecone"/>
+            <G_Mobile_Android_WMS.Controls.NumericUpDown
+                android:id="@+id/settings_set_value_on_order_doc_zl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="@string/settings_order_check_frequency"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <G_Mobile_Android_WMS.Controls.NumericUpDown
+                android:id="@+id/settings_refresh_frequency"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="@string/settings_back_date_docs"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <G_Mobile_Android_WMS.Controls.NumericUpDown
+                android:id="@+id/settings_days_back_to_display"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <CheckBox
+                android:id="@+id/settings_proddate"
+                android:text="@string/settings_proddate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="@string/settings_proddate_days"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <G_Mobile_Android_WMS.Controls.NumericUpDown
+                android:id="@+id/settings_proddate_days"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <CheckBox
+                android:id="@+id/settings_bestbeforedate"
+                android:text="@string/settings_bestbeforedate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:text="@string/settings_bestbeforedate_days"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <G_Mobile_Android_WMS.Controls.NumericUpDown
+                android:id="@+id/settings_bestbeforedate_days"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:layout_margin="3dp"
+                android:textColor="@color/color_white"
+                android:id="@+id/settings_barcode_order"
+                android:text="@string/settings_barcode_order"
+                android:background="@drawable/roundbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <CheckBox
+                android:id="@+id/settings_barcode_order_force"
+                android:text="Wymuszaj skanowanie według kolejności"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:text="Usuwa przycisk 'Koniec' podczas skanowania według kolejności"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:layout_margin="3dp"
+                android:textColor="@color/color_white"
+                android:id="@+id/settings_modules"
+                android:text="@string/settings_modules"
+                android:background="@drawable/roundbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:layout_margin="3dp"
+                android:textColor="@color/color_white"
+                android:id="@+id/settings_instantscan"
+                android:text="@string/settings_instantscan"
+                android:background="@drawable/roundbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
+            <Button
+                android:layout_margin="3dp"
+                android:textColor="@color/color_white"
+                android:id="@+id/settings_zlmode"
+                android:text="@string/settings_zlmode"
+                android:background="@drawable/roundbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:layout_margin="3dp"
+                android:textColor="@color/color_white"
+                android:id="@+id/settings_mmmode"
+                android:text="@string/settings_mmmode"
+                android:background="@drawable/roundbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+         
+
+
+            
+            <Button
+                android:layout_margin="3dp"
+                android:textColor="@color/color_white"
+                android:id="@+id/settings_lists"
+                android:text="@string/settings_lists"
+                android:background="@drawable/roundbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
+
+            <Button
+                android:layout_margin="3dp"
+                android:textColor="@color/color_white"
+                android:id="@+id/settings_confirmscreen"
+                android:text="@string/settings_confirmscreen"
+                android:background="@drawable/roundbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:layout_margin="3dp"
+                android:textColor="@color/color_white"
+                android:id="@+id/settings_requiredfields"
+                android:text="@string/settings_requiredfields"
+                android:background="@drawable/roundbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:layout_margin="3dp"
+                android:textColor="@color/color_white"
+                android:id="@+id/settings_items_requiredfields"
+                android:text="@string/settings_items_requiredfields"
+                android:background="@drawable/roundbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:layout_margin="3dp"
+                android:textColor="@color/color_white"
+                android:id="@+id/settings_codes"
+                android:text="@string/settings_codes"
+                android:background="@drawable/roundbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
+            <Button
+                android:layout_margin="3dp"
+                android:textColor="@color/color_white"
+                android:id="@+id/settings_statuses_enter"
+                android:text="@string/settings_statuses_enter"
+                android:background="@drawable/roundbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:layout_margin="3dp"
+                android:textColor="@color/color_white"
+                android:id="@+id/settings_statuses_exit"
+                android:text="@string/settings_statuses_exit"
+                android:background="@drawable/roundbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:layout_margin="3dp"
+                android:textColor="@color/color_white"
+                android:id="@+id/settings_statuses_pause"
+                android:text="@string/settings_statuses_pause"
+                android:background="@drawable/roundbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+                        <Button
+                android:layout_margin="3dp"
+                android:textColor="@color/color_white"
+                android:id="@+id/settings_statuses_done"
+                android:text="@string/settings_statuses_done"
+                android:background="@drawable/roundbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:layout_margin="3dp"
+                android:textColor="@color/color_white"
+                android:id="@+id/settings_statuses_finish"
+                android:text="@string/settings_statuses_finish"
+                android:background="@drawable/roundbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
+            <Button
+                android:layout_margin="3dp"
+                android:textColor="@color/color_white"
+                android:id="@+id/settings_statuses_incomplete"
+                android:text="@string/settings_statuses_incomplete"
+                android:background="@drawable/roundbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
+        </LinearLayout>
+
+
+
+    </ScrollView>
+
+
+
+
+    <!-- Footer -->
+
+    <RelativeLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/footer_size"
+        android:focusableInTouchMode="true"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_alignParentBottom="true"
+        android:background="@color/color_footer"
+        android:gravity="left">
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_below="@id/scanbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/arrow_prev"
+            app:backgroundTint="@color/floating_button_blue"
+            app:fabCustomSize="@dimen/floating_button_size"
+            app:maxImageSize="@dimen/floating_button_maximagesize"
+            android:layout_marginLeft="@dimen/floating_button_margin_left"
+            android:id="@+id/SettingsInnerBtnPrev" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/SettingsBtnPrev"
+            android:gravity="right">
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/refresh"
+                app:fabCustomSize="@dimen/floating_button_size"
+                app:maxImageSize="@dimen/floating_button_maximagesize"
+                android:layout_marginRight="@dimen/floating_button_margin_right"
+                android:id="@+id/SettingsInnerBtnDefault" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/checkmark"
+                app:backgroundTint="@color/floating_button_green"
+                app:fabCustomSize="@dimen/floating_button_size"
+                app:maxImageSize="@dimen/floating_button_maximagesize"
+                android:layout_marginRight="@dimen/floating_button_margin_right"
+                android:id="@+id/SettingsInnerBtnSave" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,542 @@
+<resources>
+	<string name="app_name">G-Mobile WMS</string>
+	<string name="action_settings">Ustawienia:</string>
+	<string name="global_tak">Tak</string>
+	<string name="global_nie">Nie</string>
+	<string name="global_wait">Czekaj...</string>
+	<string name="global_skanuj">Skan...</string>
+	<string name="global_ok">OK</string>
+	<string name="global_cancel">Anuluj</string>
+	<string name="global_alert">Uwaga!</string>
+	<string name="global_cameraerror">Błąd uruchomienia kamery.</string>
+	<string name="global_error">Wystąpił błąd!</string>
+	<string name="global_connectionerror">Nie udało połączyć się z serwerem.</string>
+	<string name="global_reconnected">Utracono połączenie, ale udało się je przywrócić. Spróbuj wykonać ostatnią czynność jeszcze raz.</string>
+	<string name="global_liczba_pozycji">Pozycji:</string>
+	<string name="global_suma_pozycji">Suma:</string>
+	<string name="global_licence_invalid">Licencja jest błędna.</string>
+	<string name="global_licence_inactive">Licencja jest nieaktywna.</string>
+	<string name="global_licence_expired">Termin licencji minął.</string>
+	<string name="global_licence_nearly_expired">Niedługo koniec terminu licencji. Pozostało dni: </string>
+	<string name="global_licence_occupied">Pracuje już zbyt dużo operatorów.</string>
+	<string name="global_logged_out">Zostałeś wylogowany z systemu.</string>
+	<string name="global_searching_barcode">Parsowanie kodu kreskowego...</string>
+	<string name="global_setting_documents_to_group">Przypisywanie dokumentów do grupy lokalizacji...</string>
+	<string name="global_define_statuses">Brak zdefiniowanego odpowiedniego statusu dokumentu.</string>
+	<string name="global_delete">Usuń</string>
+	<string name="global_edit">Edytuj</string>
+	<string name="global_busy">Aplikacja jest w trakcie wykonywania polecenia. Czy na pewno chcesz je przerwać? Może to spowodować zawieszenie się programu.</string>
+	<string name="global_default">Domyślny</string>
+	<string name="global_youscanned">Zeskanowano... </string>
+	<string name="global_end">Koniec</string>
+	<string name="global_dateerror">Niepoprawna data!</string>
+	<string name="global_next">Następny:</string>
+	<string name="global_skip">Pomiń</string>
+	<string name="global_none">Brak</string>
+	<string name="global_new">Nowy...</string>
+	<string name="global_scanning_now">Do zeskanowania:</string>
+	<string name="update_available">Konieczna jest aktualizacja aplikacji. Rozpocząć?</string>
+	<string name="updating">Pobieranie aktualizacji...</string>
+	<string name="update_failed">Aktualizacja nie powiodła się.</string>
+	<string name="unhandled_exception">Wystąpił nieoczekiwany błąd.</string>
+
+	<string name="select_flog">Wybierz funkcję logistyczną</string>
+	<string name="select_reg">Wybierz rejestr</string>
+	<string name="select_unit">Wybierz jednostkę miary</string>
+
+	<string name="common_logout_title">Wylogowanie</string>
+	<string name="common_logout_message">Wylogować się z systemu?</string>
+
+	<string name="header_user">Operator: </string>
+	<string name="header_mag">Magazyn: </string>
+
+	<string name="splash_activity_name">"Witaj"</string>
+	<string name="splash_activity_connecting">Łączenie z serwerem...</string>
+	<string name="splash_activity_connecterror">Nie udało się połączyć z serwerem.</string>
+	<string name="splash_activity_blad_konfig">Nie znaleziono poprawnej konfiguracji programu</string>
+
+	<string name="main_activity_name">Start</string>
+	<string name="main_activity_wyjściezprogramu_title">"Zamknięcie programu"</string>
+	<string name="main_activity_wyjściezprogramu_message">Czy na pewno chcesz zamknąć program?</string>
+	<string name="main_activity_wersja">Wersja: </string>
+	<string name="main_activity_copyright">2024 Gama System</string>
+	<string name="main_activity_versioninsuff">Wersja serwera jest inna niż wymagana. Wymagana wersja bazy z którą program działa to: </string>
+
+	<string name="info_activity_name">Info</string>
+	<string name="info_activity_wersja">Wersja: </string>
+	<string name="info_activity_zarejestrowano">Zarejestrowano dla:</string>
+	<string name="info_activity_czaslicencji">Czas trwania licencji:</string>
+	<string name="info_activity_licencjapelna">Licencja nieograniczona czasowo.</string>
+
+
+	<string name="scanner_activity_name">Skanowanie</string>
+
+	<string name="warehouses_activity_name_change">Zmiana magazynu</string>
+	<string name="warehouses_activity_name_context">Magazyn kontekstowy</string>
+	<string name="warehouses_activity_name_target">Magazyn docelowy</string>
+	<string name="warehouses_loading">Pobieranie magazynów...</string>
+	<string name="warehouses_name">Nazwa magazynu</string>
+
+
+	<string name="modules_PW">PW</string>
+	<string name="modules_RW">RW</string>
+	<string name="modules_PZ">PZ</string>
+	<string name="modules_WZ">WZ</string>
+	<string name="modules_MM">MM</string>
+	<string name="modules_ZL">ZL</string>
+	<string name="modules_IN">Inwentaryzacja</string>
+	<string name="modules_Stan">Stan magazynu</string>
+	<string name="modules_activity_name">Moduły</string>
+	<string name="modules_kompletacja">Kompletacja</string>
+
+	<string name="stocks_activity_name">Stan magazynu</string>
+	<string name="stocks_loading">Obliczanie stanów...</string>
+	<string name="stocks_article_or_location_not_found">Nie znaleziono w bazie lokalizacji ani towaru o danym kodzie kreskowym.</string>
+	<string name="stocks_itemname">Nazwa towaru</string>
+	<string name="stocks_itemsymbol">Symbol</string>
+	<string name="stocks_location">Nazwa lokalizacji</string>
+	<string name="stocks_number">Ilość</string>
+	<string name="stocks_unit">Jednostka</string>
+	<string name="stocks_unit_mode">Wyświetlana jednostka</string>
+	<string name="stocks_default_unit">Jednostka domyślna</string>
+	<string name="stocks_base_unit">Jednostka podstawowa</string>
+	<string name="stocks_activity_scanhint">Zeskanuj towar lub wybierz &#128269;</string>
+	<string name="stocks_search_by_what">Stan czego wyświetlić?</string>
+	<string name="stocks_search_by_article">Towaru...</string>
+	<string name="stocks_search_by_location">Lokalizacji...</string>
+
+	<string name="article_activity_name">Towary</string>
+	<string name="articles_loading">Wyszukiwanie towarów..."</string>
+	<string name="articles_articlename">Nazwa towaru</string>
+	<string name="articles_symbol">Symbol</string>
+	<string name="articles_amount">Ilość</string>
+	<string name="articles_activity_scanhint">Zeskanuj towar albo wybierz go z listy!</string>
+	<string name="articles_filter">Wpisz filtr przeszukiwania...</string>
+	<string name="articles_not_found">Nie znaleziono w bazie towaru o danym kodzie kreskowym.</string>
+	<string name="articles_cannot_be_used">Ten artykuł nie może zostać dodany do tego dokumentu.</string>
+	<string name="articles_many">Który dokładnie to artykuł?</string>
+
+	<string name="locations_activity_name">Lokalizacje</string>
+	<string name="locations_loading">Wyszukiwanie lokalizacji..."</string>
+	<string name="locations_locationname">Nazwa lokalizacji</string>
+	<string name="locations_warehousename">Nazwa magazynu</string>
+	<string name="locations_amount">Stan towaru</string>
+	<string name="locations_activity_scanhint">Zeskanuj lokalizację albo wybierz ją z listy!</string>
+	<string name="locations_filter">Wpisz filtr przeszukiwania...</string>
+	<string name="locations_not_found">Nie znaleziono w bazie lokalizacji o danym kodzie kreskowym.</string>
+
+	<string name="partie_activity_name">Partie</string>
+	<string name="partie_loading">Wyszukiwanie partii..."</string>
+	<string name="partie_name">Kod partii</string>
+	<string name="partie_amount">Stan</string>
+	<string name="partie_activity_scanhint">Zeskanuj partię albo wybierz ją z listy!</string>
+	<string name="partie_filter">Wpisz filtr przeszukiwania...</string>
+	<string name="partie_not_found">Nie znaleziono w bazie takiej partii.</string>
+
+	<string name="palety_activity_name">Palety</string>
+	<string name="palety_loading">Wyszukiwanie palet..."</string>
+	<string name="palety_name">Oznaczenie palety</string>
+	<string name="palety_amount">Stan</string>
+	<string name="palety_activity_scanhint">Zeskanuj paletę albo wybierz ją z listy!</string>
+	<string name="palety_filter">Wpisz filtr przeszukiwania...</string>
+	<string name="palety_not_found">Nie znaleziono w bazie takiej palety.</string>
+
+
+
+	<string name="serial_activity_name">Numery seryjne</string>
+	<string name="serial_loading">Wyszukiwanie numerów seryjnych..."</string>
+	<string name="serial_name">Oznaczenie numeru seryjnego</string>
+	<string name="serial_amount">Stan</string>
+	<string name="serial_activity_scanhint">Zeskanuj numer seryjny albo wybierz go z listy!</string>
+	<string name="serial_filter">Wpisz filtr przeszukiwania...</string>
+	<string name="serial_not_found">Nie znaleziono w bazie takiego numeru seryjnego.</string>
+
+
+	<string name="inventorylocations_activity_name">Lokalizacje inwentaryzacji</string>
+	<string name="inventorylocations_not_found">Nie znaleziono w bazie lokalizacji o danym kodzie kreskowym, bądź nie jest on przypisany do tego dokumentu inwentaryzacji!</string>
+
+	<string name="contractors_activity_name">Kontrahenci</string>
+	<string name="contractors_loading">Wyszukiwanie kontrahentów..."</string>
+	<string name="contractors_contractorsymbol">Symbol kontrahenta</string>
+	<string name="contractors_contractorname">Nazwa kontrahenta</string>
+	<string name="contractors_activity_scanhint">Zeskanuj kod kontrahenta albo wybierz go z listy!</string>
+	<string name="contractors_filter">Wpisz filtr przeszukiwania...</string>
+	<string name="contractors_not_found">Nie znaleziono w bazie kontrahenta o danym kodzie kreskowym.</string>
+
+	<string name="documents_activity_name">Dokumenty</string>
+	<string name="documents_activity_scanhint">Zeskanuj wózek bądź kod dokumentu!</string>
+	<string name="documents_activity_scanhintZLMM">Zeskanuj Towar lub Lokalizacje</string>
+	<string name="documents_loading">Pobieranie dokumentów..."</string>
+	<string name="documents_added">Czekaj, otwieranie dokumentu..."</string>
+	<string name="documents_opening">Otwieranie dokumentu..."</string>
+	<string name="documents_docnumber">Numer dokumentu</string>
+	<string name="documents_docdate">Data dokumentu</string>
+	<string name="documents_contractor">Kontrahent</string>
+	<string name="documents_delete">Czy na pewno chcesz usunąć ten dokument?</string>
+	<string name="documents_deletemany">Czy na pewno chcesz usunąć te dokumenty?</string>
+	<string name="documents_deletemanyconfirm">Uważaj! Usuwasz WIELE dokumentów. Potwierdź decyzję o usunięciu jeszcze raz.</string>
+	<string name="documents_cantdelete_locvolumeexceeded">Usunięcie tego dokumentu spowoduje przekroczenie objętości lokalizacji których ustawienia na to nie zezwalają.</string>
+	<string name="documents_cantdelete_locmaxweightexceeded">Usunięcie tego dokumentu spowoduje przekroczenie nośności lokalizacji których ustawienia na to nie zezwalają.</string>
+	<string name="documents_cantdelete_beingedited">Nie można usunąć tego dokumentu gdyż jest edytowany.</string>
+	<string name="documents_cantdelete_notyours">Nie można usunąć tego dokumentu, gdyż został utworzony przez innego operatora.</string>
+	<string name="documents_cantdelete_posused">Pozycje tego dokumentu były już użyte, więc nie można go usunąć.</string>
+	<string name="documents_cantdelete_closed">Nie masz uprawnień do usuwania zamkniętych dokumentów.</string>
+	<string name="documents_cantdelete_used">Ten dokument został użyty do wygenerowania innego, więc nie można go usunąć.</string>
+	<string name="documents_cantdelete_many">Niektórych dokumentów nie udało się usunąć.</string>
+	<string name="documents_cantedit_edited">Wybrany dokument jest edytowany przez innego operatora.</string>
+	<string name="documents_cantedit_deleted">Wybrany dokument został usunięty.</string>
+	<string name="documents_cantedit_many_of_this_type">Wykonywać jednocześnie można jedynie dokumenty zlecone.</string>
+	<string name="documents_cantedit_many_if_closed">Wykonywać jednocześnie można jedynie dokumenty niezakończone.</string>
+	<string name="documents_cantedit_opened_or_closed">Dokument został przesunięty do statusu, który uniemożliwia jego edytowanie.</string>
+	<string name="document_was_empty_and_was_deleted">Dokument był pusty, więc został usunięty.</string>
+	<string name="documents_didnotfound_assignedtoloc">Nie znaleziono dokumentu przypisanego do tej lokalizacji.</string>
+	<string name="documents_didnotfound_barcode">Nie znaleziono dokumentu, lokalizacji bądź grupy lokalizacji o tym kodzie kreskowym.</string>
+	<string name="documents_docfound_barcode">Znaleziono dokument ale należy on do innego typu!</string>
+	<string name="documents_locgroup_fromdifferent_warehouse">Znaleziono grupę lokalizacji, ale nie należy ona do bieżącego magazynu.</string>
+	<string name="documents_loc_fromdifferent_warehouse">Znaleziono lokalizację, ale nie należy ona do bieżącego magazynu.</string>
+	<string name="documents_wrong_warehouse">Dokumentu nie można edytować, gdyż pochodzi z innego magazynu.</string>
+	<string name="documents_cannot_assign">Do danej grupy dokumentów nie można przypisać żadnego z listy.</string>
+	<string name="documents_selection_hint">Zaznaczono: </string>
+	<string name="documents_number_postion">Ilosc kuwet/dokumentów </string>
+
+
+	<string name="creating_documents_activity_name">Tworzenie dokumentu</string>
+	<string name="creating_documents_progress">Tworzenie dokumentu..."</string>
+	<string name="creating_documents_contractor">Kontrahent:</string>
+	<string name="creating_documents_buffer">Lokalizacja buforowa:</string>
+	<string name="creating_documents_funclog_tar">Domyślna docelowa f. logistyczna:</string>
+	<string name="creating_documents_funclog_src">Domyślna źródłowa f. logistyczna:</string>
+	<string name="creating_documents_description">Opis:</string>
+	<string name="creating_documents_warehouse">Magazyn docelowy:</string>
+	<string name="creating_documents_docrelated">Dokument powiązany:</string>
+	<string name="creating_documents_registry">Rejestr:</string>
+	<string name="creating_documents_target_registry_not_set">Musisz wybrać najpierw rejestr!</string>
+	<string name="creating_documents_target_warehouse_not_set">Musisz wybrać najpierw magazyn docelowy!</string>
+	<string name="creating_documents_not_complete">Wypełnij wszystkie pola zaznaczone na czerwono.</string>
+	<string name="creating_documents_cannot_create_doc_of_type">Program nie obsługuje dodawania dokumentów o takim typie.</string>
+	<string name="creating_documents_registry_must_be_set">Dla wszystkich dokumentów koniecznym jest wpisanie rejestru.</string>
+	<string name="creating_documents_registry_not_found">Rejestr został usunięty.</string>
+	<string name="creating_documents_registry_not_of_correct_type">Wybrany rejestr należy do innego typu dokumentów.</string>
+	<string name="creating_documents_unknown_error">Wystąpił nieznany błąd podczas tworzenia dokumentu.</string>
+	<string name="documents_filter">Wpisz filtr przeszukiwania...</string>
+
+	<string name="Dopotwierdzenia">Do potwierdzenia</string>
+	<string name="Uszkodzenie">Uszkodzenie</string>
+	<string name="Brakfaktury">Brak faktury</string>
+	<string name="Brakitowarowe">Braki towarowe</string>
+	<string name="Dostawaniekompletna">Dostawa niekompletna</string>
+
+
+	<string name="editing_documents_activity_name">Edycja dokumentu</string>
+	<string name="editing_documents_loading">Pobieranie pozycji..."</string>
+	<string name="editingdocuments_articlename">Nazwa towaru"</string>
+	<string name="editingdocuments_articlesymbol">Symbol"</string>
+	<string name="editingdocuments_symbol">Symbol"</string>
+	<string name="editingdocuments_partia">Partia"</string>
+	<string name="editingdocuments_paleta">Paleta (SSCC)"</string>
+	<string name="editingdocuments_paletaP">Paleta (SSCC) źródłowa"</string>
+	<string name="editingdocuments_paletaW">Paleta (SSCC) docelowa"</string>
+	<string name="editingdocuments_flog">Funkcja logistyczna"</string>
+	<string name="editingdocuments_flogP">F.Logis.źródłowa"</string>
+	<string name="editingdocuments_flogW">F.Logis.docelowa"</string>
+	<string name="editingdocuments_serialnumber">Nry seryjne"</string>
+	<string name="editingdocuments_lot">Loty"</string>
+	<string name="editingdocuments_kodean">Kod EAN"</string>
+	<string name="editingdocuments_nrkat">Numer katalogowy"</string>
+	<string name="editingdocuments_productiondate">Data produkcji"</string>
+	<string name="editingdocuments_bestbefore">Data przydatności"</string>
+	<string name="editingdocuments_location">Lokalizacja"</string>
+	<string name="editingdocuments_locationP">Lokalizacja źródłowa"</string>
+	<string name="editingdocuments_locationW">Lokalizacja docelowa"</string>
+	<string name="editingdocuments_amountset">Ilość zlecona"</string>
+	<string name="editingdocuments_amountgot">Ilość zebrana"</string>
+	<string name="editingdocuments_amountfulfilled">Ilość wykonana"</string>
+    <string name="editingdocuments_activity_scanhintnoarticle">Zeskanuj lokalizację!"</string>
+	<string name="editingdocuments_activity_scanhint">Zeskanuj towar lub lokalizację!"</string>
+	<string name="editingdocuments_activity_scanhint2_in">Zeskanuj towar! Lokalizacja przychodu:"</string>
+	<string name="editingdocuments_activity_scanhint2_out">Zeskanuj towar! Lokalizacja rozchodu:"</string>
+	<string name="editingdocuments_activity_scanhint2_unk">Zeskanuj towar! Lokalizacja:"</string>
+	<string name="editingdocuments_leave">Jak wyjść z dokumentu?</string>
+	<string name="editingdocuments_leave_allow_others_to_edit">Przerwij wykonywanie</string>
+	<string name="editingdocuments_leave_allow_only_me_to_edit">Pauzuj wykonywanie</string>
+	<string name="editingdocuments_leave_closedocument">Zamknij dokument(y)</string>
+	<string name="editingdocuments_leave_confirm_close">Na pewno chcesz zamknąć dokument(y)? Nie będzie możliwa ich dalsza edycja na terminalu!</string>
+	<string name="editingdocuments_leave_incomplete">Jeden z edytowanych dokumentów jest niekompletny i nie można go zamknąć. Czy chcesz przypisać mu status </string>
+	<string name="editingdocuments_deleteitem_confirm">Czy na pewno chcesz usunąć tą pozycję?</string>
+	<string name="editingdocuments_deleteitem_many">Czy na pewno chcesz usunąć te pozycje?</string>
+	<string name="editingdocuments_deleteitem_many_confirm">Uważaj! Usuwasz WIELE pozycji. Potwierdź decyzję o usunięciu jeszcze raz.</string>
+	<string name="editingdocuments_cannot_deleteitem_many">Niektórych pozycji nie udało się usunąć.</string>
+	<string name="editingdocuments_cannot_find_item">Nie znaleziono pozycji do edycji.</string>
+	<string name="editingdocuments_gathering">Zbiórka</string>
+	<string name="editingdocuments_distrib">Roznoszenie</string>
+	<string name="editing_documents_opening">Otwieranie pozycji..."</string>
+	<string name="editingdocuments_inventoryloc_leave">Jak wyjść z pozycji?</string>
+	<string name="editingdocuments_inventoryloc_leave_without_marking">Wyjdź bez oznaczania</string>
+	<string name="editingdocuments_inventoryloc_leave_markcomplete">Oznacz jako wykonaną</string>
+	<string name="editingdocuments_loctoputin">Kuweta</string>
+	<string name="editingdocuments_locnoinwarehouse">Lokalizacja nie należy do obecnego magazynu.</string>
+
+	<string name="editingdocuments_buffertype_out">Rozchodu</string>
+	<string name="editingdocuments_buffertype_in">Przychodu</string>
+	<string name="editingdocuments_buffertype">Dla której operacji jest to bufor?</string>
+
+	<string name="documentitem_activity_name">Edytowanie pozycji</string>
+	<string name="documentitem_activity_name_adding">Dodawanie pozycji</string>
+	<string name="documentitem_activity_name_splitting">Rozbijanie pozycji</string>
+	<string name="documentitem_activity_name_increasing">Zwiększanie pozycji</string>
+	<string name="documentitem_activity_name_editing">Edytowanie pozycji</string>
+
+	<string name="documentitem_activity_scanhint_loc_add">Wpisz ilość i zeskanuj lokalizację lub kolejny towar by przyjąć!</string>
+	<string name="documentitem_activity_scanhint_loc_take">Wpisz ilość i zeskanuj lokalizację lub kolejny towar by dokonać rozchodu!</string>
+	<string name="documentitem_activity_scanhint_bufferset">Wpisz ilość i zeskanuj kolejny towar!</string>
+	<string name="documentitem_activity_scanhint_bufferset_zlmm_onestep">Wypełnij pola, wpisz ilość i zeskanuj kolejny towar!</string>
+	<string name="documentitem_activity_scanhint_zlmm_onestep">Wypełnij pola, wpisz ilość i zatwierdź!</string>
+
+	<string name="documentitem_not_filled">Uzupełnij wszystkie wymagane pola.</string>
+	<string name="documentitem_creationedition_toomuch">Ilość przekracza ilość zleconą, co na tym dokumencie jest niedozwolone.</string>
+	<string name="documentitem_creationedition_uniterror">Taka jednostka nie jest przypisana do towaru!</string>
+	<string name="documentitem_creationedition_amounterror">Na magazynie nie ma wystarczającej ilości towaru.</string>
+	<string name="documentitem_creationedition_docerror">Błędny typ dokumentu.</string>
+	<string name="documentitem_creationedition_locerror">Nie można wykonać ruchu magazynowego bez przypisanej istniejącej lokalizacji!</string>
+	<string name="documentitem_creationedition_partiablocked">Ten numer partii jest zablokowany.</string>
+	<string name="documentitem_creationedition_paletablocked">Ten numer palety jest zablokowany.</string>
+	<string name="documentitem_creationedition_articleblocked">Ten towar jest zablokowany.</string>
+	<string name="documentitem_creationedition_locationblocked">Ta lokalizacja jest zablokowana.</string>
+	<string name="documentitem_edition_zlmm_distrib_more_than_gather">Ilość zebrana nie może być mniejsza niż ilość rozniesiona!</string>
+	<string name="documentitem_creationedition_noarticle">Nie wybrano towaru.</string>
+	<string name="documentitem_creationedition_volumeexceeded">Nie można wykonać tego przychodu, gdyż spowoduje on przekroczenie maksymalnej objętości lokalizacji, na co nie pozwalają jej ustawienia.</string>
+	<string name="documentitem_creationedition_weightexceeded">Nie można wykonać tego przychodu, gdyż spowoduje on przekroczenie maksymalnej nośności lokalizacji, na co nie pozwalają jej ustawienia.</string>
+	<string name="documentitem_creationedition_dimensionsexceeded">Nie można wykonać tego przychodu, gdyż wymiary towaru przekraczają wymiary lokalizacji, na co nie pozwalają jej ustawienia.</string>
+	<string name="documentitem_editiondeletion_volumeexceededonr">Nie można zmienić tego rozchodu, gdyż spowoduje to przekroczenie maksymalnej objętości lokalizacji, na co nie pozwalają jej ustawienia.</string>
+	<string name="documentitem_editiondeletion_weightexceededonr">Nie można zmienić tego rozchodu, gdyż spowoduje to przekroczenie maksymalnej nośności lokalizacji, na co nie pozwalają jej ustawienia.</string>
+	<string name="documentitem_location_already_set">Nie można przypisać tej lokalizacji, gdyż pozycja ma już przypisaną odgórnie lokalizację.</string>
+
+
+	<string name="documentitem_location_notfound">Nie znaleziono takiej lokalizacji.</string>
+	<string name="documentitem_deletion_uniterror">Taka jednostka nie jest przypisana do towaru!</string>
+	<string name="documentitem_deletionedition_used">Przychody tej pozycji zostały już użyte i nie mogą być edytowane.</string>
+	<string name="documentitem_deletionedition_doesntexist">Edytowana pozycja została usunięta z bazy danych.</string>
+
+	<string name="documentitem_deletion_docerror">Błędny typ dokumentu.</string>
+
+	<string name="editingdocuments_zlmm_howtoedit">Jak wykonać to przeniesienie?</string>
+	<string name="editingdocuments_zlmm_onestep">Bezpośrednio</string>
+	<string name="editingdocuments_zlmm_twostep">Jako zbiórka i roznoszenie</string>
+
+
+	<string name="editingdocuments_rwzm_howtoedit">Jak wykonać multipicking</string>
+	<string name="editingdocuments_rwzm_selection">Wybrane dokumenty</string>
+	<string name="editingdocuments_rwzm_alldocuments">Wszystkie dokumenty</string>
+
+	<string name="editingdocuments_rwzm_shouldcontinue">Czy kontynuwać poprzedni multipicking</string>
+	<string name="editingdocuments_rwzm_continue">Kontynuj poprzedni multipicking</string>
+	<string name="editingdocuments_rwzm_new">Rozpocznij nowy multipicking</string>
+	<string name="editingdocuments_rwzm_pause_multipick">Czy aby na pewno chcesz wsztrzymać multipicking</string>
+
+	<string name="document_mp_kuweta">Lokalizcja Docelowa</string>
+	<string name="document_mp_lokalizacjazrodlowa">Lokalizacja źródłowa</string>
+	<string name="document_item_article_name">Nazwa towaru:</string>
+	<string name="document_item_symbol_name">Symbol:</string>
+	<string name="document_item_partia">Partia:</string>
+	<string name="document_item_paleta">Paleta (SSCC):</string>
+	<string name="document_item_paleta_out">Paleta (SSCC) przed:</string>
+	<string name="document_item_paleta_in">Paleta (SSCC) po:</string>
+	<string name="document_item_serial">Nr seryjny:</string>
+	<string name="document_item_owner">Właściciel:</string>
+	<string name="document_item_lot">Lot:</string>
+	<string name="document_item_flog">Funkcja logistyczna:</string>
+	<string name="document_item_flog_out">Funkcja logistyczna przed:</string>
+	<string name="document_item_flog_in">Funkcja logistyczna po:</string>
+	<string name="document_item_location_out">Lokalizacja przed:</string>
+	<string name="document_item_location_in">Lokalizacja po:</string>
+	<string name="document_item_location">Lokalizacja:</string>
+	<string name="document_item_ordered">Zlecono:</string>
+	<string name="document_item_ondoc">Zrealizowano:</string>
+	<string name="document_item_amountinwarehouse">Zasób:</string>
+	<string name="document_item_kodean">EAN:</string>
+	<string name="document_item_layout_kodean">EAN:</string>
+
+	<string name="document_item_NrKat">Numer Katalogowy:</string>
+	<string name="document_item_layout_NrKat">Numer Katalogowy:</string>
+	
+	<string name="document_item_proddate">Wyprodukowano:</string>
+	<string name="document_item_bestbefore">Przydatność:</string>
+	<string name="document_item_amountcanbeaddedtoloc">Można przyjąć:</string>
+	<string name="documentitem_cant_be_zero">Ilość musi być większa od 0!</string>
+	<string name="documentitem_cant_be_less_than_location">Ilość nie możę być większa niż ilość kuwet!</string>
+	<string name="Etykieta">Czy wydrukować etykiete?</string>
+	<string name="Etykieta_Wydruk_Niemozliwy">Wydruk niemożliwy. Brak konfiguracji</string>
+
+	<string name="users_input_new_setting_group_name">Wpisz nazwę dla nowej grupy uprawnień...</string>
+	<string name="user_cannot_edit_settings">Ten użytkownik nie ma uprawnień do edytowania ustawień terminala mobilnego.</string>
+	<string name="user_cannot_leave_app">Ten użytkownik nie ma uprawnień do zamykania programu.</string>
+	<string name="users_activity_name">Operatorzy</string>
+	<string name="users_activity_closing_name">Zamykanie programu</string>
+	<string name="users_activity_settings_name">Dostęp do ustawień</string>
+	<string name="users_login">Login</string>
+	<string name="users_name">Nazwa użytkownika</string>
+	<string name="users_password">Hasło:</string>
+	<string name="users_loading">Pobieranie operatorów...</string>
+	<string name="users_already_logged_in">Ten operator zalogowany jest na innym stanowisku. Zalogować się tutaj?</string>
+	<string name="users_password_incorrect">Podano błędne hasło.</string>
+	<string name="users_user_deactivated">Ten operator został usunięty albo zdezaktywowany.</string>
+	<string name="users_passport_incorrect">Legitymacja niepoprawna.</string>
+	<string name="users_getpass">Wpisz hasło.</string>
+	<string name="users_no_settings">Ten operator nie ma przypisanej grupy uprawnień mobilnych.</string>
+
+	<string name="settings_activity_name">Ustawienia</string>
+	<string name="settings_activity_ip">IP:</string>
+	<string name="settings_activity_port">Port:</string>
+	<string name="settings_activity_user">Użytkownik:</string>
+	<string name="settings_activity_pass">Hasło:</string>
+	<string name="settings_activity_test">Test skanera:</string>
+	<string name="settings_activity_connecterror">Zapisano, ale nie udało się połączyć z serwerem.</string>
+	<string name="settings_activity_saved">Zapisano. Połączenie z serwerem powiodło się.</string>
+	<string name="settings_activity_saveerror">Błąd zapisu konfiguracji.</string>
+	<string name="settings_getpass">Wprowadź hasło wdrożeniowe.</string>
+	<string name="settings_activity_inner">Ustawienia wdrożeniowe</string>
+	<string name="settings_activity_usersettings">Uprawnienia operatorów</string>
+	<string name="settings_activity_usersettingids">Grupy uprawnień operatorów</string>
+	<string name="settings_activity_selectsetgroup">Wybierz grupę uprawnień do edycji...</string>
+	<string name="settings_activity_group_exists">Grupa o takiej nazwie już istnieje.</string>
+
+	<string name="settings_instantscan">Moduły skanowania natychmiastowego</string>
+	<string name="settings_sounds">Dźwięki</string>
+	<string name="settings_can_delete_own_docs">Może usuwać własne dokumenty</string>
+	<string name="settings_can_delete_others_docs">Może usuwać cudze dokumenty</string>
+	<string name="settings_can_delete_items">Może usuwać pozycje dokumentów</string>
+	<string name="settings_can_delete_items_on_orders">Może usuwać pozycje zleceń</string>
+	<string name="settings_order_check_frequency">Częstotliwość sprawdzania nowych zleceń na ekranie modułów (ms):</string>
+	<string name="settings_back_date_docs">Wyświetlaj zamknięte dokumenty z poprzednich tylu dni:</string>
+	<string name="settings_confirm_only_location">Potwierdzanie pozycji tylko kodem lokalizacji na dokumentach:</string>
+	<string name="settings_modules">Włączone moduły</string>
+	<string name="settings_codes">Sposób parsowania kodów kreskowych</string>
+	<string name="settings_zlmode">Domyślny tryb dokumentów ZL</string>
+	<string name="settings_mmmode">Domyślny tryb dokumentów MM</string>
+	<string name="settings_rwwzmmode">Domyślny tryb dokumentów RW ZW</string>
+	<string name="settings_lists">Elementy wyświetlane na liście pozycji</string>
+	<string name="settings_confirmscreen">Elementy wyświetlane na ekranie pozycji</string>
+	<string name="settings_requiredfields">Pola wymagane dla dokumentów</string>
+	<string name="settings_statuses_enter">Status dokumentu po wejściu</string>
+	<string name="settings_statuses_exit">Status dokumentu po przerwaniu jego wykonywania</string>
+	<string name="settings_statuses_pause">Status dokumentu podczas pauzy</string>
+	<string name="settings_statuses_done">Status dokumentu po jego wykonaniu</string>
+	<string name="settings_statuses_finish">Status dokumentu po jego zamknięciu</string>
+	<string name="settings_statuses_incomplete">Status dokumentu gdy zostanie zamknięty niekompletny</string>
+	<string name="settings_select_module">Wybierz moduł</string>
+	<string name="settings_select_doc_status">Wybierz status dokumentu</string>
+	<string name="settings_required_elements">Elementy wymagane</string>
+	<string name="settings_inner_activity_name">Konfiguracja wdrożeniowa</string>
+	<string name="settings_shown_elements">Elementy wyświetlane</string>
+	<string name="settings_nothing_to_import">Na serwerze nie ma ustawień do pobrania.</string>
+	<string name="settings_import_error">Ustawienia na serwerze są błędne.</string>
+	<string name="settings_imported">Zaimportowano.</string>
+	<string name="settings_exported">Wyeksportowano.</string>
+	<string name="settings_do_import">Zaimportować ustawienia z serwera?</string>
+	<string name="settings_do_export">Wyeksportować ustawienia do serwera?</string>
+	<string name="settings_do_default">Przywrócić ustawienia domyślne?</string>
+	<string name="settings_proddate">Wpisuj datę produkcji</string>
+	<string name="settings_proddate_days">Offset dni daty produkcji:</string>
+	<string name="settings_bestbeforedate">Wpisuj datę przydatności</string>
+	<string name="settings_bestbeforedate_days">Offset dni daty przydatności:</string>
+	<string name="settings_num_barcodes">Skanuj maksymalną ilość kodów:</string>
+	<string name="settings_items_requiredfields">Pola wymagane na pozycjach dokumentów</string>
+	<string name="settings_getfromsscc">Pobieraj dane z pierwszego przychodu SSCC</string>
+	<string name="settings_AutoDetal">Włącz tworzenie WZ dla detal</string>
+	<string name="settings_QuickMM">Włącz tworzenie szybkich MM </string>
+	<string name="settings_disableHandLocationsChange">Wyłącz zmianę lokalizacji z ręki</string>
+	<string name="settings_barcode_order">Kolejność skanowania kodów kreskowych</string>
+	<string name="settings_can_close_app">Może zamknąć aplikację</string>
+	<string name="settings_can_close_app_global">Sprawdzaj, czy użytkownicy mogą zamknąć aplikację</string>
+	<string name="settings_show_hidden_docs">Pokaż na liście dokumentów również te "W realizacji" przez innych operatorów (kolor błękitny)</string>
+	<string name="settings_show_difference_colors">Oznacz kolorem dokumenty "Do realizacji" które mają co najmniej jedną pozycję zrealizowaną</string>
+	
+	<string name="settings_can_delete_closed_docs">Może usuwać zamknięte dokumenty</string>
+	<string name="settings_autoclose_one_invent">Podczas inwentaryzacji wielu lokalizacji, automatycznie oznaczaj je jako wykonane po dodaniu pozycji.</string>
+	<string name="settings_barcodelogin">Zezwalaj na logowanie kodem kreskowym.</string>
+	<string name="settings_locationChange">Zezwalaj na zmiane lokalizacji zródłowej</string>
+	<string name="settings_disable_navigationbar">Blokada paska nawigacji</string>
+	<string name="settings_enable_cameracapture">Włączenie skanowania aparatem</string>
+	<string name="settings_only_once_pallet">Tylko jedna paleta SSCC na dokumecie PW</string>
+	<string name="settings_disable_edit_pallete">Blokada edycji pola paleta (SSCC)</string>
+
+	<string name="settings_SetContrahForDetal">Wpisz Nazwę kontrahenta dla detalu.</string>
+	<string name="settings_SetRejestrForDetal">Wpisz Nazwę Rejestru dla detalu.</string>
+	<string name="settings_SetMagazineForMM">Ustaw Nazwę magazynu do tworzenia szybkich MM.</string>
+	<string name="settings_SetRejestrForMM">Ustaw Nazwę Rejestru dla tworzenia szybkich MM.</string>
+	
+	<string name="orientation_vert">Pionowy</string>
+	<string name="orientation_horiz">Poziomy</string>
+	<string name="orientation_revvert">Pionowy odwrócony</string>
+	<string name="orientation_revhoriz">Poziomy odwrócony</string>
+	<string name="select_screen_orientation">Wybierz orientację ekranu</string>
+	<string name="settings_allow_multipicking">Multipicking</string>
+	<string name="settings_multipicking_confirmoutloc">Multipicking: Potwierdzenie lokalizacji wyjścia</string>
+	<string name="settings_multipicking_set_status_close_after_finish">Multipicking: Ustaw status zamknięty na dok. WZ</string>
+	<string name="settings_multipicking_auto_kompletacja_after_finish">Multipicking: Wykonaj kompletację po zak. MP</string>
+	<string name="settings_multipicking_confirmart">Multipicking: Potwierdzenie artykułu</string>
+	<string name="settings_multipicking_confirminloc">Multipicking: Potwierdzenie kuwety</string>
+	<string name="settings_multipicking_closedelay">Multipicking: pauza po zakończeniu ścieżki:</string>
+	<string name="settings_multipicking_modechoice">Multipicking: Wybór dokumentów</string>
+
+	<string name="settings_one_instead_of_set">Na zleceniach, podpowiadaj ilość 1 zamiast ilości zleconej.</string>
+	<string name="doc_pw">PW</string>
+	<string name="doc_rw">RW</string>
+	<string name="doc_zl">ZL</string>
+	<string name="settings_set_value_on_doc_pw">Dokumenty PW:</string>
+	<string name="settings_set_value_on_doc_rw">Dokumenty RW:</string>
+	<string name="settings_set_value_on_doc_pz">Dokumenty PZ:</string>
+	<string name="settings_set_value_on_doc_wz">Dokumenty WZ:</string>
+	<string name="settings_set_value_on_doc_zl">Dokumenty ZL:</string>
+
+	<string name="usersettingids_name">Uprawnienia operatarów</string>
+	<string name="usersettingids_selectopsetid">Wybierz poziom uprawnień dla operatora...</string>
+
+	<string name="usersettings_name">Edycja grupy uprawnień</string>
+	<string name="settings_activity_selectsetgrouptocopy">Wybierz grupę uprawnień do skopiowania...</string>
+	<string name="usersettings_removed">Ta grupa nie istnieje w bazie danych.</string>
+	<string name="usersettings_delete_group">Usunąć tą grupę uprawnień?</string>
+
+	<string name="barcodesettings_name">Parsowanie kodów kreskowych</string>
+	<string name="barcodesettings_shouldntedit">Ta wartość powinna pozostać statyczna.</string>
+	<string name="barcodesettings_target">Wybierz docelowe pole...</string>
+
+	<string name="barcodeorder_type">Wybierz typ kodu kreskowego...</string>
+	<string name="barcodeorder_remove">Usuń</string>
+	<string name="barcodeorder_templateany">Szablon</string>
+	<string name="barcodeorder_gs1">GS1</string>
+	<string name="barcodeorder_article">Artykuł</string>
+	<string name="barcodeorder_partia">Partia</string>
+	<string name="barcodeorder_paleta">Paleta (SSCC)</string>
+	<string name="barcodeorder_serialnr">Nr seryjny</string>
+	<string name="barcodeorder_lot">Lot</string>
+
+	<string name="multipicking_activity_previous">Poprzednia kuweta:</string>
+	<string name="multipicking_activity_setamount">Ilość zlecona:</string>
+	<string name="multipicking_activity_done">Zabrano:</string>
+	<string name="multipicking_activity_name">Zbiórka wielu dokumentów</string>
+	<string name="multipicking_activity_loading">Ustalanie kolejnej pozycji...</string>
+	<string name="multipicking_activity_loading_1">Pobieranie danych...</string>
+	<string name="multipicking_activity_closing">Koniec ścieżki. Zamykanie dokumentów. Ostatnia kuweta:</string>
+	<string name="multip_scanhint1">Zeskanuj wskazaną lokalizację źródłową</string>
+	<string name="multip_scanhint2">Zeskanuj towar</string>
+	<string name="multip_scanhint3">Zeskanuj wskazane miejsce na wózku</string>
+	<string name="multip_wrong_loc">Zeskanowano nieodpowiednią lokalizację.</string>
+	<string name="multip_wrong_art">Zeskanowano nieodpowiedni towar.</string>
+	<string name="multip_wrong_partia">Zeskanowano towar z nieodpowiedniej palety.</string>
+	<string name="multip_wrong_paleta">Zeskanowano towar z nieodpowiedniej partii.</string>
+	<string name="multip_wrong_serialnum">Zeskanowano towar z nieodpowiednim numerem seryjnym</string>
+
+	<string name="multip_art_not_in_loc">Zeskanowany towar nie występuje w podanej ilości w lokalizacji źródłowej.</string>
+	<string name="multip_docs_done">Brak pozycji do zebrania.</string>
+
+
+	<string name="kompletacja_ok">Zatwierdź</string>
+	<string name="kompletacja_activity_name">Kompletacja</string>
+	<string name="kompletacja_scanhint">Zeskanuj lokalizację lub kod kreskowy dokumentu.</string>
+	<string name="kompletacja_confirming">Zatwierdzanie dokumentu i zwalnianie z lokalizacji...</string>
+	<string name="kompletacja_didnotfind_barcode">Nie znaleziono dokumentu o takim kodzie kreskowym, bądź zeskanowana lokalizacja nie ma przypisanego dokumentu.</string>
+	<string name="kompletacja_didnotfind_locbarcode">Nie znaleziono lokalizacji o takim kodzie kreskowym.</string>
+	<string name="kompletacja_docexternal">Dokument zewnętrzny:</string>
+
+</resources>

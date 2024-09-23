@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32126.317
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "G-Mobile Android WMS", "G-Mobile Android WMS\G-Mobile Android WMS.csproj", "{E1465718-053F-493C-92A8-30073FC309D2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WMS-DESKTOP-API", "..\WMS-DESKTOP-API\WMS-DESKTOP-API\WMS-DESKTOP-API.csproj", "{8B6810FE-CD10-4312-B772-A1A213F6AB03}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WMS_Model", "..\WMS-SERWER-API\WMS_API\WMS_Model\WMS_Model.csproj", "{D8C533D3-3AB7-4386-9DF8-B2C35F4AE5F8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E1465718-053F-493C-92A8-30073FC309D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1465718-053F-493C-92A8-30073FC309D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1465718-053F-493C-92A8-30073FC309D2}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{E1465718-053F-493C-92A8-30073FC309D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1465718-053F-493C-92A8-30073FC309D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1465718-053F-493C-92A8-30073FC309D2}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{8B6810FE-CD10-4312-B772-A1A213F6AB03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B6810FE-CD10-4312-B772-A1A213F6AB03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B6810FE-CD10-4312-B772-A1A213F6AB03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B6810FE-CD10-4312-B772-A1A213F6AB03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8C533D3-3AB7-4386-9DF8-B2C35F4AE5F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8C533D3-3AB7-4386-9DF8-B2C35F4AE5F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8C533D3-3AB7-4386-9DF8-B2C35F4AE5F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8C533D3-3AB7-4386-9DF8-B2C35F4AE5F8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {90902EBC-7C94-4EDC-AFEA-924F0CF0C0C3}
+	EndGlobalSection
+EndGlobal

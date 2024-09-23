@@ -1,0 +1,225 @@
+﻿
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:focusableInTouchMode="true"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="top|center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Header aligned to top -->
+    <include
+        layout="@layout/header" />
+
+    <!-- Content below header and above footer -->
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_below="@id/header"
+        android:layout_above="@id/scanhint"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:id="@+id/partie_list_header"
+            android:orientation="horizontal"
+            android:background="@color/list_bands_a"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_weight="180"
+                android:orientation="vertical"
+                android:layout_width="wrap_content "
+                android:layout_height="fill_parent">
+
+                <TextView
+                    android:textStyle="bold"
+                    android:text="@string/partie_name"
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:textColor="@color/color_white"
+                    android:lines="1"
+                    android:autoSizeTextType="uniform"
+                    android:layout_weight="70"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content "/>
+
+                <LinearLayout
+                    android:layout_weight="200"
+                    android:orientation="horizontal"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:textStyle="bold"
+                        android:id="@+id/partie_list_header_amount"
+                        android:gravity="right"
+                        android:lines="1"
+                        android:text="@string/partie_amount"
+                        android:layout_marginRight="@dimen/list_margin_right"
+                        android:textColor="@color/color_white"
+                        android:autoSizeTextType="uniform"
+                        android:layout_weight="1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content "/>
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+        <ListView
+            android:layout_below="@id/partie_list_header"
+            android:layout_above="@id/partie_list_footer"
+            android:drawSelectorOnTop="false"
+            android:listSelector="@android:color/darker_gray"
+            android:id="@+id/list_view_partie"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"/>
+
+        <LinearLayout
+            android:id="@+id/partie_list_footer"
+            android:layout_alignParentBottom="true"
+            android:background="@color/list_bands_a"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <TextView
+                android:id="@+id/partie_item_count"
+                android:textColor="@color/color_white"
+                android:layout_marginLeft="@dimen/list_margin_left"
+                android:padding="3dp"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:lines="1"
+                android:text="@string/global_liczba_pozycji"
+                android:autoSizeTextType="uniform"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"/>
+
+
+
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:gravity="center"
+        android:lines="1"
+        android:id="@+id/scanhint"
+        android:layout_above="@id/scanbutton"
+        android:layout_weight="1"
+        android:padding="3dp"
+        android:textStyle="bold"
+        android:text="@string/partie_activity_scanhint"
+        android:autoSizeTextType="uniform"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
+
+
+    <Button
+        android:id="@+id/scanbutton"
+        android:background="@color/color_scanbutton"
+        android:text="@string/global_skanuj"
+        android:gravity = "center"
+        android:layout_above="@id/footer"
+        android:layout_marginTop="@dimen/scanbutton_margin_top"
+        android:layout_marginLeft="@dimen/scanbutton_margin_left"
+        android:layout_marginBottom="@dimen/scanbutton_margin_bottom"
+        android:layout_marginRight="@dimen/scanbutton_margin_right"
+        android:clickable="true"
+        android:padding="8dp"
+        android:autoSizeTextType="uniform"
+        android:textSize="@dimen/scanbutton_textsize"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/scanbutton_height"/>
+
+    <!-- Footer -->
+
+    <RelativeLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/footer_size"
+        android:focusableInTouchMode="true"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_alignParentBottom="true"
+        android:background="@color/color_footer"
+        android:gravity="left">
+
+
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/arrow_prev"
+            app:backgroundTint="@color/floating_button_blue"
+            app:fabCustomSize="@dimen/floating_button_size"
+            app:maxImageSize="@dimen/floating_button_maximagesize"
+            android:layout_marginLeft="@dimen/floating_button_margin_left"
+            android:id="@+id/partie_button_prev" />
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/partie_button_prev"
+            android:gravity="right">
+
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/refresh"
+                app:backgroundTint="@color/floating_button_blue"
+                app:fabCustomSize="@dimen/floating_button_size"
+                app:maxImageSize="@dimen/floating_button_maximagesize"
+                android:layout_marginRight="@dimen/floating_button_margin_right"
+                android:id="@+id/partie_btn_refresh" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/settings"
+                app:backgroundTint="@color/floating_button_blue"
+                app:fabCustomSize="@dimen/floating_button_size"
+                app:maxImageSize="@dimen/floating_button_maximagesize"
+                android:layout_marginRight="@dimen/floating_button_margin_right"
+                android:id="@+id/partie_btn_settings" />
+
+
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/search"
+                app:backgroundTint="@color/floating_button_blue"
+                app:fabCustomSize="@dimen/floating_button_size"
+                app:maxImageSize="@dimen/floating_button_maximagesize"
+                android:layout_marginRight="@dimen/floating_button_margin_right"
+                android:id="@+id/partie_btn_search" />
+
+
+
+        </LinearLayout>
+
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

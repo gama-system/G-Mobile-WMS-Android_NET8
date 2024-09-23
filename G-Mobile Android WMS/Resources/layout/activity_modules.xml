@@ -1,0 +1,277 @@
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Header aligned to top -->
+    <include
+        layout="@layout/header" />
+
+    <!-- Content below header and above footer -->
+
+    <ScrollView
+        android:padding="10sp"
+        android:fillViewport="true"
+        android:layout_above="@id/footer"
+        android:layout_below="@id/header"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:id="@+id/modules_button_container"
+            android:layout_above="@id/footer"
+            android:layout_below="@id/header"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/modules_btn_pw"
+                    android:tag="PW"
+                    android:padding="10dp"
+                    android:textSize="20sp"
+                    android:autoSizeTextType="uniform"
+                    android:layout_margin="3dp"                   
+                    android:textColor="@color/color_white"
+                    android:background="@drawable/roundbutton"
+                    android:text="@string/modules_PW"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"/>
+
+                <Button
+                    android:id="@+id/modules_btn_rw"
+                    android:tag="RW"
+                    android:padding="10dp"
+                    android:textSize="20sp"
+                    android:autoSizeTextType="uniform"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/roundbutton"
+                    android:text="@string/modules_RW"
+                    android:textColor="@color/color_white"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/modules_btn_pz"
+                    android:tag="PZ"
+                    android:padding="10dp"
+                    android:textSize="20sp"
+                    android:autoSizeTextType="uniform"
+                    android:textColor="@color/color_white"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/roundbutton"
+                    android:text="@string/modules_PZ"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"/>
+
+                <Button
+                    android:id="@+id/modules_btn_wz"
+                    android:tag="WZ"
+                    android:padding="10dp"
+                    android:textSize="20sp"
+                    android:autoSizeTextType="uniform"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/roundbutton"
+                    android:text="@string/modules_WZ"
+                    android:textColor="@color/color_white"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/modules_btn_zl"
+                    android:tag="ZL"
+                    android:padding="10dp"
+                    android:textSize="20sp"
+                    android:autoSizeTextType="uniform"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/roundbutton"
+                    android:text="@string/modules_ZL"
+                    android:textColor="@color/color_white"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/modules_btn_mm"
+                    android:tag="MM"
+                    android:padding="10dp"
+                    android:textSize="20sp"
+                    android:autoSizeTextType="uniform"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/roundbutton"
+                    android:text="@string/modules_MM"
+                    android:textColor="@color/color_white"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/modules_btn_in"
+                    android:tag="IN"
+                    android:padding="10dp"
+                    android:textSize="20sp"
+                    android:autoSizeTextType="uniform"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/roundbutton"
+                    android:text="@string/modules_IN"
+                    android:textColor="@color/color_white"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+                        <LinearLayout
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/modules_btn_kompletacja"
+                    android:tag="KOMPLETACJA"
+                    android:padding="10dp"
+                    android:textSize="20sp"
+                    android:autoSizeTextType="uniform"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/roundbutton"
+                    android:text="@string/modules_kompletacja"
+                    android:textColor="@color/color_white"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/modules_btn_stan"
+                    android:tag="STAN"
+                    android:padding="10dp"
+                    android:textSize="20sp"
+                    android:autoSizeTextType="uniform"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/roundbutton"
+                    android:text="@string/modules_Stan"
+                    android:textColor="@color/color_white"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+    </ScrollView>
+    <!-- Footer -->
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/footer_size"
+        android:focusableInTouchMode="true"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_alignParentBottom="true"
+        android:background="@color/color_footer"
+        android:gravity="left">
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:src="@drawable/arrow_prev"
+            app:backgroundTint="@color/floating_button_blue"
+            app:fabCustomSize="@dimen/floating_button_size"
+            app:maxImageSize="@dimen/floating_button_maximagesize"
+            android:layout_marginLeft="@dimen/floating_button_margin_left"
+            android:id="@+id/modules_btn_prev" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/BtnInfo"
+            android:gravity="right">
+
+                        <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/refresh"
+                app:backgroundTint="@color/floating_button_blue"
+                app:fabCustomSize="@dimen/floating_button_size"
+                app:maxImageSize="@dimen/floating_button_maximagesize"
+                android:layout_marginRight="@dimen/floating_button_margin_right"
+                android:id="@+id/modules_btn_checkdocs" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/home"
+                app:backgroundTint="@color/floating_button_blue"
+                app:fabCustomSize="@dimen/floating_button_size"
+                app:maxImageSize="@dimen/floating_button_maximagesize"
+                android:layout_marginRight="@dimen/floating_button_margin_right"
+                android:id="@+id/modules_btn_changewarehouse" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

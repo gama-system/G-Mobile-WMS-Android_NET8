@@ -1,0 +1,71 @@
+﻿
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/locations_list_status"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:textColor="@color/color_black"
+        android:background="#27b300"
+        android:textStyle="bold"
+        android:padding="@dimen/listv_padding"/>
+
+
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:id="@+id/locations_list_item"
+        android:layout_weight="5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:id="@+id/locations_list_locationname"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_black"
+            android:textStyle="bold"
+            android:padding="@dimen/listv_padding"/>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:padding="@dimen/listv_padding"
+                android:id="@+id/locations_list_warehouse"
+                android:gravity="left"
+                android:layout_marginRight="@dimen/list_margin_right"
+                android:textColor="@color/color_black"
+                android:layout_weight="1.75"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent "/>
+
+            <TextView
+                android:padding="@dimen/listv_padding"
+                android:id="@+id/locations_list_amount"
+                android:gravity="right"
+                android:textColor="@color/color_black"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent "/>
+
+
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+</LinearLayout>

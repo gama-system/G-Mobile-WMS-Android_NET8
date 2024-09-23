@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">G_Mobile_Android_WMS</string>
+    <string name="action_settings">Settings</string>
+    <string name="test">Translations test</string>
+</resources>

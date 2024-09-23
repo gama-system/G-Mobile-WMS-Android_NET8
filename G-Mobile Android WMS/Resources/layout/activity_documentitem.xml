@@ -1,0 +1,931 @@
+﻿
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:gravity="top|center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Header aligned to top -->
+    <include
+        layout="@layout/header" />
+
+    <!-- Content below header and above footer -->
+
+    <ScrollView
+        android:descendantFocusability="beforeDescendants"
+        android:fillViewport="true"
+        android:id="@+id/document_item_scrollcontent"
+        android:layout_above="@id/scanhint"
+        android:layout_below="@id/header"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <LinearLayout
+            android:descendantFocusability="beforeDescendants"
+            android:focusableInTouchMode="true"
+            android:padding="3dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+             <LinearLayout
+                android:id="@+id/document_item_layout_symbol"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:text="@string/document_item_symbol_name"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity = "left"
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:textStyle="bold"/>
+
+                    <LinearLayout
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:layout_marginRight="@dimen/list_margin_right"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    
+                    <TextView
+                        android:id="@+id/document_item_symbol"
+                        android:background="@color/text_field"
+                        android:text=""
+                        android:textSize="18sp"
+                        android:layout_weight="1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity = "left"
+                        android:textStyle="bold"/>
+                     </LinearLayout>
+             </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/document_item_layout_article"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="@string/document_item_article_name"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity = "left"
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:textStyle="bold"/>
+
+                <LinearLayout
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:layout_marginRight="@dimen/list_margin_right"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    
+                        
+
+                    <TextView
+                        android:id="@+id/document_item_article"
+                        android:background="@color/text_field"
+                        android:text=""
+                        android:textSize="18sp"
+                        android:layout_weight="1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity = "left"
+                        android:textStyle="bold"/>
+
+                    <android.support.design.widget.FloatingActionButton
+                        android:layout_marginLeft="@dimen/floating_button_margin_left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:backgroundTint="@color/floating_button_blue"
+                        android:src="@drawable/edit"
+                        app:fabCustomSize="@dimen/small_floating_button_size"
+                        app:maxImageSize="@dimen/small_floating_button_maximagesize"
+                        android:id="@+id/document_item_btn_article" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+                        				<LinearLayout
+                        android:layout_marginLeft="@dimen/list_margin_left"
+                        android:layout_marginRight="@dimen/list_margin_right"
+                        android:id="@+id/document_item_layout_NrKat"
+					    android:orientation="vertical"
+                        android:layout_marginTop="0dp"
+					    android:layout_width="match_parent"
+					    android:layout_height="wrap_content">
+
+					<TextView
+                        android:text="@string/document_item_NrKat"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity = "center"
+                        android:textStyle="bold"/>
+
+                    <TextView
+   
+                        android:id="@+id/document_item_NrKat"
+                        android:textColor="@color/color_black"
+                        android:layout_weight="1"
+                        android:autoSizeTextType="uniform"
+                        android:autoSizeMinTextSize="16sp"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"/>
+                     
+
+				</LinearLayout>
+            <LinearLayout
+                android:layout_marginLeft="@dimen/list_margin_left"
+                android:layout_marginRight="@dimen/list_margin_right"
+                android:id="@+id/document_item_layout_partia"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+
+                <TextView
+                    android:text="@string/document_item_partia"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity = "left"
+                    android:textStyle="bold"/>
+
+
+
+
+                <LinearLayout
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:layout_marginRight="@dimen/list_margin_right"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+                    <EditText
+                        android:text=""
+                        android:textSize="18sp"
+                        android:inputType="text"
+                        android:id="@+id/document_item_partia"
+                        android:singleLine="true"
+                        android:layout_weight="1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+
+
+
+
+
+                    <android.support.design.widget.FloatingActionButton
+                        android:layout_marginLeft="@dimen/floating_button_margin_left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:backgroundTint="@color/floating_button_blue"
+                        android:src="@drawable/edit"
+                        app:fabCustomSize="@dimen/small_floating_button_size"
+                        app:maxImageSize="@dimen/small_floating_button_maximagesize"
+                        android:id="@+id/document_item_btn_partia" />
+
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginLeft="@dimen/list_margin_left"
+                android:layout_marginRight="@dimen/list_margin_right"
+                android:id="@+id/document_item_layout_paleta"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/document_item_layout_paleta"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+                    <TextView
+                        android:text="@string/document_item_paleta"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity = "left"
+                        android:textStyle="bold"/>
+
+                    <LinearLayout
+                        android:layout_marginLeft="@dimen/list_margin_left"
+                        android:layout_marginRight="@dimen/list_margin_right"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+
+
+                        <EditText
+                            android:inputType="text"
+                            android:layout_weight="1"
+                            android:id="@+id/document_item_paleta"
+                            android:singleLine="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                        <android.support.design.widget.FloatingActionButton
+                            android:layout_marginLeft="@dimen/floating_button_margin_left"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:backgroundTint="@color/floating_button_blue"
+                            android:src="@drawable/edit"
+                            app:fabCustomSize="@dimen/small_floating_button_size"
+                            app:maxImageSize="@dimen/small_floating_button_maximagesize"
+                            android:id="@+id/document_item_btn_paleta" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              <LinearLayout
+                android:layout_marginLeft="@dimen/list_margin_left"
+                android:layout_marginRight="@dimen/list_margin_right"
+                android:id="@+id/document_item_layout_serial"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/document_item_layout_serial"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+                    <TextView
+                        android:text="@string/document_item_serial"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity = "left"
+                        android:textStyle="bold"/>
+
+                    <LinearLayout
+                        android:layout_marginLeft="@dimen/list_margin_left"
+                        android:layout_marginRight="@dimen/list_margin_right"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+
+
+                        <EditText
+                            android:inputType="text"
+                            android:layout_weight="1"
+                            android:id="@+id/document_item_serial"
+                            android:singleLine="true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                        <android.support.design.widget.FloatingActionButton
+                            android:layout_marginLeft="@dimen/floating_button_margin_left"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:backgroundTint="@color/floating_button_blue"
+                            android:src="@drawable/edit"
+                            app:fabCustomSize="@dimen/small_floating_button_size"
+                            app:maxImageSize="@dimen/small_floating_button_maximagesize"
+                            android:id="@+id/document_item_btn_serial" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <LinearLayout
+                android:layout_marginLeft="@dimen/list_margin_left"
+                android:layout_marginRight="@dimen/list_margin_right"
+                android:id="@+id/document_item_layout_bbefore_proddate"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/document_item_layout_proddate"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="@string/document_item_proddate"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity = "left"
+                        android:textStyle="bold"/>
+
+                    <EditText
+                        android:inputType="none"
+                        android:id="@+id/document_item_proddate"
+                        android:singleLine="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/document_item_layout_bestbefore"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="@string/document_item_bestbefore"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity = "left"
+                        android:textStyle="bold"/>
+
+                    <EditText
+                        android:inputType="none"
+                        android:id="@+id/document_item_bestbefore"
+                        android:singleLine="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginLeft="@dimen/list_margin_left"
+                android:layout_marginRight="@dimen/list_margin_right"
+                android:id="@+id/document_item_layout_serial_lot"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/document_item_layout_lot"
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="@string/document_item_lot"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity = "left"
+                        android:textStyle="bold"/>
+
+                    <EditText
+                        android:inputType="text"
+                        android:id="@+id/document_item_lot"
+                        android:singleLine="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+            				<LinearLayout
+                        android:layout_marginLeft="@dimen/list_margin_left"
+                        android:layout_marginRight="@dimen/list_margin_right"
+                        android:id="@+id/document_item_layout_kodean"
+					    android:orientation="vertical"
+                android:layout_marginTop="0dp"
+					    android:layout_width="match_parent"
+					    android:layout_height="wrap_content">
+
+					<TextView
+                        android:text="@string/document_item_kodean"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity = "center"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:inputType="text"
+                        android:id="@+id/document_item_kodean"
+                        android:textColor="@color/color_black"
+                        android:textSize="18sp"
+                        android:layout_marginTop="0dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+
+				</LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/document_item_layout_flog"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="@string/document_item_flog"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity = "left"
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:textStyle="bold"/>
+
+                <LinearLayout
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:layout_marginRight="@dimen/list_margin_right"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/document_item_flog"
+                        android:background="@color/text_field"
+                        android:text=""
+                        android:textSize="18sp"
+                        android:layout_weight="1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity = "center"
+                        android:textStyle="bold"/>
+
+                    <android.support.design.widget.FloatingActionButton
+                        android:layout_marginLeft="@dimen/floating_button_margin_left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:backgroundTint="@color/floating_button_blue"
+                        android:src="@drawable/edit"
+                        app:fabCustomSize="@dimen/small_floating_button_size"
+                        app:maxImageSize="@dimen/small_floating_button_maximagesize"
+                        android:id="@+id/document_item_btn_flog" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/document_item_layout_owner"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="@string/document_item_owner"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity = "left"
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:textStyle="bold"/>
+
+                <LinearLayout
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:layout_marginRight="@dimen/list_margin_right"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/document_item_owner"
+                        android:background="@color/text_field"
+                        android:text=""
+                        android:textSize="18sp"
+                        android:layout_weight="1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity = "center"
+                        android:textStyle="bold"/>
+
+                    <android.support.design.widget.FloatingActionButton
+                        android:layout_marginLeft="@dimen/floating_button_margin_left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:backgroundTint="@color/floating_button_blue"
+                        android:src="@drawable/edit"
+                        app:fabCustomSize="@dimen/small_floating_button_size"
+                        app:maxImageSize="@dimen/small_floating_button_maximagesize"
+                        android:id="@+id/document_item_btn_owner" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:id="@+id/document_item_layout_location"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="@string/document_item_location"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity = "left"
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:textStyle="bold"/>
+
+                <LinearLayout
+                    android:layout_marginLeft="@dimen/list_margin_left"
+                    android:layout_marginRight="@dimen/list_margin_right"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/document_item_location"
+                        android:background="@color/text_field"
+                        android:text=""
+                        android:textSize="18sp"
+                        android:layout_weight="1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity = "top"
+                        android:textStyle="bold"/>
+
+                    <android.support.design.widget.FloatingActionButton
+                        android:layout_marginLeft="@dimen/floating_button_margin_left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:backgroundTint="@color/floating_button_blue"
+                        android:src="@drawable/edit"
+                        app:fabCustomSize="@dimen/small_floating_button_size"
+                        app:maxImageSize="@dimen/small_floating_button_maximagesize"
+                        android:id="@+id/document_item_btn_location" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="5dp"
+                android:id="@+id/document_item_layout_amount"
+                android:orientation="horizontal"
+                android:gravity="top"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_weight="2"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/document_item_layout_ordered">
+
+                        <TextView
+                            android:lines="1"
+                            android:text="@string/document_item_ordered"
+                            android:textSize="14sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity = "left"
+                            android:layout_marginLeft="@dimen/list_margin_left"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:id="@+id/document_item_ordered"
+                            android:background="@color/text_field"
+                            android:text=""
+                            android:textSize="14sp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity = "left"
+                            android:layout_marginLeft="@dimen/list_margin_left"
+                            android:textStyle="bold"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/document_item_layout_ondoc">
+
+                        <TextView
+                            android:lines="1"
+                            android:text="@string/document_item_ondoc"
+                            android:textSize="14sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity = "left"
+                            android:layout_marginLeft="@dimen/list_margin_left"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:id="@+id/document_item_ondoc"
+                            android:background="@color/text_field"
+                            android:text=""
+                            android:textSize="14sp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity = "left"
+                            android:layout_marginLeft="@dimen/list_margin_left"
+                            android:textStyle="bold"/>
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/document_item_layout_amountinwarehouse">
+
+                        <TextView
+                            android:lines="1"
+                            android:text="@string/document_item_amountinwarehouse"
+                            android:textSize="14sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity = "left"
+                            android:layout_marginLeft="@dimen/list_margin_left"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:id="@+id/document_item_amountinwarehouse"
+                            android:background="@color/text_field"
+                            android:text=""
+                            android:textSize="14sp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity = "left"
+                            android:layout_marginLeft="@dimen/list_margin_left"
+                            android:textStyle="bold"/>
+
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/document_item_layout_amountcanbeaddedtoloc">
+
+                        <TextView
+                            android:lines="1"
+                            android:text="@string/document_item_amountcanbeaddedtoloc"
+                            android:textSize="14sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity = "left"
+                            android:layout_marginLeft="@dimen/list_margin_left"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:id="@+id/document_item_amountcanbeaddedtoloc"
+                            android:background="@color/text_field"
+                            android:text=""
+                            android:textSize="14sp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity = "left"
+                            android:layout_marginLeft="@dimen/list_margin_left"
+                            android:textStyle="bold"/>
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+                    <G_Mobile_Android_WMS.Controls.NumericUpDown
+                        android:id="@+id/document_item_amount"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="@dimen/list_margin_left"
+                        android:layout_marginRight="@dimen/list_margin_right"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+
+                    <LinearLayout
+                        android:id="@+id/document_item_layout_unit"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="@dimen/list_margin_left"
+                        android:layout_marginRight="@dimen/list_margin_right"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/document_item_unit"
+                            android:background="@color/text_field"
+                            android:text=""
+                            android:textSize="18sp"
+                            android:layout_weight="1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity = "center"
+                            android:textStyle="bold"/>
+
+                        <android.support.design.widget.FloatingActionButton
+                            android:layout_marginLeft="@dimen/floating_button_margin_left"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:backgroundTint="@color/floating_button_blue"
+                            android:src="@drawable/edit"
+                            app:fabCustomSize="@dimen/small_floating_button_size"
+                            app:maxImageSize="@dimen/small_floating_button_maximagesize"
+                            android:id="@+id/document_item_btn_unit" />
+
+                    </LinearLayout>
+
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+
+
+
+
+
+
+
+    <TextView
+        android:gravity="center"
+        android:id="@+id/scanhint"
+        android:layout_above="@id/scanbutton"
+        android:layout_weight="1"
+        android:padding="3dp"
+        android:textStyle="bold"
+        android:text="@string/documentitem_activity_scanhint_loc_add"
+        android:autoSizeTextType="uniform"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
+
+
+    <Button
+        android:id="@+id/scanbutton"
+        android:background="@color/color_scanbutton"
+        android:text="@string/global_skanuj"
+        android:gravity = "center"
+        android:layout_above="@id/footer"
+        android:layout_marginTop="@dimen/scanbutton_margin_top"
+        android:layout_marginLeft="@dimen/scanbutton_margin_left"
+        android:layout_marginBottom="@dimen/scanbutton_margin_bottom"
+        android:layout_marginRight="@dimen/scanbutton_margin_right"
+        android:clickable="true"
+        android:padding="8dp"
+        android:autoSizeTextType="uniform"
+        android:textSize="@dimen/scanbutton_textsize"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/scanbutton_height"/>
+
+
+    <!-- Footer -->
+
+    <RelativeLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/footer_size"
+        android:layout_alignParentBottom="true"
+        android:background="#e3e3e3"
+        android:gravity="left">
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:backgroundTint="@color/floating_button_blue"
+            android:src="@drawable/arrow_prev"
+            app:fabCustomSize="@dimen/floating_button_size"
+            app:maxImageSize="@dimen/floating_button_maximagesize"
+            android:layout_marginLeft="@dimen/floating_button_margin_left"
+            android:id="@+id/document_item_btn_cancel" />
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/creating_documents_btn_cancel"
+            android:gravity="right">
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:backgroundTint="@color/floating_button_green"
+                android:src="@drawable/checkmark"
+                app:fabCustomSize="@dimen/floating_button_size"
+                app:maxImageSize="@dimen/floating_button_maximagesize"
+                android:layout_marginRight="@dimen/floating_button_margin_right"
+                android:id="@+id/document_item_btn_ok" />
+
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

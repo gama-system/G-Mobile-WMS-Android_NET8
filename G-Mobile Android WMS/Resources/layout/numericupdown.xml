@@ -1,0 +1,45 @@
+﻿
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@android:color/transparent"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <Button
+        android:background="@android:color/transparent"
+        android:id="@+id/numupdown_btn_minus"
+        android:text="–"
+        android:textSize="30dp"
+        android:fontFamily="serif"
+        android:autoSizeTextType="uniform"
+        android:layout_weight="3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <EditText
+        android:selectAllOnFocus="true"
+        android:text="0.000"
+        android:gravity="center"
+        android:textSize="30dp"
+        android:autoSizeTextType="uniform"
+        android:id="@+id/numupdown_edit"
+        android:inputType="numberDecimal"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <Button
+        android:id="@+id/numupdown_btn_plus"
+        android:text="+"
+        android:textSize="30dp"
+        android:fontFamily="serif"
+        android:autoSizeTextType="uniform"
+        android:background="@android:color/transparent"
+        android:layout_weight="3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+</LinearLayout>

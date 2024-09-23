@@ -1,0 +1,55 @@
+﻿
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+  
+
+
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:id="@+id/partie_list_item"
+        android:layout_weight="5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:id="@+id/partie_list_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_black"
+            android:textStyle="bold"
+            android:padding="@dimen/listv_padding"/>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+
+
+            <TextView
+                android:padding="@dimen/listv_padding"
+                android:id="@+id/partie_list_amount"
+                android:gravity="right"
+                android:textColor="@color/color_black"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent "/>
+
+
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+</LinearLayout>

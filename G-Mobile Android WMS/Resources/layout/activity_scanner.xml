@@ -1,0 +1,98 @@
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Header aligned to top -->
+    <include
+        layout="@layout/header" />
+
+    <!-- Content below header and above footer -->
+
+    <EDMTDev.ZXingXamarinAndroid.ZXingScannerView
+        android:id="@+id/viewfinder"
+        android:layout_above="@id/footer"
+        android:layout_below="@id/header"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000"
+        android:layout_margin="5dp" />
+
+    <!-- Footer -->
+
+    <RelativeLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/footer_size"
+        android:focusableInTouchMode="true"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_alignParentBottom="true"
+        android:background="@color/color_footer"
+        android:gravity="left">
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/arrow_prev"
+            app:backgroundTint="@color/floating_button_blue"
+            app:fabCustomSize="@dimen/floating_button_size"
+            app:maxImageSize="@dimen/floating_button_maximagesize"
+            android:layout_marginLeft="@dimen/floating_button_margin_left"
+            android:id="@+id/BtnZamknijViewFinder" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:textColor="@android:color/black"
+                android:id="@+id/ScanningNum"
+                android:gravity="center"
+                android:textSize="15sp"
+                android:background="@color/color_footer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:textStyle="italic"
+                android:textColor="@android:color/black"
+                android:id="@+id/ScanningNext"
+                android:gravity="center"
+                android:textSize="15sp"
+                android:background="@color/color_footer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/BtnZamknijViewFinder"
+            android:gravity="right">
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/checkmark"
+                app:backgroundTint="@color/floating_button_green"
+                app:fabCustomSize="@dimen/floating_button_size"
+                app:maxImageSize="@dimen/floating_button_maximagesize"
+                android:layout_marginRight="@dimen/floating_button_margin_right"
+                android:id="@+id/ScannerScanningOK" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

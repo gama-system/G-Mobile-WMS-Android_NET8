@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Licencja>
+  <Firma>gamasystem</Firma>
+  <KodKomp>9005-351D-1E8B-DAD9-8D6D-E964-0756-96E9</KodKomp>
+  <Start>2022-06-20</Start>
+  <Koniec>2022-12-31</Koniec>
+  <Typ>Pełna</Typ>
+  <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+    <SignedInfo>
+      <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+      <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
+      <Reference URI="">
+        <Transforms>
+          <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+        </Transforms>
+        <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+        <DigestValue>Sva3ub2CflU7W+AfKC5f9RncItE=</DigestValue>
+      </Reference>
+    </SignedInfo>
+    <SignatureValue>jNK09A5lGefq9m4AWkuC5YpmbcoSQ71HPopwF/QIT2rNuHrbORzXz8k/rC8aN1PY1kDseezWaO1/Z5DQ1/MCEXJGTwE2FLnEaTcHHGxcfF99FQNPQS2ExhXcPOvUFBaweF07MKTnisZaJAdRDIp7VhvKvucaWlwyU8VFMXZpPgk=</SignatureValue>
+  </Signature>
+</Licencja>

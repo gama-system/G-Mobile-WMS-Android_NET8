@@ -1,0 +1,118 @@
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Header aligned to top -->
+    <include
+        layout="@layout/header" />
+
+    <!-- Content below header and above footer -->
+    <LinearLayout
+        android:layout_above="@id/footer"
+        android:layout_below="@id/header"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:contentDescription=""
+            android:src="@drawable/androidlogo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight = "150"
+            android:layout_marginHorizontal = "10dp"
+            android:id="@+id/LogoWMS"/>
+
+        <TextView
+            android:text="@string/main_activity_wersja"
+            android:textSize="18sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity = "center"
+            android:layout_weight = "50"
+            android:id="@+id/TextWersja"/>
+
+        <ImageView
+            android:contentDescription=""
+            android:src="@drawable/logo_firmy"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_weight="150"
+            android:layout_marginHorizontal = "10dp"
+            android:id="@+id/LogoKlienta"/>
+
+        <TextView
+            android:text="@string/main_activity_copyright"
+            android:textSize="20sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity = "center"
+            android:layout_weight = "100"
+            android:id="@+id/TextCopyright"/>
+
+
+    </LinearLayout>
+
+    <!-- Footer -->
+
+    <RelativeLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/footer_size"
+        android:focusableInTouchMode="true"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_alignParentBottom="true"
+        android:background="@color/color_footer"
+        android:gravity="left">
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/power"
+            app:backgroundTint="@color/floating_button_red"
+            app:fabCustomSize="@dimen/floating_button_size"
+            app:maxImageSize="@dimen/floating_button_maximagesize"
+            android:layout_marginLeft="@dimen/floating_button_margin_left"
+            android:id="@+id/BtnZamknij" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/info"
+            android:layout_toRightOf="@id/BtnZamknij"
+            app:backgroundTint="@color/floating_button_blue"
+            app:fabCustomSize="@dimen/floating_button_size"
+            app:maxImageSize="@dimen/floating_button_maximagesize"
+            android:layout_marginLeft="@dimen/floating_button_margin_left"
+            android:id="@+id/BtnInfo" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/BtnInfo"
+            android:gravity="right">
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/arrow_next"
+                app:backgroundTint="@color/floating_button_blue"
+                app:fabCustomSize="@dimen/floating_button_size"
+                app:maxImageSize="@dimen/floating_button_maximagesize"
+                android:layout_marginRight="@dimen/floating_button_margin_right"
+                android:id="@+id/BtnStart" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

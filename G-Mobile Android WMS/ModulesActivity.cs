@@ -15,6 +15,7 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using G_Mobile_Android_WMS.Enums;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS

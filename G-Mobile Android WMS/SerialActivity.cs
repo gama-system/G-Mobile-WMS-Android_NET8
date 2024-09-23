@@ -18,6 +18,9 @@ using Android.Views.InputMethods;
 using Android.Widget;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
+using WMS_DESKTOP_API;
+using WMS_DESKTOP_API;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
@@ -152,7 +155,7 @@ namespace G_Mobile_Android_WMS
 
         private async Task<int> ParseBarcode(string Data)
         {
-            NumerSeryjnyO numerSeryjny = Globalne.numerSeryjnyBL.PobierzNumerSeryjny(-1, Data);
+            NumerSeryjnyO numerSeryjny = Serwer.numerySeryjneBL.PobierzNumerSeryjny(-1, Data);
             if (numerSeryjny.ID < 0)
             {
                 await Helpers.AlertAsyncWithConfirm(
@@ -268,7 +271,7 @@ namespace G_Mobile_Android_WMS
         private List<NumerSeryjnyO> GetData()
         {
             List<NumerSeryjnyO> numery =
-                Globalne.numerSeryjnyBL.PobierzListeNumerowSeryjychNaLokalizacjiDlaDanegoTowaru(
+                Serwer.numerySeryjneBL.PobierzListeNumerowSeryjychNaLokalizacjiDlaDanegoTowaru(
                     IDTowaru,
                     IDLokalizacji
                 );

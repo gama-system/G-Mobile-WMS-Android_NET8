@@ -19,6 +19,7 @@ using G_Mobile_Android_WMS.Controls;
 using G_Mobile_Android_WMS.Enums;
 using Symbol.XamarinEMDK.Barcode;
 using WMS_DESKTOP_API;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
@@ -666,7 +667,7 @@ namespace G_Mobile_Android_WMS
 
                 przedTag1 = (string)Location.Tag;
                 przedText1 = (string)Location.Text;
-                przedLocId1 = Globalne
+                przedLocId1 = Serwer
                     .lokalizacjaBL.PobierzLokalizacjęWgNazwy(Location.Text, Globalne.Magazyn.ID)
                     .ID;
 
@@ -679,7 +680,7 @@ namespace G_Mobile_Android_WMS
                 // natomiast Task.Delay(50) wstawiane jest jako dodatkowe zabezpieczenie - o ile to tak mozna nazwac
 
                 Task.Delay(50);
-                Location.Tag = Globalne
+                Location.Tag = Serwer
                     .lokalizacjaBL.PobierzLokalizacjęWgNazwy(Location.Text, Globalne.Magazyn.ID)
                     .ID;
                 Task.Delay(50);
@@ -1690,7 +1691,7 @@ namespace G_Mobile_Android_WMS
                     && Globalne.CurrentSettings.SerialNumber
                 )
                 {
-                    int ID = Globalne.numerSeryjnyBL.PobierzIDNumeruSeryjnego(SerialNumber.Text);
+                    int ID = Serwer.numerySeryjneBL.PobierzIDNumeruSeryjnego(SerialNumber.Text);
 
                     if (ID != (int)SerialNumber.Tag)
                     {
@@ -2024,7 +2025,7 @@ namespace G_Mobile_Android_WMS
                 if (LastScanData != null && !string.IsNullOrEmpty(LastScanData[0]))
                 {
                     var czyLokalizacja =
-                        Globalne
+                        Serwer
                             .lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(
                                 LastScanData[0],
                                 Globalne.Magazyn.ID,
@@ -2032,20 +2033,20 @@ namespace G_Mobile_Android_WMS
                             )
                             ?.ID != -1;
                     var skanowanyTowarNieIstnieje =
-                        Serwer.kodykreskoweBL.WyszukajKodKreskowy(LastScanData[0])?.Towar == "";
+                        Serwer.kodyKreskoweBL.WyszukajKodKreskowy(LastScanData[0])?.Towar == "";
                     if (skanowanyTowarNieIstnieje && !czyLokalizacja)
                     {
                         AutoException.ThrowIfNotNull(this, Resource.String.articles_not_found);
                     }
                     else if (!czyLokalizacja)
                     {
-                        var skanowanyTowar = Globalne
+                        var skanowanyTowar = Serwer
                             .towarBL.PobierzTowarWgKoduKreskowego(LastScanData[0])
                             .FirstOrDefault();
                         // sprawdzamy czy towar jest na liscie pozycji w danym dokumencie
                         if (
                             Dokument.bZlecenie
-                            && Globalne
+                            && Serwer
                                 .dokumentBL.PobierzListęIDPozycji(Dokument.ID)
                                 .Select(x => x == skanowanyTowar.ID)
                                 .Count() == 0

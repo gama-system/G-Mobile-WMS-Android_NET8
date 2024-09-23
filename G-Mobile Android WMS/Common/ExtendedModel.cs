@@ -11,6 +11,7 @@ using Android.Widget;
 using G_Mobile_Android_WMS.Enums;
 using Newtonsoft.Json;
 using WMS_DESKTOP_API;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS.ExtendedModel
@@ -298,12 +299,7 @@ namespace G_Mobile_Android_WMS.ExtendedModel
                 ExProductionDate = R.Base.dtDataProdukcji;
                 ExBestBefore = R.Base.dtDataPrzydatności;
                 ExIDOwner = R.Base.idKontrahent;
-                ExOwner = (string)
-                    Helpers.HiveInvoke(
-                        typeof(WMSServerAccess.Podmiot.PodmiotBL),
-                        "PobierzNazwęKontrahenta",
-                        R.Base.idKontrahent
-                    );
+                ExOwner = Serwer.podmiotBL.PobierzNazwęKontrahenta(R.Base.idKontrahent);
                 DefaultAmount = 0;
                 ExNumerSeryjny = R.Base.strNumerySeryjne;
             }

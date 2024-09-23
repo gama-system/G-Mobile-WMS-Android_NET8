@@ -10,6 +10,7 @@ using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Views;
 using Android.Widget;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
@@ -474,13 +475,8 @@ namespace G_Mobile_Android_WMS
 
             try
             {
-#warning HiveInvoke
-                ZapytanieZTabeliO Zap = (ZapytanieZTabeliO)
-                    Helpers.HiveInvoke(
-                        typeof(WMSServerAccess.Ogólne.OgólneBL),
-                        "ZapytanieSQL",
-                        Komenda
-                    );
+                ZapytanieZTabeliO Zap = Serwer.ogólneBL.ZapytanieSQL(Komenda);
+
                 // usuniecie pozycji gdzie ilosc rowna sie zeru.. nalezaloby zmienic SQL GetStocks, rozwiazanie tymczasowe i zarazem docelowe
                 Zap.ListaWierszy?.RemoveAll(x => x[3]?.ToString() == "0");
                 return Zap;
@@ -506,13 +502,7 @@ namespace G_Mobile_Android_WMS
                 .Replace("<<IDJEDNOSTKI>>", Globalne.CurrentUserSettings.DisplayUnit.ToString());
             try
             {
-#warning HiveInvoke
-                var roznoszoneZBufora = (ZapytanieZTabeliO)
-                    Helpers.HiveInvoke(
-                        typeof(WMSServerAccess.Ogólne.OgólneBL),
-                        "ZapytanieSQL",
-                        sqlRoznoszoneZBufora
-                    );
+                var roznoszoneZBufora = Serwer.ogólneBL.ZapytanieSQL(sqlRoznoszoneZBufora);
 
                 // usuniecie pozycji gdzie ilosc rowna sie zeru.. nalezaloby zmienic SQL GetStocks, rozwiazanie tymczasowe i zarazem docelowe
                 zap.ListaWierszy.AddRange(roznoszoneZBufora.ListaWierszy);

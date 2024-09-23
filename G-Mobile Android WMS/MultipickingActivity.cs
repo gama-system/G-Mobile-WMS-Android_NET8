@@ -15,6 +15,7 @@ using G_Mobile_Android_WMS.Common.BusinessLogicHelpers;
 using G_Mobile_Android_WMS.Controls;
 using G_Mobile_Android_WMS.Enums;
 using G_Mobile_Android_WMS.ExtendedModel;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
@@ -976,12 +977,9 @@ namespace G_Mobile_Android_WMS
                 if (First)
                 {
                     foreach (DokumentVO Doc in Documents)
-                        DocLocNames[Doc.ID] = (string)
-                            Helpers.HiveInvoke(
-                                typeof(WMSServerAccess.Lokalizacja.LokalizacjaBL),
-                                "PobierzNazwęLokalizacji",
-                                Doc.intLokalizacja
-                            );
+                        DocLocNames[Doc.ID] = Serwer.lokalizacjaBL.PobierzNazwęLokalizacji(
+                            Doc.intLokalizacja
+                        );
 
                     Items = await Task.Factory.StartNew(
                         () =>
@@ -1235,7 +1233,7 @@ namespace G_Mobile_Android_WMS
                     if (CurrentItem.Base.idNumerSeryjny >= 0)
                     {
                         if (
-                            Globalne.numerSeryjnyBL.PobierzIDNumeruSeryjnego(Kod.NrSeryjny)
+                            Serwer.numerySeryjneBL.PobierzIDNumeruSeryjnego(Kod.NrSeryjny)
                             != CurrentItem.Base.idNumerSeryjny
                         )
                         {

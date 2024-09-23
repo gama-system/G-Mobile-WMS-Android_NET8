@@ -13,6 +13,7 @@ using Android.Widget;
 using G_Mobile_Android_WMS.Controls;
 using G_Mobile_Android_WMS.ExtendedModel;
 using Newtonsoft.Json;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS

@@ -12,6 +12,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using WMS_DESKTOP_API;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS.BusinessLogicHelpers
@@ -24,9 +25,8 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
             TextView v = null
         )
         {
-            List<FunkcjaLogistycznaO> FLogs = Serwer.funklogBL.PobierzListęFunkcjiLogistycznych(
-                WarehouseID
-            );
+            List<FunkcjaLogistycznaO> FLogs =
+                Serwer.funkcjaLogistycznaBL.PobierzListęFunkcjiLogistycznych(WarehouseID);
 
             string Res = await UserDialogs.Instance.ActionSheetAsync(
                 ctx.GetString(Resource.String.select_flog),
@@ -143,21 +143,10 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                 foreach (TowarJednostkaO TowarJedn in ToChooseFrom)
                 {
 #warning HiveInvoke
-                    string T = Helpers
-                        .HiveInvoke(
-                            typeof(WMSServerAccess.Towar.TowarBL),
-                            "PobierzNazwęTowaru",
-                            TowarJedn.IDTowaru
-                        )
-                        .ToString();
+                    string T = Serwer.towarBL.PobierzNazwęTowaru(TowarJedn.IDTowaru);
+
                     string S = Serwer.towarBL.PobierzTowar(TowarJedn.IDTowaru).strSymbol;
-                    string J = Helpers
-                        .HiveInvoke(
-                            typeof(WMSServerAccess.JednostkaMiary.JednostkaMiaryBL),
-                            "PobierzNazwęJednostki",
-                            TowarJedn.IDJednostki
-                        )
-                        .ToString();
+                    string J = Serwer.jednostkaMiaryBL.PobierzNazwęJednostki(TowarJedn.IDJednostki);
 
                     string ResE = string.Format("{0} - {1} ({2}) ", S, T, J);
 

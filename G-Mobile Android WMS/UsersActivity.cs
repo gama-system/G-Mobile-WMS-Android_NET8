@@ -13,6 +13,7 @@ using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
 using Plugin.DeviceInfo;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
@@ -532,12 +533,7 @@ namespace G_Mobile_Android_WMS
 
                 IsBusy = true;
 
-                string WersjaNaSerwerze = (string)
-                    Helpers.HiveInvoke(
-                        typeof(WMSServerAccess.Aktualizacje.AktualizacjeBL),
-                        "PobierzNajnowsząWersję",
-                        new object[] { "Android" }
-                    );
+                string WersjaNaSerwerze = Serwer.aktualizacjeBL.PobierzNajnowsząWersję("Android");
 
                 if (WersjaNaSerwerze == "0")
                 {
@@ -1072,11 +1068,7 @@ namespace G_Mobile_Android_WMS
 
                     #region sprawdzenie czy wersja bazy danych jest zgodna z wersja androida
                     int WersjaBazy = Convert.ToInt32(
-                        Helpers.HiveInvoke(
-                            typeof(WMSServerAccess.Menu.MenuBL),
-                            "PobierzUstawienie",
-                            (int)Enums.Ustawienia.WersjaBazy
-                        )
+                        Serwer.menuBL.PobierzUstawienie((int)Enums.Ustawienia.WersjaBazy)
                     );
 
                     if (WersjaBazy != Globalne.WymaganaWersjaBazy && Res == true)

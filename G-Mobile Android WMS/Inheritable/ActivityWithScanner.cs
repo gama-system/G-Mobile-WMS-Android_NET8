@@ -21,6 +21,7 @@ using Android.Views.InputMethods;
 using Android.Widget;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
+using WMS_DESKTOP_API;
 
 namespace G_Mobile_Android_WMS
 {
@@ -309,7 +310,7 @@ namespace G_Mobile_Android_WMS
             )
             {
                 var kodEan = Barcodes[0].Substring(3, 8);
-                if (Serwer.kodykreskoweBL.WyszukajKodKreskowy(kodEan).Towar != "")
+                if (Serwer.kodyKreskoweBL.WyszukajKodKreskowy(kodEan).Towar != "")
                     Barcodes[0] = kodEan;
             }
             #endregion

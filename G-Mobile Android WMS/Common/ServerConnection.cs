@@ -271,7 +271,7 @@ namespace G_Mobile_Android_WMS
             //            "WMSServerAccess",
             //            typeof(WMSServerAccess.Menu.MenuBL)
             //        );
-            //    Globalne.numerSeryjnyBL = (WMSServerAccess.NumerSeryjny.NumerSeryjnyBL)
+            //    Serwer.numerSeryjnyBL = (WMSServerAccess.NumerSeryjny.NumerSeryjnyBL)
             //        Globalne.client.Activate(
             //            "WMSServerAccess",
             //            typeof(WMSServerAccess.NumerSeryjny.NumerSeryjnyBL)

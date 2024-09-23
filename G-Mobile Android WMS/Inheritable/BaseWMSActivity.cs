@@ -18,6 +18,7 @@ using Android.Widget;
 using Plugin.DeviceInfo;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
+using WMS_DESKTOP_API;
 using Xamarin.Essentials;
 
 namespace G_Mobile_Android_WMS

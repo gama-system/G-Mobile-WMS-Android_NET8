@@ -19,6 +19,7 @@ using G_Mobile_Android_WMS.SQL;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
 using WMS_DESKTOP_API;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
@@ -251,12 +252,8 @@ namespace G_Mobile_Android_WMS
         {
             string Komenda = SQL.Contractors.GetContactors.Replace("<<FILTR>>", FilterText);
 
-            ZapytanieZTabeliO Zap = (ZapytanieZTabeliO)
-                Helpers.HiveInvoke(
-                    typeof(WMSServerAccess.Ogólne.OgólneBL),
-                    "ZapytanieSQL",
-                    Komenda
-                );
+            ZapytanieZTabeliO Zap = Serwer.ogólneBL.ZapytanieSQL(Komenda);
+
             return Zap;
         }
 

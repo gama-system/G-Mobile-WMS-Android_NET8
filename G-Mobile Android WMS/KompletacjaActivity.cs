@@ -19,8 +19,9 @@ using G_Mobile_Android_WMS.BusinessLogicHelpers;
 using G_Mobile_Android_WMS.Common.BusinessLogicHelpers;
 using G_Mobile_Android_WMS.Enums;
 using G_Mobile_Android_WMS.ExtendedModel;
-using Hive.Serialization.Core;
 using Symbol.XamarinEMDK.Barcode;
+using WMS_DESKTOP_API;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
@@ -194,7 +195,7 @@ namespace G_Mobile_Android_WMS
                     ShowProgressAndDecideOperation(
                         new List<string>()
                         {
-                            Globalne
+                            Serwer
                                 .lokalizacjaBL.PobierzLokalizację(selected.ExIDLokalizacjaP)
                                 .strKod
                         }
@@ -311,12 +312,8 @@ namespace G_Mobile_Android_WMS
                     OK.Visibility = ViewStates.Gone;
                     ItemSum.Visibility = ViewStates.Gone;
                     DocExternal.Visibility = ViewStates.Gone;
-#warning HiveInvoke
-                    ZapytanieZTabeliO Zap = (ZapytanieZTabeliO)
-                        Helpers.HiveInvoke(
-                            typeof(WMSServerAccess.Ogólne.OgólneBL),
-                            "ZapytanieSQL",
-                            @"select
+                    ZapytanieZTabeliO Zap = Serwer.ogólneBL.ZapytanieSQL(
+                        @"select
                                         	d.idDokumentu,
                                         	d.strNazwa,
                                         	d.strERP,
@@ -348,7 +345,7 @@ namespace G_Mobile_Android_WMS
                                             l.strNazwa
                                         ORDER BY
                                             d.intLokalizacja ASC;"
-                        );
+                    );
 
                     int licznik = 0;
                     foreach (object[] wiersz in Zap.ListaWierszy)
@@ -385,21 +382,14 @@ namespace G_Mobile_Android_WMS
                     }
                     if (Items.Count > 0)
                     {
-#warning HiveInvoke
-                        string TypDoc = (string)
-                            Helpers.HiveInvoke(
-                                typeof(WMSServerAccess.Dokument.DokumentBL),
-                                "PobierzTypDokumentu",
-                                new object[]
-                                {
-                                    Items.FirstOrDefault().Base.idDokumentu,
-                                    "",
-                                    "",
-                                    -1,
-                                    -1,
-                                    ""
-                                }
-                            );
+                        string TypDoc = Serwer.dokumentBL.PobierzTypDokumentu(
+                            Items.FirstOrDefault().Base.idDokumentu,
+                            "",
+                            "",
+                            -1,
+                            -1,
+                            ""
+                        );
                         DocType = (DocTypes)Enum.Parse(typeof(DocTypes), TypDoc);
 
                         CurrentOperation =
@@ -420,13 +410,15 @@ namespace G_Mobile_Android_WMS
 
                     // maybe like this
                     //string TypDoc1 = Serwer.dokumentBL.PobierzTypDokumentu( Doc.ID, "", "", -1, -1, "");
-#warning HiveInvoke
-                    string TypDoc = (string)
-                        Helpers.HiveInvoke(
-                            typeof(WMSServerAccess.Dokument.DokumentBL),
-                            "PobierzTypDokumentu",
-                            new object[] { Doc.ID, "", "", -1, -1, "" }
-                        );
+                    string TypDoc = Serwer.dokumentBL.PobierzTypDokumentu(
+                        Doc.ID,
+                        "",
+                        "",
+                        -1,
+                        -1,
+                        ""
+                    );
+
                     DocType = (DocTypes)Enum.Parse(typeof(DocTypes), TypDoc);
 
                     CurrentOperation =
@@ -556,7 +548,7 @@ namespace G_Mobile_Android_WMS
             {
                 try
                 {
-                    int IDLok = Globalne
+                    int IDLok = Serwer
                         .lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(
                             Scanned[0],
                             Globalne.Magazyn.ID,

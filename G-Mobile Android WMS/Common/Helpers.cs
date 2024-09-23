@@ -19,6 +19,7 @@ using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
 using WMS_DESKTOP_API;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
@@ -170,7 +171,7 @@ namespace G_Mobile_Android_WMS
             Enums.DocTypes Type
         )
         {
-            KodKreskowyZSzablonuO Ksk = Serwer.kodykreskoweBL.PustyKodKreskowyZSzablonu();
+            KodKreskowyZSzablonuO Ksk = Serwer.kodyKreskoweBL.PustyKodKreskowyZSzablonu();
 
             List<int> Order = Globalne.CurrentSettings.BarcodeScanningOrder[Type];
 
@@ -187,7 +188,7 @@ namespace G_Mobile_Android_WMS
                         }
                     }
 
-                Ksk = Serwer.kodykreskoweBL.ParsujWedługGS1(ToParse);
+                Ksk = Serwer.kodyKreskoweBL.ParsujWedługGS1(ToParse);
             }
 
             for (int i = 0; i < Order.Count; i++)
@@ -201,18 +202,18 @@ namespace G_Mobile_Android_WMS
                     {
                         Ksk = MergeResults(
                             Ksk,
-                            Serwer.kodykreskoweBL.WyszukajKodKreskowy(Barcodes[i])
+                            Serwer.kodyKreskoweBL.WyszukajKodKreskowy(Barcodes[i])
                         );
 
                         if (Ksk.Towar == "")
                         {
-                            var kodKreskowy = Serwer.kodykreskoweBL.PobierzKodKreskowyZNrKat(
+                            var kodKreskowy = Serwer.kodyKreskoweBL.PobierzKodKreskowyZNrKat(
                                 Barcodes[i]
                             );
                             if (kodKreskowy.strKod != "")
                                 Ksk = MergeResults(
                                     Ksk,
-                                    Serwer.kodykreskoweBL.WyszukajKodKreskowy(kodKreskowy.strKod)
+                                    Serwer.kodyKreskoweBL.WyszukajKodKreskowy(kodKreskowy.strKod)
                                 );
                         }
                         break;

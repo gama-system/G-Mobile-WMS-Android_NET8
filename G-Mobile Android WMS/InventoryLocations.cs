@@ -19,6 +19,7 @@ using Android.Widget;
 using G_Mobile_Android_WMS.Enums;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS

@@ -17,6 +17,7 @@ using Android.Webkit;
 using Android.Widget;
 using G_Mobile_Android_WMS.Enums;
 using WMS_DESKTOP_API;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 using Color = System.Drawing.Color;
 
@@ -60,7 +61,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
             Dokument.intZmodyfikowanyPrzez = Globalne.Operator.ID;
             Dokument.idRejestr = RegistryID;
 
-            Dokument.intPriorytet = Globalne
+            Dokument.intPriorytet = Serwer
                 .rejestrBL.PobierzRejestr(Dokument.idRejestr)
                 .intPriorytet;
             Dokument.dataDokumentu = Serwer.ogólneBL.GetSQLDate();
@@ -258,7 +259,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
 
 
                         // lista wpisanych drukarek
-                        var drukarkiEtykiet = Globalne
+                        var drukarkiEtykiet = Serwer
                             .drukarkaBL.PobierzDrukarkeEtykiet()
                             .strERP.TrimEnd();
                         var drukarkiEtykietList = string.IsNullOrEmpty(drukarkiEtykiet)
@@ -610,12 +611,8 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                     );
 
 #warning HiveInvoke
-                string TypDoc = (string)
-                    Helpers.HiveInvoke(
-                        typeof(WMSServerAccess.Dokument.DokumentBL),
-                        "PobierzTypDokumentu",
-                        new object[] { Doc.ID, "", "", -1, -1, "" }
-                    );
+                string TypDoc = Serwer.dokumentBL.PobierzTypDokumentu(Doc.ID, "", "", -1, -1, "");
+
                 DocTypes DocType = (DocTypes)Enum.Parse(typeof(DocTypes), TypDoc);
 
                 if (

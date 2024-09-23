@@ -16,7 +16,7 @@ using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
 using Symbol.XamarinEMDK;
-using WMSServerAccess.Licencja;
+using WMS_DESKTOP_API;
 
 namespace G_Mobile_Android_WMS
 {
@@ -102,39 +102,40 @@ namespace G_Mobile_Android_WMS
 
         void SetDefaults()
         {
-            SetDeviceData();
+            //todo: dosotwąć do api
+            //SetDeviceData();
 
-            Globalne.AppName = Xamarin.Essentials.AppInfo.Name;
-            Globalne.AppVer = Xamarin.Essentials.AppInfo.VersionString;
+            //Globalne.AppName = Xamarin.Essentials.AppInfo.Name;
+            //Globalne.AppVer = Xamarin.Essentials.AppInfo.VersionString;
 
-            Globalne.Player = new Android.Media.MediaPlayer();
+            //Globalne.Player = new Android.Media.MediaPlayer();
 
-            Globalne.client = null;
+            //Globalne.client = null;
 
-            Globalne.CurrentSettings = null;
+            //Globalne.CurrentSettings = null;
 
-            Serwer.licencjaBL = null;
-            Serwer.operatorBL = null;
-            Serwer.magazynBL = null;
-            Serwer.ogólneBL = null;
-            Serwer.podmiotBL = null;
-            Serwer.jednostkaMiaryBL = null;
-            Serwer.towarBL = null;
-            Globalne.wymaganiaBL = null;
-            Serwer.lokalizacjaBL = null;
-            Serwer.rejestrBL = null;
-            Serwer.dokumentBL = null;
-            Serwer.przychRozchBL = null;
-            Serwer.kodykreskoweBL = null;
-            Serwer.partiaBL = null;
-            Serwer.paletaBL = null;
-            Serwer.funklogBL = null;
-            Serwer.menuBL = null;
-            Serwer.aktualizacjeBL = null;
+            //Serwer.licencjaBL = null;
+            //Serwer.operatorBL = null;
+            //Serwer.magazynBL = null;
+            //Serwer.ogólneBL = null;
+            //Serwer.podmiotBL = null;
+            //Serwer.jednostkaMiaryBL = null;
+            //Serwer.towarBL = null;
+            //Globalne.wymaganiaBL = null;
+            //Serwer.lokalizacjaBL = null;
+            //Serwer.rejestrBL = null;
+            //Serwer.dokumentBL = null;
+            //Serwer.przychRozchBL = null;
+            //Serwer.kodykreskoweBL = null;
+            //Serwer.partiaBL = null;
+            //Serwer.paletaBL = null;
+            //Serwer.funklogBL = null;
+            //Serwer.menuBL = null;
+            //Serwer.aktualizacjeBL = null;
 
-            Globalne.Licencja = null;
-            Globalne.Operator = null;
-            Globalne.Magazyn = null;
+            //Globalne.Licencja = null;
+            //Globalne.Operator = null;
+            //Globalne.Magazyn = null;
         }
 
         void SetDeviceData()

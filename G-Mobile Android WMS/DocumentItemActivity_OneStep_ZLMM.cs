@@ -17,6 +17,7 @@ using G_Mobile_Android_WMS.Controls;
 using G_Mobile_Android_WMS.Enums;
 using Symbol.XamarinEMDK.Barcode;
 using WMS_DESKTOP_API;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
@@ -631,14 +632,14 @@ namespace G_Mobile_Android_WMS
             // Failsafe
             if ((int)LocationIn.Tag > 0 && LocationIn.Text != "")
             {
-                LocationIn.Tag = Globalne
+                LocationIn.Tag = Serwer
                     .lokalizacjaBL.PobierzLokalizacjęWgNazwy(LocationIn.Text, Dokument.intMagazynP)
                     .ID;
             }
 
             if ((int)LocationOut.Tag < 0 && LocationOut.Text != "")
             {
-                LocationOut.Tag = Globalne
+                LocationOut.Tag = Serwer
                     .lokalizacjaBL.PobierzLokalizacjęWgNazwy(LocationOut.Text, Dokument.intMagazynP)
                     .ID;
             }
@@ -1304,7 +1305,7 @@ namespace G_Mobile_Android_WMS
                     && Globalne.CurrentSettings.SerialNumber
                 )
                 {
-                    int ID = Globalne.numerSeryjnyBL.PobierzIDNumeruSeryjnego(SerialNumber.Text);
+                    int ID = Serwer.numerySeryjneBL.PobierzIDNumeruSeryjnego(SerialNumber.Text);
                     //todo: przeyjrze sie co tu siedzieje
 
 
@@ -1647,7 +1648,7 @@ namespace G_Mobile_Android_WMS
                     if (LastScanData != null && !string.IsNullOrEmpty(LastScanData[0]))
                     {
                         var czyLokalizacja =
-                            Globalne
+                            Serwer
                                 .lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(
                                     LastScanData[0],
                                     Globalne.Magazyn.ID,
@@ -1655,20 +1656,20 @@ namespace G_Mobile_Android_WMS
                                 )
                                 ?.ID != -1;
                         var skanowanyTowarNieIstnieje =
-                            Serwer.kodykreskoweBL.WyszukajKodKreskowy(LastScanData[0])?.Towar == "";
+                            Serwer.kodyKreskoweBL.WyszukajKodKreskowy(LastScanData[0])?.Towar == "";
                         if (skanowanyTowarNieIstnieje && !czyLokalizacja)
                         {
                             AutoException.ThrowIfNotNull(this, Resource.String.articles_not_found);
                         }
                         else if (!czyLokalizacja)
                         {
-                            var skanowanyTowar = Globalne
+                            var skanowanyTowar = Serwer
                                 .towarBL.PobierzTowarWgKoduKreskowego(LastScanData[0])
                                 .FirstOrDefault();
                             // sprawdzamy czy towar jest na liscie pozycji w danym dokumencie
                             if (
                                 Dokument.bZlecenie
-                                && Globalne
+                                && Serwer
                                     .dokumentBL.PobierzListęIDPozycji(Dokument.ID)
                                     .Where(x => x == skanowanyTowar.ID)
                                     .Count() == 0

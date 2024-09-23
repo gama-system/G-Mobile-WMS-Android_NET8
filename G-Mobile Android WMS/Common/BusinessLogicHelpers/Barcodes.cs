@@ -8,6 +8,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS.Common.BusinessLogicHelpers
@@ -16,7 +17,7 @@ namespace G_Mobile_Android_WMS.Common.BusinessLogicHelpers
     {
         public static LokalizacjaVO GetLocationFromBarcode(string Barcode, bool PominKuwety)
         {
-            return Globalne.lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(
+            return Serwer.lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(
                 Barcode,
                 Globalne.Magazyn.ID,
                 PominKuwety

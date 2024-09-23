@@ -117,7 +117,7 @@ namespace G_Mobile_Android_WMS
                 ChangeWarehouse.Click += ChangeWarehouse_Click;
                 Timer.Elapsed += Timer_Elapsed;
 
-                List<MagazynO> Magazyny = Globalne.magazynBL.PobierzListęDostępnychDlaOperatora(
+                List<MagazynO> Magazyny = Serwer.magazynBL.PobierzListęDostępnychDlaOperatora(
                     Globalne.Operator.ID
                 );
 
@@ -203,7 +203,7 @@ namespace G_Mobile_Android_WMS
                     if (B != null)
                     {
                         if (
-                            Globalne.dokumentBL.SprawdźCzySąZleconeDokumentyTypu(
+                            Serwer.dokumentBL.SprawdźCzySąZleconeDokumentyTypu(
                                 m.ToString(),
                                 Globalne.Operator.ID,
                                 Globalne.Magazyn.ID
@@ -234,7 +234,7 @@ namespace G_Mobile_Android_WMS
 
                 if (Res)
                 {
-                    Globalne.operatorBL.WylogujOperatora(Globalne.Operator.ID);
+                    Serwer.operatorBL.WylogujOperatora(Globalne.Operator.ID);
                     Globalne.Operator = null;
                     Globalne.Magazyn = null;
                     Helpers.SwitchAndFinishCurrentActivity(this, typeof(UsersActivity));

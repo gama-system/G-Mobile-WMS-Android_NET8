@@ -20,7 +20,7 @@ using Android.Views;
 using Android.Widget;
 using Java.Nio.Channels;
 using Java.Util;
-using WMSServerAccess.FunkcjaLogistyczna;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 using Xamarin.Essentials;
 
@@ -155,14 +155,14 @@ namespace G_Mobile_Android_WMS
                     .SetTitle("Utwórz dokument ZL z bufora:");
 
                 foreach (
-                    var item in Globalne.lokalizacjaBL.PobierzListęDostępnychLokalizacjiBuforowych(
+                    var item in Serwer.lokalizacjaBL.PobierzListęDostępnychLokalizacjiBuforowych(
                         Globalne.Magazyn.ID,
                         true
                     )
                 )
                 {
-                    var przychod = Globalne
-                        .przychrozchBL.PobierzListęPrzychodów(
+                    var przychod = Serwer
+                        .przychRozchBL.PobierzListęPrzychodów(
                             -1,
                             Globalne.Magazyn.ID,
                             item.ID,
@@ -179,7 +179,7 @@ namespace G_Mobile_Android_WMS
 
                     foreach (var przych in przychod.GroupBy(x => x.idDokumentP))
                     {
-                        var dokument = Globalne.dokumentBL.PobierzDokument(
+                        var dokument = Serwer.dokumentBL.PobierzDokument(
                             przych.Key,
                             "",
                             "",
@@ -187,7 +187,7 @@ namespace G_Mobile_Android_WMS
                             item.ID,
                             ""
                         );
-                        var pozycjeCount = Globalne
+                        var pozycjeCount = Serwer
                             .dokumentBL.PobierzListęPozycji(dokument.ID)
                             .Distinct()
                             .Count();
@@ -215,19 +215,19 @@ namespace G_Mobile_Android_WMS
 
         void CreateDocumentFromBuffor(int idBuffor)
         {
-            var Rejestr = Globalne.rejestrBL.PobierzPierwszyRejestrDlaDokumentu(
+            var Rejestr = Serwer.rejestrBL.PobierzPierwszyRejestrDlaDokumentu(
                 "ZL",
                 Globalne.Magazyn.ID
             );
 
-            DokumentVO Dokument = Globalne.dokumentBL.PustyDokumentVO();
+            DokumentVO Dokument = Serwer.dokumentBL.PustyDokumentVO();
             Dokument.intLokalizacjaPozycji = idBuffor;
             Dokument.intEdytowany = Globalne.Operator.ID;
             Dokument.intUtworzonyPrzez = Globalne.Operator.ID;
             Dokument.intZmodyfikowanyPrzez = Globalne.Operator.ID;
             Dokument.idRejestr = Rejestr.ID;
             Dokument.intPriorytet = Rejestr.intPriorytet;
-            Dokument.dataDokumentu = Globalne.ogólneBL.GetSQLDate();
+            Dokument.dataDokumentu = Serwer.ogólneBL.GetSQLDate();
             Dokument.bTworzenieNaTerminalu = true;
             Dokument.bDokumentMobilny = true;
             Dokument.bZlecenie = true;
@@ -236,7 +236,7 @@ namespace G_Mobile_Android_WMS
             Dokument.strDokumentDostawcy = "";
             Dokument.idKontrahent = -1;
 
-            StatusDokumentuO Status = Globalne.dokumentBL.PobierzPierwszyStatusDokumentuOTypie(
+            StatusDokumentuO Status = Serwer.dokumentBL.PobierzPierwszyStatusDokumentuOTypie(
                 "ZL",
                 1
             );
@@ -245,7 +245,7 @@ namespace G_Mobile_Android_WMS
             Dokument.intMagazynP = Globalne.Magazyn.ID;
             Dokument.intMagazynW = Globalne.Magazyn.ID;
 
-            int DodanyDok = Globalne.dokumentBL.ZróbDokument(Dokument);
+            int DodanyDok = Serwer.dokumentBL.ZróbDokument(Dokument);
             if (DodanyDok == -1)
             {
                 Helpers.Alert(this, "BłądDodawaniaDokumentu").Wait();
@@ -255,7 +255,7 @@ namespace G_Mobile_Android_WMS
                 bool ZabieranieCałegoBufora = true;
                 if (ZabieranieCałegoBufora)
                 {
-                    Globalne.dokumentBL.WypełnijTowaramiZBufora(
+                    Serwer.dokumentBL.WypełnijTowaramiZBufora(
                         DodanyDok,
                         idBuffor,
                         "ZL",
@@ -350,7 +350,7 @@ namespace G_Mobile_Android_WMS
                         var dokument = Task
                             .Factory.StartNew(
                                 () =>
-                                    Globalne.dokumentBL.PobierzDokument(
+                                    Serwer.dokumentBL.PobierzDokument(
                                         idDok,
                                         "",
                                         nazwaDok,
@@ -377,8 +377,7 @@ namespace G_Mobile_Android_WMS
                         {
                             var nazwaOperatora = Task
                                 .Factory.StartNew(
-                                    () =>
-                                        Globalne.operatorBL.PobierzOperatora(dokument.intEdytowany)
+                                    () => Serwer.operatorBL.PobierzOperatora(dokument.intEdytowany)
                                 )
                                 .Result.Nazwa;
                             Helpers.CenteredToast(
@@ -570,18 +569,11 @@ namespace G_Mobile_Android_WMS
             {
                 IsBusy = false;
 
-                DokumentVO Dok = Globalne.dokumentBL.PobierzDokument(
-                    -1,
-                    "",
-                    "",
-                    -1,
-                    -1,
-                    Barcodes[0]
-                );
-                var rejestr = Globalne.rejestrBL.PobierzRejestr(Dok.idRejestr);
+                DokumentVO Dok = Serwer.dokumentBL.PobierzDokument(-1, "", "", -1, -1, Barcodes[0]);
+                var rejestr = Serwer.rejestrBL.PobierzRejestr(Dok.idRejestr);
 
                 // dokument WZ - podkreslenie " _ " przed numerem zamowienia
-                DokumentVO _Dok = Globalne.dokumentBL.PobierzDokument(
+                DokumentVO _Dok = Serwer.dokumentBL.PobierzDokument(
                     -1,
                     "",
                     "",
@@ -589,7 +581,7 @@ namespace G_Mobile_Android_WMS
                     -1,
                     "_" + Barcodes[0]
                 );
-                var _rejestr = Globalne.rejestrBL.PobierzRejestr(_Dok.idRejestr);
+                var _rejestr = Serwer.rejestrBL.PobierzRejestr(_Dok.idRejestr);
 
                 // Sprawdzanie czy pobrany dokument jest o typie w ktorym znajduje sie oparator (np. dokument to WZ i znajdujemy sie na WZ)
                 if (
@@ -608,7 +600,7 @@ namespace G_Mobile_Android_WMS
                     AutoException.ThrowIfNotNull(this, Resource.String.documents_docfound_barcode);
                 }
                 else if (
-                    !Globalne.lokalizacjaBL.SprawdźCzyGrupaLokalizacjiIstnieje(
+                    !Serwer.lokalizacjaBL.SprawdźCzyGrupaLokalizacjiIstnieje(
                         Barcodes[0],
                         Barcodes[0],
                         -1,
@@ -638,7 +630,7 @@ namespace G_Mobile_Android_WMS
                 else
                 {
                     // Pobranie dokumentu przypisanego już do lokalizacji
-                    LokalizacjaVO Lok = Globalne.lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(
+                    LokalizacjaVO Lok = Serwer.lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(
                         Barcodes[0],
                         Globalne.Magazyn.ID,
                         true
@@ -652,7 +644,7 @@ namespace G_Mobile_Android_WMS
                                 Resource.String.documents_loc_fromdifferent_warehouse
                             );
 
-                        DokumentVO DokLok = Globalne.dokumentBL.PobierzDokument(
+                        DokumentVO DokLok = Serwer.dokumentBL.PobierzDokument(
                             -1,
                             "",
                             "",
@@ -674,7 +666,7 @@ namespace G_Mobile_Android_WMS
                     }
 
                     // Przypisanie dokumentów do grupy lokalizacji
-                    this.Gru = Globalne.lokalizacjaBL.PobierzGrupęlokalizacji(Barcodes[0]);
+                    this.Gru = Serwer.lokalizacjaBL.PobierzGrupęlokalizacji(Barcodes[0]);
 
                     if (this.Gru.ID < 0)
                     {
@@ -694,7 +686,7 @@ namespace G_Mobile_Android_WMS
                     {
                         // Jeśli do grupy przypisane są już dokumenty...
                         List<int> Docs =
-                            Globalne.dokumentBL.PobierzListęIDDokumentówPrzypisanychDoGrupyLokalizacji(
+                            Serwer.dokumentBL.PobierzListęIDDokumentówPrzypisanychDoGrupyLokalizacji(
                                 this.Gru.ID
                             );
 
@@ -735,7 +727,7 @@ namespace G_Mobile_Android_WMS
                             }
 
                             this.LokGru =
-                                Globalne.lokalizacjaBL.PobierzListęLokalizacjaRowZGrupyLokalizacji(
+                                Serwer.lokalizacjaBL.PobierzListęLokalizacjaRowZGrupyLokalizacji(
                                     this.Gru.ID
                                 );
 
@@ -743,7 +735,7 @@ namespace G_Mobile_Android_WMS
                             {
                                 if (continueMode == Enums.WZRWContMode.NewMul)
                                 {
-                                    idForMultipicking = Globalne.dokumentBL.PobierzNumerki();
+                                    idForMultipicking = Serwer.dokumentBL.PobierzNumerki();
                                 }
                                 GoIntoMultiPicking(idForMultipicking);
                                 return;
@@ -768,12 +760,8 @@ namespace G_Mobile_Android_WMS
 
         List<int> getIdOfDocumentsInProcessingOnLocation(int idLok)
         {
-#warning HiveInvoke
-            ZapytanieZTabeliO Zap = (ZapytanieZTabeliO)
-                Helpers.HiveInvoke(
-                    typeof(WMSServerAccess.Ogólne.OgólneBL),
-                    "ZapytanieSQL",
-                    $@"SELECT d.idDokumentu
+            ZapytanieZTabeliO Zap = Serwer.ogólneBL.ZapytanieSQL(
+                $@"SELECT d.idDokumentu
 FROM Dokumenty d
 WHERE d.intLokalizacja IN
     (SELECT l.idLokalizacja
@@ -781,8 +769,7 @@ WHERE d.intLokalizacja IN
      LEFT JOIN LokalizacjeWGrupie lwg ON lwg.idLokalizacja=l.idLokalizacja
      WHERE lwg.idGrupaLokalizacji={idLok} )
   AND d.idStatusDokumentu=1057 ;"
-                );
-            ;
+            );
             return Zap.ListaWierszy.Select(x => Convert.ToInt32(x[0])).ToList();
         }
 
@@ -805,12 +792,8 @@ WHERE d.intLokalizacja IN
                     .Concat(getIdOfDocumentsInProcessingOnLocation(this.Gru.ID))
                     .ToList();
 
-#warning HiveInvoke
-                ZapytanieZTabeliO Zap = (ZapytanieZTabeliO)
-                    Helpers.HiveInvoke(
-                        typeof(WMSServerAccess.Ogólne.OgólneBL),
-                        "ZapytanieSQL",
-                        @"select
+                ZapytanieZTabeliO Zap = Serwer.ogólneBL.ZapytanieSQL(
+                    @"select
                                         	d.idDokumentu,
                                         	sum(pd.numIloscZlecona) as numZlecona,
                                         	sum(pd.numIloscZrealizowana) as numZrealizowana
@@ -837,7 +820,7 @@ WHERE d.intLokalizacja IN
                                             l.strNazwa
                                         ORDER BY
                                             d.intLokalizacja ASC;"
-                    );
+                );
 
                 foreach (int numerek in numerki)
                 {
@@ -863,9 +846,7 @@ WHERE d.intLokalizacja IN
                     //    }
                     //}
 
-                    decimal SumaPoz = Globalne.dokumentBL.PobierzWykonanąSumęPozycjiDokumentu(
-                        IDDoc
-                    );
+                    decimal SumaPoz = Serwer.dokumentBL.PobierzWykonanąSumęPozycjiDokumentu(IDDoc);
 
                     if (SumaPoz == 0)
                     {
@@ -875,7 +856,7 @@ WHERE d.intLokalizacja IN
                         foreach (LokalizacjaRow LG in this.LokGru)
                         {
                             int Wynik =
-                                Globalne.dokumentBL.SprawdźCzyDokumentMożeByćPrzypisanyDoLokalizacji(
+                                Serwer.dokumentBL.SprawdźCzyDokumentMożeByćPrzypisanyDoLokalizacji(
                                     IDDoc,
                                     LG.ID,
                                     true
@@ -895,7 +876,7 @@ WHERE d.intLokalizacja IN
                             {
                                 try
                                 {
-                                    Globalne.dokumentBL.UstawLokalizacjęDokumentu(IDDoc, LG.ID);
+                                    Serwer.dokumentBL.UstawLokalizacjęDokumentu(IDDoc, LG.ID);
                                     DocsToEdit.Add(IDDoc);
                                     this.LokGru.Remove(LG);
                                     break;
@@ -1069,7 +1050,7 @@ WHERE d.intLokalizacja IN
             string Rejestry = "(";
 
             List<RejestrRow> DostępneRejestry =
-                Globalne.rejestrBL.PobierzListęRejestrówDostępnychDlaOperatora(
+                Serwer.rejestrBL.PobierzListęRejestrówDostępnychDlaOperatora(
                     Helpers.StringDocType(DocType),
                     (Helpers.StringDocType(DocType) == Enums.DocTypes.MM.ToString())
                         ? -1
@@ -1098,7 +1079,7 @@ WHERE d.intLokalizacja IN
                 .Replace("<<REJESTRY>>", Rejestry)
                 .Replace(
                     "<<DATAPOCZĄTKOWA>>",
-                    Globalne
+                    Serwer
                         .ogólneBL.GetSQLDate()
                         .AddDays(-Globalne.CurrentSettings.DocumentsDaysDisplayThreshhold - 30)
                         .ToString("yyyy-MM-dd")
@@ -1129,13 +1110,9 @@ WHERE d.intLokalizacja IN
             Komenda += SQL.Documents.GetDocs_OrderBy;
 
             // #warning HiveInvoke
-            ZapytanieZTabeliO Zap = (ZapytanieZTabeliO)
-                Helpers.HiveInvoke(
-                    typeof(WMSServerAccess.Ogólne.OgólneBL),
-                    "ZapytanieSQL",
-                    Komenda
-                );
-            //ZapytanieZTabeliO Zap = Globalne.ogólneBL.WykonajZapytanieWidokuZFiltrem(Komenda);
+            ZapytanieZTabeliO Zap = Serwer.ogólneBL.ZapytanieSQL(Komenda);
+
+            //ZapytanieZTabeliO Zap = Serwer.ogólneBL.WykonajZapytanieWidokuZFiltrem(Komenda);
             return Zap;
         }
 
@@ -1276,7 +1253,7 @@ WHERE d.intLokalizacja IN
             {
                 int idDok = Convert.ToInt32(Pos[(int)SQL.Documents.Documents_Results.idDokumentu]);
                 var pozycje = Task
-                    .Factory.StartNew(() => Globalne.dokumentBL.PobierzListęPozycji(idDok))
+                    .Factory.StartNew(() => Serwer.dokumentBL.PobierzListęPozycji(idDok))
                     .Result;
 
                 if (pozycje.ToList().Any(x => x.numIloscZlecona == x.numIloscZrealizowana))

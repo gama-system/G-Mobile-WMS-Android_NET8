@@ -113,7 +113,7 @@ namespace G_Mobile_Android_WMS
 
             while (true)
             {
-                var tryEmptyPassword = Globalne.operatorBL.SprawdźHasłoOperatora(
+                var tryEmptyPassword = Serwer.operatorBL.SprawdźHasłoOperatora(
                     Selected.ID,
                     Encryption.RSAEncrypt("")
                 );
@@ -143,7 +143,7 @@ namespace G_Mobile_Android_WMS
                     {
                         try
                         {
-                            UstawienieMobilneOpe Ust = Globalne.menuBL.PobierzUstawienieMobOpe(
+                            UstawienieMobilneOpe Ust = Serwer.menuBL.PobierzUstawienieMobOpe(
                                 Selected.idUstawienieMobOpe
                             );
 
@@ -163,7 +163,7 @@ namespace G_Mobile_Android_WMS
                                     );
 
                             List<MagazynO> Magazyny =
-                                Globalne.magazynBL.PobierzListęDostępnychDlaOperatora(
+                                Serwer.magazynBL.PobierzListęDostępnychDlaOperatora(
                                     Globalne.Operator.ID
                                 );
 
@@ -208,7 +208,7 @@ namespace G_Mobile_Android_WMS
                     {
                         try
                         {
-                            UstawienieMobilneOpe Ust = Globalne.menuBL.PobierzUstawienieMobOpe(
+                            UstawienieMobilneOpe Ust = Serwer.menuBL.PobierzUstawienieMobOpe(
                                 Globalne.Operator.idUstawienieMobOpe
                             );
 
@@ -229,7 +229,7 @@ namespace G_Mobile_Android_WMS
                                     );
 
                             List<MagazynO> Magazyny =
-                                Globalne.magazynBL.PobierzListęDostępnychDlaOperatora(
+                                Serwer.magazynBL.PobierzListęDostępnychDlaOperatora(
                                     Globalne.Operator.ID
                                 );
 
@@ -384,12 +384,12 @@ namespace G_Mobile_Android_WMS
         {
             try
             {
-                int ID = Globalne.operatorBL.SprawdźLegitymacjęOperatora(Barcode);
+                int ID = Serwer.operatorBL.SprawdźLegitymacjęOperatora(Barcode);
 
                 if (ID == -1)
                     return false;
 
-                OperatorRow Selected = Globalne.operatorBL.PobierzOperatorRow(ID);
+                OperatorRow Selected = Serwer.operatorBL.PobierzOperatorRow(ID);
 
                 if (!Selected.bMozeZarzadzacUprawnieniamiMobilnymi && Selected.ID != Int32.MaxValue)
                 {
@@ -420,7 +420,7 @@ namespace G_Mobile_Android_WMS
 
                 if (Selected.ID != Int32.MaxValue)
                 {
-                    MobOpe = Globalne.menuBL.PobierzUstawienieMobOpe(Selected.idUstawienieMobOpe);
+                    MobOpe = Serwer.menuBL.PobierzUstawienieMobOpe(Selected.idUstawienieMobOpe);
 
                     if (Selected.idUstawienieMobOpe == -1 || MobOpe.strUstawienie == "")
                     {
@@ -474,19 +474,19 @@ namespace G_Mobile_Android_WMS
         {
             try
             {
-                int ID = Globalne.operatorBL.SprawdźLegitymacjęOperatora(Barcode);
+                int ID = Serwer.operatorBL.SprawdźLegitymacjęOperatora(Barcode);
 
                 if (ID == -1)
                     return false;
 
-                OperatorRow Selected = Globalne.operatorBL.PobierzOperatorRow(ID);
+                OperatorRow Selected = Serwer.operatorBL.PobierzOperatorRow(ID);
 
                 UstawienieMobilneOpe MobOpe = null;
                 UserSettings Set = null;
 
                 if (Selected.ID != Int32.MaxValue)
                 {
-                    MobOpe = Globalne.menuBL.PobierzUstawienieMobOpe(Selected.idUstawienieMobOpe);
+                    MobOpe = Serwer.menuBL.PobierzUstawienieMobOpe(Selected.idUstawienieMobOpe);
 
                     if (Selected.idUstawienieMobOpe == -1 || MobOpe.strUstawienie == "")
                     {
@@ -639,7 +639,7 @@ namespace G_Mobile_Android_WMS
         {
             try
             {
-                List<AktualizacjaO> Akt = Globalne.aktualizacjeBL.PobierzAktualizację(
+                List<AktualizacjaO> Akt = Serwer.aktualizacjeBL.PobierzAktualizację(
                     "Android",
                     WersjaNaSerwerze
                 );
@@ -702,7 +702,7 @@ namespace G_Mobile_Android_WMS
         {
             try
             {
-                int LoggedIn = Globalne.operatorBL.SprawdźIlośćZalogowań();
+                int LoggedIn = Serwer.operatorBL.SprawdźIlośćZalogowań();
 
                 if (LoggedIn >= Globalne.Licencja.Stanowisk)
                 {
@@ -736,7 +736,7 @@ namespace G_Mobile_Android_WMS
                 );
 
                 if (Resp)
-                    Globalne.operatorBL.WylogujOperatora(IDOperatora);
+                    Serwer.operatorBL.WylogujOperatora(IDOperatora);
 
                 return Resp;
             }
@@ -762,7 +762,7 @@ namespace G_Mobile_Android_WMS
                     return false;
                 }
 
-                DateTime DateNow = Globalne.ogólneBL.GetDate();
+                DateTime DateNow = Serwer.ogólneBL.GetDate();
                 DateTime TwoMonthsWhen = Globalne.Licencja.TerminLicencji.AddDays(-60);
 
                 if (
@@ -808,9 +808,7 @@ namespace G_Mobile_Android_WMS
 
         private async Task<bool> CheckPassword(OperatorRow Selected, string Pass)
         {
-            if (
-                !Globalne.operatorBL.SprawdźHasłoOperatora(Selected.ID, Encryption.RSAEncrypt(Pass))
-            )
+            if (!Serwer.operatorBL.SprawdźHasłoOperatora(Selected.ID, Encryption.RSAEncrypt(Pass)))
             {
                 await Helpers.AlertAsyncWithConfirm(
                     this,
@@ -829,7 +827,7 @@ namespace G_Mobile_Android_WMS
             if (!await CheckLicence())
                 return -1;
 
-            int ID = Globalne.operatorBL.SprawdźLegitymacjęOperatora(Legitymacja);
+            int ID = Serwer.operatorBL.SprawdźLegitymacjęOperatora(Legitymacja);
 
             if (ID == -1)
             {
@@ -844,7 +842,7 @@ namespace G_Mobile_Android_WMS
 
 #pragma warning disable CS0618
             if (
-                Globalne.operatorBL.SprawdźCzyZalogowanyNaInnymUrządzeniu(
+                Serwer.operatorBL.SprawdźCzyZalogowanyNaInnymUrządzeniu(
                     ID,
                     (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                         ? CrossDeviceInfo.Current.Id.ToString()
@@ -856,7 +854,7 @@ namespace G_Mobile_Android_WMS
                 var Res = await LogOutElsewhere(ID);
 
                 if (Res)
-                    Globalne.operatorBL.WylogujOperatora(ID);
+                    Serwer.operatorBL.WylogujOperatora(ID);
                 else
                     return -1;
             }
@@ -876,7 +874,7 @@ namespace G_Mobile_Android_WMS
             }
             else
             {
-                OperatorVO Operator = Globalne.operatorBL.PobierzOperatora(ID);
+                OperatorVO Operator = Serwer.operatorBL.PobierzOperatora(ID);
 
                 if (Operator.ID == -1 || !Operator.Aktywny)
                 {
@@ -893,7 +891,7 @@ namespace G_Mobile_Android_WMS
             }
 
 #pragma warning disable CS0618
-            Globalne.operatorBL.ZalogujOperatora(
+            Serwer.operatorBL.ZalogujOperatora(
                 ID,
                 (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                     ? CrossDeviceInfo.Current.Id.ToString()
@@ -913,7 +911,7 @@ namespace G_Mobile_Android_WMS
 
 #pragma warning disable CS0618
             if (
-                Globalne.operatorBL.SprawdźCzyZalogowanyNaInnymUrządzeniu(
+                Serwer.operatorBL.SprawdźCzyZalogowanyNaInnymUrządzeniu(
                     Selected.ID,
                     (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                         ? CrossDeviceInfo.Current.Id.ToString()
@@ -925,7 +923,7 @@ namespace G_Mobile_Android_WMS
                 var Res = await LogOutElsewhere(Selected.ID);
 
                 if (Res)
-                    Globalne.operatorBL.WylogujOperatora(Selected.ID);
+                    Serwer.operatorBL.WylogujOperatora(Selected.ID);
                 else
                     return -1;
             }
@@ -945,7 +943,7 @@ namespace G_Mobile_Android_WMS
             }
             else
             {
-                OperatorVO Operator = Globalne.operatorBL.PobierzOperatora(Selected.ID);
+                OperatorVO Operator = Serwer.operatorBL.PobierzOperatora(Selected.ID);
 
                 if (Operator.ID == -1 || !Operator.Aktywny)
                 {
@@ -962,7 +960,7 @@ namespace G_Mobile_Android_WMS
             }
 
 #pragma warning disable CS0618
-            Globalne.operatorBL.ZalogujOperatora(
+            Serwer.operatorBL.ZalogujOperatora(
                 Selected.ID,
                 (Build.VERSION.SdkInt >= BuildVersionCodes.O)
                     ? CrossDeviceInfo.Current.Id.ToString()
@@ -1018,14 +1016,14 @@ namespace G_Mobile_Android_WMS
 
         private List<OperatorRow> GetData()
         {
-            List<OperatorRow> Operatorzy = Globalne.operatorBL.PobierzListęNaTerminal();
+            List<OperatorRow> Operatorzy = Serwer.operatorBL.PobierzListęNaTerminal();
 
             OperatorRow R = Operatorzy.Find(x => x.ID == Int32.MaxValue);
 
             if (R != null)
                 Operatorzy.Remove(R);
 
-            OperatorRow Admin = Globalne.operatorBL.PobierzOperatorRow(Int32.MaxValue);
+            OperatorRow Admin = Serwer.operatorBL.PobierzOperatorRow(Int32.MaxValue);
             Admin.ID = Int32.MaxValue;
             Admin.Login = "SYSADM";
             Admin.Nazwa = "SERWIS";

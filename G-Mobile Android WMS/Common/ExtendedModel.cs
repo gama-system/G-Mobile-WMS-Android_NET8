@@ -10,6 +10,7 @@ using Android.Views;
 using Android.Widget;
 using G_Mobile_Android_WMS.Enums;
 using Newtonsoft.Json;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS.ExtendedModel
@@ -264,7 +265,7 @@ namespace G_Mobile_Android_WMS.ExtendedModel
         {
             try
             {
-                Base = Globalne.dokumentBL.PobierzPozycję(R.Base.ID);
+                Base = Serwer.dokumentBL.PobierzPozycję(R.Base.ID);
 
                 ExIDLokalizacjaW = R.ExIDLokalizacjaW;
                 ExLokalizacjaW = R.ExLokalizacjaW;
@@ -328,7 +329,7 @@ namespace G_Mobile_Android_WMS.ExtendedModel
         {
             try
             {
-                Base = Globalne.dokumentBL.PobierzPozycję(R.Base.ID);
+                Base = Serwer.dokumentBL.PobierzPozycję(R.Base.ID);
 
                 ExIDLokalizacjaW = R.ExIDLokalizacjaW;
                 ExLokalizacjaW = R.ExLokalizacjaW;

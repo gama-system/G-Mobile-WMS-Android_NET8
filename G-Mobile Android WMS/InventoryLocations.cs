@@ -126,7 +126,7 @@ namespace G_Mobile_Android_WMS
             await Task.Delay(Globalne.TaskDelay);
 
             if (Status != DocumentStatusTypes.Zamknięty)
-                Globalne.dokumentBL.UstawStatusLokInwentaryzacji(IDLoc, Doc.ID, false);
+                Serwer.dokumentBL.UstawStatusLokInwentaryzacji(IDLoc, Doc.ID, false);
 
             BusinessLogicHelpers.Documents.EditDocuments(
                 this,
@@ -164,7 +164,7 @@ namespace G_Mobile_Android_WMS
 
         private async Task ParseBarcode(string Data)
         {
-            LokalizacjaVO lokalizacja = Globalne.lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(
+            LokalizacjaVO lokalizacja = Serwer.lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(
                 Data,
                 Globalne.Magazyn.ID,
                 true
@@ -185,7 +185,7 @@ namespace G_Mobile_Android_WMS
                     .Result;
                 if (res.Value)
                 {
-                    Globalne.dokumentBL.WstawLokalizacjęDoDokumentuInwentaryzacji(
+                    Serwer.dokumentBL.WstawLokalizacjęDoDokumentuInwentaryzacji(
                         Doc.ID,
                         lokalizacja.ID
                     );
@@ -239,7 +239,7 @@ namespace G_Mobile_Android_WMS
                 Locs = await Task.Factory.StartNew(() => GetData());
 
                 Status = (DocumentStatusTypes)
-                    Globalne.dokumentBL.PobierzTypStatusuDokumentu(Doc.ID, "", "", -1, -1, "");
+                    Serwer.dokumentBL.PobierzTypStatusuDokumentu(Doc.ID, "", "", -1, -1, "");
 
                 RunOnUiThread(() =>
                 {
@@ -273,7 +273,7 @@ namespace G_Mobile_Android_WMS
         private List<LokalizacjaInwentaryzacji> GetData()
         {
             List<LokalizacjaInwentaryzacji> Lokalizacje =
-                Globalne.dokumentBL.PobierzListęLokalizacjiInwentaryzacji(Doc.ID);
+                Serwer.dokumentBL.PobierzListęLokalizacjiInwentaryzacji(Doc.ID);
             return Lokalizacje;
         }
 

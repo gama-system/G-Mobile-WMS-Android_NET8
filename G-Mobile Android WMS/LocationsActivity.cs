@@ -170,7 +170,7 @@ namespace G_Mobile_Android_WMS
 
         private async Task<int> ParseBarcode(string Data)
         {
-            LokalizacjaVO Kod = Globalne.lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(
+            LokalizacjaVO Kod = Serwer.lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(
                 Data,
                 Globalne.Magazyn.ID,
                 true
@@ -217,7 +217,7 @@ namespace G_Mobile_Android_WMS
                     LokalizacjaRowTerminal Selected = (
                         LocationsList.Adapter as LocationsListAdapter
                     )[e.Position];
-                    LokalizacjaVO Lok = Globalne.lokalizacjaBL.PobierzLokalizację(Selected.ID);
+                    LokalizacjaVO Lok = Serwer.lokalizacjaBL.PobierzLokalizację(Selected.ID);
 
                     if (Lok.ID != -1)
                         SelectLocationAndCloseActivity(Lok);
@@ -296,7 +296,7 @@ namespace G_Mobile_Android_WMS
         private List<LokalizacjaRowTerminal> GetData(bool Bufor)
         {
             List<LokalizacjaRowTerminal> Lokalizacje =
-                Globalne.lokalizacjaBL.PobierzListęDostępnychLokalizacjiZeStanemWedług(
+                Serwer.lokalizacjaBL.PobierzListęDostępnychLokalizacjiZeStanemWedług(
                     IDDokumentu,
                     IDMagazynu,
                     IDTowaru,

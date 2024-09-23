@@ -11,6 +11,8 @@ using Android.Views;
 using Android.Widget;
 using G_Mobile_Android_WMS.Enums;
 using G_Mobile_Android_WMS.ExtendedModel;
+using WMS_DESKTOP_API;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS.BusinessLogicHelpers
@@ -69,7 +71,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                     AutoException.ThrowIfNotNull(
                         ctx,
                         ErrorType.ItemDeletionError,
-                        Globalne.dokumentBL.UsuńPozycję(Helpers.StringDocType(DocType), DocItems[0])
+                        Serwer.dokumentBL.UsuńPozycję(Helpers.StringDocType(DocType), DocItems[0])
                     );
                     return true;
                 }
@@ -97,7 +99,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
 
                     foreach (int DocItem in DocItems)
                     {
-                        int Resp = Globalne.dokumentBL.UsuńPozycję(
+                        int Resp = Serwer.dokumentBL.UsuńPozycję(
                             Helpers.StringDocType(DocType),
                             DocItem
                         );
@@ -127,7 +129,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
             {
                 Item.ExIDArticle = Kod.TowaryJednostkiWBazie[0].IDTowaru;
                 Item.ExIDUnit = Kod.TowaryJednostkiWBazie[0].IDJednostki;
-                Item.ExUnit = Globalne.jednostkaMiaryBL.PobierzJednostkę(Item.ExIDUnit).strNazwa;
+                Item.ExUnit = Serwer.jednostkaMiaryBL.PobierzJednostkę(Item.ExIDUnit).strNazwa;
             }
 
             foreach (string Property in Globalne.CurrentSettings.CodeParsing.Keys)
@@ -167,7 +169,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                             if (Value == "")
                                 continue;
 
-                            List<int> IDs = Globalne.towarBL.PobierzIDTowarów(Value);
+                            List<int> IDs = Serwer.towarBL.PobierzIDTowarów(Value);
                             Item.ExIDArticle = IDs.Count == 0 ? -1 : IDs[0];
 
                             break;
@@ -185,9 +187,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                             if (Value == "")
                                 continue;
 
-                            KontrahentVO KtrVO = Globalne.podmiotBL.PobierzKontrahentaWgNazwy(
-                                Value
-                            );
+                            KontrahentVO KtrVO = Serwer.podmiotBL.PobierzKontrahentaWgNazwy(Value);
 
                             if (KtrVO.ID >= 0)
                             {
@@ -196,7 +196,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                             }
                             else
                             {
-                                KtrVO = Globalne.podmiotBL.PobierzKontrahentaWgSymbolu(Value);
+                                KtrVO = Serwer.podmiotBL.PobierzKontrahentaWgSymbolu(Value);
 
                                 if (KtrVO.ID >= 0)
                                 {
@@ -205,9 +205,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                                 }
                                 else
                                 {
-                                    KtrVO = Globalne.podmiotBL.PobierzKontrahentaWgSymboluERP(
-                                        Value
-                                    );
+                                    KtrVO = Serwer.podmiotBL.PobierzKontrahentaWgSymboluERP(Value);
 
                                     if (KtrVO.ID >= 0)
                                     {
@@ -232,7 +230,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                             if (Value == "")
                                 continue;
 
-                            JednostkaMiaryO Jednostka = Globalne.jednostkaMiaryBL.PobierzJednostkę(
+                            JednostkaMiaryO Jednostka = Serwer.jednostkaMiaryBL.PobierzJednostkę(
                                 Value
                             );
 
@@ -284,7 +282,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
 
                             if (Value != "")
                             {
-                                int ID = Globalne.paletaBL.PobierzIDPalety(Value);
+                                int ID = Serwer.paletaBL.PobierzIDPalety(Value);
 
                                 if (Operation == Operation.In || Operation == Operation.OutIn)
                                 {
@@ -309,7 +307,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
 
                             if (Value != "")
                             {
-                                int ID = Globalne.partiaBL.PobierzIDPartii(Value);
+                                int ID = Serwer.partiaBL.PobierzIDPartii(Value);
 
                                 Item.ExPartia = Value;
                                 Item.ExIDPartia = ID;
@@ -379,40 +377,29 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
         private static void GetNames(ref DocumentItemVO Item)
         {
             if (Item.ExIDFunkcjaLogistycznaP >= 0 && Item.ExFunkcjaLogistycznaP == "")
-                Item.ExFunkcjaLogistycznaP = (string)
-                    Helpers.HiveInvoke(
-                        typeof(WMSServerAccess.FunkcjaLogistyczna.FunkcjaLogistycznaBL),
-                        "PobierzNazwęFunkcjiLogistycznej",
+                Item.ExFunkcjaLogistycznaP =
+                    Serwer.funkcjaLogistycznaBL.PobierzNazwęFunkcjiLogistycznej(
                         Item.ExIDFunkcjaLogistycznaP
                     );
 
             if (Item.ExIDFunkcjaLogistycznaW >= 0 && Item.ExFunkcjaLogistycznaW == "")
-                Item.ExFunkcjaLogistycznaW = (string)
-                    Helpers.HiveInvoke(
-                        typeof(WMSServerAccess.FunkcjaLogistyczna.FunkcjaLogistycznaBL),
-                        "PobierzNazwęFunkcjiLogistycznej",
+                Item.ExFunkcjaLogistycznaW =
+                    Serwer.funkcjaLogistycznaBL.PobierzNazwęFunkcjiLogistycznej(
                         Item.ExIDFunkcjaLogistycznaW
                     );
 
             if (Item.ExIDLokalizacjaP >= 0 && Item.ExLokalizacjaP == "")
-                Item.ExLokalizacjaP = (string)
-                    Helpers.HiveInvoke(
-                        typeof(WMSServerAccess.Lokalizacja.LokalizacjaBL),
-                        "PobierzNazwęLokalizacji",
-                        Item.ExIDLokalizacjaP
-                    );
+                Item.ExLokalizacjaP = Serwer.lokalizacjaBL.PobierzNazwęLokalizacji(
+                    Item.ExIDLokalizacjaP
+                );
 
             if (Item.ExIDLokalizacjaW >= 0 && Item.ExLokalizacjaW == "")
                 Item.ExLokalizacjaW = (string)
-                    Helpers.HiveInvoke(
-                        typeof(WMSServerAccess.Lokalizacja.LokalizacjaBL),
-                        "PobierzNazwęLokalizacji",
-                        Item.ExIDLokalizacjaW
-                    );
+                    Serwer.lokalizacjaBL.PobierzNazwęLokalizacji(Item.ExIDLokalizacjaW);
 
             if (Item.ExIDArticle >= 0 && Item.ExArticle == "")
             {
-                TowarRow tr = Globalne.towarBL.PobierzTowarRow(Item.ExIDArticle);
+                TowarRow tr = Serwer.towarBL.PobierzTowarRow(Item.ExIDArticle);
                 Item.ExArticle = tr.strNazwa;
                 Item.ExSymbol = tr.strSymbol;
                 Item.ExNrKat = tr.NrKat;
@@ -420,36 +407,16 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
             }
 
             if (Item.ExIDOwner >= 0 && Item.ExOwner == "")
-                Item.ExOwner = (string)
-                    Helpers.HiveInvoke(
-                        typeof(WMSServerAccess.Podmiot.PodmiotBL),
-                        "PobierzNazwęKontrahenta",
-                        Item.ExIDOwner
-                    );
+                Item.ExOwner = Serwer.podmiotBL.PobierzNazwęKontrahenta(Item.ExIDOwner);
 
             if (Item.ExIDPaletaP >= 0 && Item.ExPaletaP == "")
-                Item.ExPaletaP = (string)
-                    Helpers.HiveInvoke(
-                        typeof(WMSServerAccess.Paleta.PaletaBL),
-                        "PobierzKodPalety",
-                        Item.ExIDPaletaP
-                    );
+                Item.ExPaletaP = Serwer.paletaBL.PobierzKodPalety(Item.ExIDPaletaP);
 
             if (Item.ExIDPaletaW >= 0 && Item.ExPaletaW == "")
-                Item.ExPaletaW = (string)
-                    Helpers.HiveInvoke(
-                        typeof(WMSServerAccess.Paleta.PaletaBL),
-                        "PobierzKodPalety",
-                        Item.ExIDPaletaW
-                    );
+                Item.ExPaletaW = Serwer.paletaBL.PobierzKodPalety(Item.ExIDPaletaW);
 
             if (Item.ExIDPartia >= 0 && Item.ExPartia == "")
-                Item.ExPartia = (string)
-                    Helpers.HiveInvoke(
-                        typeof(WMSServerAccess.Partia.PartiaBL),
-                        "PobierzKodPartii",
-                        Item.ExIDPartia
-                    );
+                Item.ExPartia = Serwer.partiaBL.PobierzKodPartii(Item.ExIDPartia);
         }
 
         private static void GetDataFromFirstSSCEntry_SQL(
@@ -459,16 +426,13 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
             Operation CurrentOperation
         )
         {
-            ZapytanieZTabeliO Zap = (ZapytanieZTabeliO)
-                Helpers.HiveInvoke(
-                    typeof(WMSServerAccess.Ogólne.OgólneBL),
-                    "ZapytanieSQL",
-                    SQL.DocumentItems.Paleta_GetFirstInData.Replace(
-                            "<<IDPOZDOK>>",
-                            IDFirstEntry.ToString()
-                        )
-                        .Replace("<<PAL>>", SSCC)
-                );
+            ZapytanieZTabeliO Zap = Serwer.ogólneBL.ZapytanieSQL(
+                SQL.DocumentItems.Paleta_GetFirstInData.Replace(
+                        "<<IDPOZDOK>>",
+                        IDFirstEntry.ToString()
+                    )
+                    .Replace("<<PAL>>", SSCC)
+            );
 
             Item.ExIDUnit = Convert.ToInt32(
                 Zap.ListaWierszy[0][
@@ -543,20 +507,17 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
         {
             if (Kod.Paleta != "")
             {
-                int IDPozPal = Globalne.paletaBL.PobierzIDPierwszejPozycjiPalety(-1, Kod.Paleta);
+                int IDPozPal = Serwer.paletaBL.PobierzIDPierwszejPozycjiPalety(-1, Kod.Paleta);
 
                 if (IDPozPal >= 0)
                 {
-                    ZapytanieZTabeliO Zap = (ZapytanieZTabeliO)
-                        Helpers.HiveInvoke(
-                            typeof(WMSServerAccess.Ogólne.OgólneBL),
-                            "ZapytanieSQL",
-                            SQL.DocumentItems.Paleta_GetFirstInData.Replace(
-                                    "<<IDPOZDOK>>",
-                                    IDPozPal.ToString()
-                                )
-                                .Replace("<<PAL>>", Kod.Paleta)
-                        );
+                    ZapytanieZTabeliO Zap = Serwer.ogólneBL.ZapytanieSQL(
+                        SQL.DocumentItems.Paleta_GetFirstInData.Replace(
+                                "<<IDPOZDOK>>",
+                                IDPozPal.ToString()
+                            )
+                            .Replace("<<PAL>>", Kod.Paleta)
+                    );
 
                     Kod.Partia = (string)
                         Zap.ListaWierszy[0][
@@ -591,7 +552,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
         {
             if (Paleta != "")
             {
-                int IDPozPal = Globalne.paletaBL.PobierzIDPierwszejPozycjiPalety(-1, Paleta);
+                int IDPozPal = Serwer.paletaBL.PobierzIDPierwszejPozycjiPalety(-1, Paleta);
 
                 if (IDPozPal >= 0)
                 {
@@ -613,7 +574,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
         {
             if (Kod.Paleta != "")
             {
-                int IDPozPal = Globalne.paletaBL.PobierzIDPierwszejPozycjiPalety(-1, Kod.Paleta);
+                int IDPozPal = Serwer.paletaBL.PobierzIDPierwszejPozycjiPalety(-1, Kod.Paleta);
 
                 if (IDPozPal >= 0)
                 {
@@ -639,7 +600,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                 return Item.Base.numIloscZlecona;
             else
             {
-                decimal Stan = Globalne.przychrozchBL.PobierzStanTowaruWJednostce(
+                decimal Stan = Serwer.przychRozchBL.PobierzStanTowaruWJednostce(
                     Item.ExIDArticle,
                     Doc.intMagazynW,
                     Item.ExIDLokalizacjaW,
@@ -674,7 +635,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                 if (Item.Base.idLokalizacjaW < 0 && Item.ExIDArticle >= 0)
                 {
                     PodpowiedźLokalizacjiO Pdp =
-                        Globalne.przychrozchBL.ZaproponujLokalizacjęDlaRozchodu_Nazwa_PozycjaNaŚć(
+                        Serwer.przychRozchBL.ZaproponujLokalizacjęDlaRozchodu_Nazwa_PozycjaNaŚć(
                             Item.ExIDArticle,
                             Doc.intMagazynW,
                             Item.ExIDPartia,
@@ -701,7 +662,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                 if (Item.Base.idLokalizacjaP < 0 && Item.ExIDArticle >= 0)
                 {
                     PodpowiedźLokalizacjiO Pdp =
-                        Globalne.przychrozchBL.ZaproponujLokalizacjęDlaPrzychodu_Nazwa_PozycjaNaŚć(
+                        Serwer.przychRozchBL.ZaproponujLokalizacjęDlaPrzychodu_Nazwa_PozycjaNaŚć(
                             Item.ExIDArticle,
                             Doc.intMagazynP,
                             new List<int>() { Item.ExIDLokalizacjaW },
@@ -756,10 +717,10 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
             {
                 if (WarunekP)
                 {
-                    int IDDef = Globalne.lokalizacjaBL.PobierzIDLokalizacjiPodstawowejDlaMagazynu(
+                    int IDDef = Serwer.lokalizacjaBL.PobierzIDLokalizacjiPodstawowejDlaMagazynu(
                         Doc.intMagazynP
                     );
-                    string NazwaDef = Globalne.lokalizacjaBL.PobierzLokalizację(IDDef).strNazwa;
+                    string NazwaDef = Serwer.lokalizacjaBL.PobierzLokalizację(IDDef).strNazwa;
 
                     Item.ExLokalizacjaP = NazwaDef;
                     Item.ExIDLokalizacjaP = IDDef;
@@ -767,10 +728,10 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
 
                 if (WarunekR)
                 {
-                    int IDDef = Globalne.lokalizacjaBL.PobierzIDLokalizacjiPodstawowejDlaMagazynu(
+                    int IDDef = Serwer.lokalizacjaBL.PobierzIDLokalizacjiPodstawowejDlaMagazynu(
                         Doc.intMagazynW
                     );
-                    string NazwaDef = Globalne.lokalizacjaBL.PobierzLokalizację(IDDef).strNazwa;
+                    string NazwaDef = Serwer.lokalizacjaBL.PobierzLokalizację(IDDef).strNazwa;
 
                     Item.ExLokalizacjaP = NazwaDef;
                     Item.ExIDLokalizacjaP = IDDef;
@@ -966,7 +927,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                             if (CurrentOperation == Operation.In)
                             {
                                 EItem.DefaultAmount = Math.Min(
-                                    Globalne.przychrozchBL.ObliczIleCałkTowaruZmieściSięWLokalizacji(
+                                    Serwer.przychRozchBL.ObliczIleCałkTowaruZmieściSięWLokalizacji(
                                         EItem.ExIDArticle,
                                         EItem.ExIDUnit,
                                         EItem.ExIDLokalizacjaP
@@ -1174,7 +1135,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                             if (EItem.Base.numIloscZrealizowana <= 0)
                             {
                                 EItem.DefaultAmount = Math.Min(
-                                    Globalne.przychrozchBL.ObliczIleCałkTowaruZmieściSięWLokalizacji(
+                                    Serwer.przychRozchBL.ObliczIleCałkTowaruZmieściSięWLokalizacji(
                                         EItem.ExIDArticle,
                                         EItem.ExIDUnit,
                                         EItem.ExIDLokalizacjaP
@@ -1243,7 +1204,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
 
                 ctx.IsSwitchingActivity = true;
 
-                DocumentItemVO Item = new DocumentItemVO(Globalne.dokumentBL.PustaPozycjaVO());
+                DocumentItemVO Item = new DocumentItemVO(Serwer.dokumentBL.PustaPozycjaVO());
 
                 Intent i;
 
@@ -1285,7 +1246,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                 {
                     if (Item.ExIDUnit <= 0)
                     {
-                        JednostkaMiaryO Jedn = Globalne.towarBL.PobierzJednostkęDomyślnąTowaru(
+                        JednostkaMiaryO Jedn = Serwer.towarBL.PobierzJednostkęDomyślnąTowaru(
                             Item.ExIDArticle
                         );
                         Item.ExIDUnit = Jedn.ID;
@@ -1554,26 +1515,22 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
             NewItem.bezposrednieZL = Operation == Operation.OutIn ? true : false;
 
             if (NewItem.numIloscZlecona == 0)
-                Globalne.dokumentBL.UsuńPozycję(Helpers.StringDocType(DocType), Original);
+                Serwer.dokumentBL.UsuńPozycję(Helpers.StringDocType(DocType), Original);
             else
             {
-                PozycjaVO Poz = Globalne.dokumentBL.PobierzPozycję(NewItem.ID);
+                PozycjaVO Poz = Serwer.dokumentBL.PobierzPozycję(NewItem.ID);
 
                 if (Poz.ID == -1)
                     AutoException.ThrowIfNotNull(
                         ctx,
                         ErrorType.ItemCreationError,
-                        Globalne.dokumentBL.ZróbPozycję(
-                            Helpers.StringDocType(DocType),
-                            NewItem,
-                            true
-                        )
+                        Serwer.dokumentBL.ZróbPozycję(Helpers.StringDocType(DocType), NewItem, true)
                     );
                 else
                     AutoException.ThrowIfNotNull(
                         ctx,
                         ErrorType.ItemEditError,
-                        Globalne.dokumentBL.EdytujPozycję(
+                        Serwer.dokumentBL.EdytujPozycję(
                             Helpers.StringDocType(DocType),
                             NewItem,
                             true

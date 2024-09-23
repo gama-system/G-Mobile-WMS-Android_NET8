@@ -686,7 +686,7 @@ namespace G_Mobile_Android_WMS
                 else
                 {
                     foreach (DokumentVO Doc in Documents)
-                        Globalne.dokumentBL.UstawOperatoraEdytującegoDokument(Doc.ID, -1);
+                        Serwer.dokumentBL.UstawOperatoraEdytującegoDokument(Doc.ID, -1);
 
                     Intent i = new Intent(this, typeof(DocumentsActivity));
                     i.PutExtra(DocumentsActivity.Vars.DocType, (int)DocType);
@@ -805,7 +805,7 @@ namespace G_Mobile_Android_WMS
 
         public static int GetNumberOfLocsInInventoryDoc(int DocID)
         {
-            return Globalne.dokumentBL.PobierzListęLokalizacjiInwentaryzacji(DocID).Count();
+            return Serwer.dokumentBL.PobierzListęLokalizacjiInwentaryzacji(DocID).Count();
         }
 
         private void SetDefaultLocationTo(LokalizacjaVO Loc)
@@ -923,13 +923,13 @@ namespace G_Mobile_Android_WMS
             List<PozycjaŚcieżkiO> PathOrder = new List<PozycjaŚcieżkiO>();
 
             if (!Documents[0].bZlecenie)
-                PathOrder = Globalne.lokalizacjaBL.PobierzŚcieżkęZbiórki(Globalne.Magazyn.ID);
+                PathOrder = Serwer.lokalizacjaBL.PobierzŚcieżkęZbiórki(Globalne.Magazyn.ID);
 
             foreach (DokumentVO Doc in Documents)
             {
                 if (Doc.bZlecenie)
                 {
-                    List<PozycjaRowZPodpowiedzią> Res = Globalne.dokumentBL.PobierzPozycjeIZaproponujLokalizacjeDlaDokumentu(Doc.ID,
+                    List<PozycjaRowZPodpowiedzią> Res = Serwer.dokumentBL.PobierzPozycjeIZaproponujLokalizacjeDlaDokumentu(Doc.ID,
                                                                                                                              CurrentOperation == Enums.Operation.In ? true : false,
                                                                                                                              CurrentOperation == Enums.Operation.Out ? true : false,
                                                                                                                              SelectedDefaultLoc);
@@ -958,7 +958,7 @@ namespace G_Mobile_Android_WMS
                 }
                 else
                 {
-                    List<PozycjaRow> Pozycje = Globalne.dokumentBL.PobierzListęPozycjiRow(Doc.ID);
+                    List<PozycjaRow> Pozycje = Serwer.dokumentBL.PobierzListęPozycjiRow(Doc.ID);
 
                     foreach (PozycjaRow R in Pozycje)
                     {
@@ -997,19 +997,19 @@ namespace G_Mobile_Android_WMS
         private List<DocumentItemRow> GetData_Old()
         {
             List<DocumentItemRow> Items = new List<DocumentItemRow>();
-            List<PozycjaŚcieżkiO> PathOrder = Globalne.lokalizacjaBL.PobierzŚcieżkęZbiórki(Globalne.Magazyn.ID);
+            List<PozycjaŚcieżkiO> PathOrder = Serwer.lokalizacjaBL.PobierzŚcieżkęZbiórki(Globalne.Magazyn.ID);
 
 
             foreach (DokumentVO Doc in Documents)
             {
-                List<PozycjaRow> Pozycje = Globalne.dokumentBL.PobierzListęPozycjiRow(Doc.ID);
+                List<PozycjaRow> Pozycje = Serwer.dokumentBL.PobierzListęPozycjiRow(Doc.ID);
 
                 string LocDefault = "";
                 int OnPathDocLoc = -1;
                 if (Doc.intLokalizacjaPozycji >= 0)
                 {
                     LocDefault = (string)Helpers.HiveInvoke(typeof(WMSServerAccess.Lokalizacja.LokalizacjaBL), "PobierzNazwęLokalizacji", Doc.intLokalizacjaPozycji);
-                    OnPathDocLoc = Globalne.lokalizacjaBL.PobierzNumerLokalizacjiNaŚcieżce(Doc.intLokalizacjaPozycji);
+                    OnPathDocLoc = Serwer.lokalizacjaBL.PobierzNumerLokalizacjiNaŚcieżce(Doc.intLokalizacjaPozycji);
                 }
 
                 foreach (PozycjaRow R in Pozycje)
@@ -1023,7 +1023,7 @@ namespace G_Mobile_Android_WMS
                         {
                             if (R.idLokalizacjaP < 0 && Doc.intLokalizacjaPozycji < 0)
                             {
-                                PodpowiedźLokalizacjiO Pdp = Globalne.przychrozchBL.ZaproponujLokalizacjęDlaPrzychodu_Nazwa_PozycjaNaŚć(R.idTowaru, Doc.intMagazynP, new List<int>());
+                                PodpowiedźLokalizacjiO Pdp = Serwer.przychRozchBL.ZaproponujLokalizacjęDlaPrzychodu_Nazwa_PozycjaNaŚć(R.idTowaru, Doc.intMagazynP, new List<int>());
 
                                 DocItem.ExIDLokalizacjaP = Pdp.ID;
                                 DocItem.ExLokalizacjaP = Pdp.strNazwa;
@@ -1045,7 +1045,7 @@ namespace G_Mobile_Android_WMS
                         {
                             if (R.idLokalizacjaW < 0 && Doc.intLokalizacjaPozycji < 0)
                             {
-                                PodpowiedźLokalizacjiO Pdp = Globalne.przychrozchBL.ZaproponujLokalizacjęDlaRozchodu_Nazwa_PozycjaNaŚć(R.idTowaru,
+                                PodpowiedźLokalizacjiO Pdp = Serwer.przychRozchBL.ZaproponujLokalizacjęDlaRozchodu_Nazwa_PozycjaNaŚć(R.idTowaru,
                                                                                                                                        Doc.intMagazynW,
                                                                                                                                        R.idPartia,
                                                                                                                                        "",
@@ -1206,7 +1206,7 @@ namespace G_Mobile_Android_WMS
             if (DocType == DocTypes.IN)
             {
                 if (
-                    !Globalne.dokumentBL.SprawdźCzyTowarMożeByćUżytyDlaPozycji(
+                    !Serwer.dokumentBL.SprawdźCzyTowarMożeByćUżytyDlaPozycji(
                         Kod.TowaryJednostkiWBazie[0].IDTowaru,
                         "I",
                         Documents[0].ID
@@ -1332,7 +1332,7 @@ namespace G_Mobile_Android_WMS
             {
                 // sprawdzenie czy nowo dodany towar i jego paleta jest juz w systemie, jezeli jest to pomin dodawanie
 
-                bool czyJestPaleta = Globalne.paletaBL.CzyPaletaIstnieje(Kod.Paleta, -1);
+                bool czyJestPaleta = Serwer.paletaBL.CzyPaletaIstnieje(Kod.Paleta, -1);
 
                 if (
                     Globalne.CurrentSettings.OnlyOncePalleteSSCCOnDocument

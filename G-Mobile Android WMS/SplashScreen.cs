@@ -1,29 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
-
+using System.Threading;
 using Android;
+using Android.Animation;
 using Android.App;
 using Android.Content;
+using Android.Content.PM;
+using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using System.Threading;
-
-using Symbol.XamarinEMDK;
-using System.Globalization;
-
-using WMSServerAccess.Licencja;
-using Android.Graphics.Drawables;
-using Android.Animation;
 using Newtonsoft.Json;
-using Android.Content.PM;
+using Symbol.XamarinEMDK;
+using WMSServerAccess.Licencja;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "G-Mobile Android WMS", MainLauncher = true, Theme = "@style/Theme.Splash", ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, NoHistory = true, Icon = "@drawable/Icon")]
+    [Activity(
+        Label = "G-Mobile Android WMS",
+        MainLauncher = true,
+        Theme = "@style/Theme.Splash",
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        NoHistory = true,
+        Icon = "@drawable/Icon"
+    )]
     public class SplashScreen : BaseWMSActivity
     {
         protected override void OnCreate(Bundle savedInstanceState)
@@ -50,7 +54,7 @@ namespace G_Mobile_Android_WMS
                     int Res = ServerConnection.CreateObjects();
 
                     if (Res == 0)
-                        Globalne.Licencja = Globalne.licencjaBL.GetLicence_Portable();
+                        Globalne.Licencja = Serwer.licencjaBL.GetLicence_Portable();
                 }
             }
             else
@@ -62,16 +66,15 @@ namespace G_Mobile_Android_WMS
                 Helpers.CenteredToast(Errors, ToastLength.Long);
             else
                 BusinessLogicHelpers.Config.GetDatabaseConfig();
-            
+
             Helpers.TurnOnScanner();
 
             IsBusy = false;
             Helpers.SwitchAndFinishCurrentActivity(this, typeof(MainActivity));
         }
 
-        bool LoadConfig()   
+        bool LoadConfig()
         {
-
 #if DEBUG
             Globalne.CurrentTerminalSettings = new TerminalSettings();
             //Globalne.CurrentTerminalSettings.IP = "10.1.0.50";
@@ -84,7 +87,6 @@ namespace G_Mobile_Android_WMS
             return true;
 #endif
 
-            
             TerminalSettings Set = TerminalSettings.GetSettings();
 
             if (Set != null)
@@ -97,7 +99,6 @@ namespace G_Mobile_Android_WMS
             else
                 return false;
         }
-
 
         void SetDefaults()
         {
@@ -112,49 +113,48 @@ namespace G_Mobile_Android_WMS
 
             Globalne.CurrentSettings = null;
 
-            Globalne.licencjaBL = null;
-            Globalne.operatorBL = null;
-            Globalne.magazynBL = null;
-            Globalne.ogólneBL = null;
-            Globalne.podmiotBL = null;
-            Globalne.jednostkaMiaryBL = null;
-            Globalne.towarBL = null;
+            Serwer.licencjaBL = null;
+            Serwer.operatorBL = null;
+            Serwer.magazynBL = null;
+            Serwer.ogólneBL = null;
+            Serwer.podmiotBL = null;
+            Serwer.jednostkaMiaryBL = null;
+            Serwer.towarBL = null;
             Globalne.wymaganiaBL = null;
-            Globalne.lokalizacjaBL = null;
-            Globalne.rejestrBL = null;
-            Globalne.dokumentBL = null;
-            Globalne.przychrozchBL = null;
-            Globalne.kodykreskoweBL = null;
-            Globalne.partiaBL = null;
-            Globalne.paletaBL = null;
-            Globalne.funklogBL = null;
-            Globalne.menuBL = null;
-            Globalne.aktualizacjeBL = null;
+            Serwer.lokalizacjaBL = null;
+            Serwer.rejestrBL = null;
+            Serwer.dokumentBL = null;
+            Serwer.przychRozchBL = null;
+            Serwer.kodykreskoweBL = null;
+            Serwer.partiaBL = null;
+            Serwer.paletaBL = null;
+            Serwer.funklogBL = null;
+            Serwer.menuBL = null;
+            Serwer.aktualizacjeBL = null;
 
             Globalne.Licencja = null;
             Globalne.Operator = null;
             Globalne.Magazyn = null;
-    }
+        }
 
         void SetDeviceData()
         {
             string Manufacturer = Android.OS.Build.Manufacturer;
 
-            if (Manufacturer.Contains("Zebra Technologies") || Manufacturer.Contains("Motorola Solutions"))
+            if (
+                Manufacturer.Contains("Zebra Technologies")
+                || Manufacturer.Contains("Motorola Solutions")
+            )
                 Globalne.DeviceType = Enums.DeviceTypes.Zebra;
             else if (Manufacturer.Contains("Newland"))
                 Globalne.DeviceType = Enums.DeviceTypes.Newland;
             else
                 Globalne.DeviceType = Enums.DeviceTypes.Other;
 
-
             Android.Content.PM.PackageManager PM = PackageManager;
 
             if (PM.HasSystemFeature(Android.Content.PM.PackageManager.FeatureCamera))
                 Globalne.HasCamera = true;
-
         }
-
-
     }
 }

@@ -16,6 +16,7 @@ using Android.Views;
 using Android.Webkit;
 using Android.Widget;
 using G_Mobile_Android_WMS.Enums;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 using Color = System.Drawing.Color;
 
@@ -42,7 +43,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                     ctx.GetString(Resource.String.creating_documents_registry_must_be_set)
                 );
 
-            StatusDokumentuO Status = Globalne.dokumentBL.PobierzPierwszyStatusDokumentuOTypie(
+            StatusDokumentuO Status = Serwer.dokumentBL.PobierzPierwszyStatusDokumentuOTypie(
                 Helpers.StringDocType(DocType),
                 (int)Enums.DocumentStatusTypes.WRealizacji
             );
@@ -50,7 +51,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
             if (Status.ID == -1)
                 throw new Exception(ctx.GetString(Resource.String.global_define_statuses));
 
-            DokumentVO Dokument = Globalne.dokumentBL.PustyDokumentVO();
+            DokumentVO Dokument = Serwer.dokumentBL.PustyDokumentVO();
             Dokument.idStatusDokumentu = Status.ID;
 
             Dokument.intLokalizacjaPozycji = Buffer;
@@ -62,7 +63,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
             Dokument.intPriorytet = Globalne
                 .rejestrBL.PobierzRejestr(Dokument.idRejestr)
                 .intPriorytet;
-            Dokument.dataDokumentu = Globalne.ogólneBL.GetSQLDate();
+            Dokument.dataDokumentu = Serwer.ogólneBL.GetSQLDate();
             Dokument.bTworzenieNaTerminalu = true;
             Dokument.bDokumentMobilny = true;
             Dokument.bZlecenie = false;
@@ -109,7 +110,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                     );
             }
 
-            int ID = Globalne.dokumentBL.ZróbDokument(Dokument);
+            int ID = Serwer.dokumentBL.ZróbDokument(Dokument);
 
             AutoException.ThrowIfNotNull(ctx, ErrorType.DocumentCreationError, ID);
 
@@ -154,13 +155,13 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                 }
                 else
                 {
-                    Globalne.dokumentBL.UstawStatusLokInwentaryzacji(IDInvLoc, Doc.ID, true);
+                    Serwer.dokumentBL.UstawStatusLokInwentaryzacji(IDInvLoc, Doc.ID, true);
                     return true;
                 }
             }
             else
             {
-                Globalne.dokumentBL.UstawStatusLokInwentaryzacji(IDInvLoc, Doc.ID, true);
+                Serwer.dokumentBL.UstawStatusLokInwentaryzacji(IDInvLoc, Doc.ID, true);
                 return true;
             }
         }
@@ -208,12 +209,12 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                 Action = DocumentLeaveAction.Leave;
 
                 if (Globalne.CurrentSettings.StatusesToSetOnDocumentLeave[DocType] >= 0)
-                    StatusOK = Globalne.dokumentBL.PobierzStatusDokumentu(
+                    StatusOK = Serwer.dokumentBL.PobierzStatusDokumentu(
                         Globalne.CurrentSettings.StatusesToSetOnDocumentLeave[DocType]
                     );
 
                 if (StatusOK == null || StatusOK.ID < 0)
-                    StatusOK = Globalne.dokumentBL.PobierzPierwszyStatusDokumentuOTypie(
+                    StatusOK = Serwer.dokumentBL.PobierzPierwszyStatusDokumentuOTypie(
                         Helpers.StringDocType(DocType),
                         (int)Enums.DocumentStatusTypes.DoRealizacji
                     );
@@ -229,7 +230,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                 Action = DocumentLeaveAction.Pause;
 
                 if (Globalne.CurrentSettings.StatusesToSetOnDocumentLeave[DocType] >= 0)
-                    StatusOK = Globalne.dokumentBL.PobierzStatusDokumentu(
+                    StatusOK = Serwer.dokumentBL.PobierzStatusDokumentu(
                         Globalne.CurrentSettings.StatusesToSetOnDocumentPause[DocType]
                     );
                 else
@@ -268,7 +269,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
 
                         // dostep do etykiet przez tylko wybranych operatorow
                         var operatorzyEtykiet =
-                            Globalne.drukarkaBL.PobierzOperatorowEtykiet().strNazwa ?? "";
+                            Serwer.drukarkaBL.PobierzOperatorowEtykiet().strNazwa ?? "";
                         // jezeli brak wpisow z operatorami uznajemy ze wszyscy moga drukowac etykiety
                         bool czyOperatorPrzypisany = (
                             (
@@ -280,7 +281,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                         // rejestry do wydruku etykiet
                         /// skladnia: rejestr, numer drukarki - RW/WEW,2;PZ/OSO,1
                         var rejestryEtykiet =
-                            Globalne.drukarkaBL.PobierzRejestryEtykiet().strNazwa ?? "";
+                            Serwer.drukarkaBL.PobierzRejestryEtykiet().strNazwa ?? "";
                         var rejestryEtykietList = string.IsNullOrEmpty(rejestryEtykiet)
                             ? new List<string>()
                             : rejestryEtykiet.Split(';').ToList();
@@ -292,7 +293,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                         foreach (var rejestr in rejestryEtykietList)
                         {
                             // [0] nazwa rejestru
-                            var rejestDokumentu = Globalne.rejestrBL.PobierzRejestr(
+                            var rejestDokumentu = Serwer.rejestrBL.PobierzRejestr(
                                 Documents.FirstOrDefault().idRejestr
                             );
                             if (
@@ -320,7 +321,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                             }
                         }
 
-                        DrukarkaO Etykieta = Globalne.drukarkaBL.PowiadomienieEtykiet();
+                        DrukarkaO Etykieta = Serwer.drukarkaBL.PowiadomienieEtykiet();
 
                         //////////////////////////////////////////////////////// DRUKOWANIE ETYKIETY
 
@@ -353,7 +354,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
 
                                         foreach (int numerDrukarki in numeryDrukarkiEtykiet)
                                         {
-                                            Globalne.dokumentBL.WydrukEty(
+                                            Serwer.dokumentBL.WydrukEty(
                                                 Documents.FirstOrDefault().strNazwa,
                                                 location,
                                                 numerDrukarki
@@ -373,12 +374,12 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                 if (!Multipicking)
                 {
                     if (Globalne.CurrentSettings.StatusesToSetOnDocumentFinish[DocType] >= 0)
-                        StatusOK = Globalne.dokumentBL.PobierzStatusDokumentu(
+                        StatusOK = Serwer.dokumentBL.PobierzStatusDokumentu(
                             Globalne.CurrentSettings.StatusesToSetOnDocumentFinish[DocType]
                         );
 
                     if (StatusOK == null || StatusOK.ID < 0)
-                        StatusOK = Globalne.dokumentBL.PobierzPierwszyStatusDokumentuOTypie(
+                        StatusOK = Serwer.dokumentBL.PobierzPierwszyStatusDokumentuOTypie(
                             Helpers.StringDocType(DocType),
                             (int)Enums.DocumentStatusTypes.Zamknięty
                         );
@@ -386,12 +387,12 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                 else if (Multipicking && Globalne.CurrentSettings.MultipickingSetStatusClose)
                 {
                     if (Globalne.CurrentSettings.StatusesToSetOnDocumentFinish[DocType] >= 0)
-                        StatusOK = Globalne.dokumentBL.PobierzStatusDokumentu(
+                        StatusOK = Serwer.dokumentBL.PobierzStatusDokumentu(
                             Globalne.CurrentSettings.StatusesToSetOnDocumentFinish[DocType]
                         );
 
                     if (StatusOK == null || StatusOK.ID < 0)
-                        StatusOK = Globalne.dokumentBL.PobierzPierwszyStatusDokumentuOTypie(
+                        StatusOK = Serwer.dokumentBL.PobierzPierwszyStatusDokumentuOTypie(
                             Helpers.StringDocType(DocType),
                             (int)Enums.DocumentStatusTypes.Zamknięty
                         );
@@ -399,12 +400,12 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                 else
                 {
                     if (Globalne.CurrentSettings.StatusesToSetOnDocumentFinish[DocType] >= 0)
-                        StatusOK = Globalne.dokumentBL.PobierzStatusDokumentu(
+                        StatusOK = Serwer.dokumentBL.PobierzStatusDokumentu(
                             Globalne.CurrentSettings.StatusesToSetOnDocumentDone[DocType]
                         );
 
                     if (StatusOK == null || StatusOK.ID < 0)
-                        StatusOK = Globalne.dokumentBL.PobierzPierwszyStatusDokumentuOTypie(
+                        StatusOK = Serwer.dokumentBL.PobierzPierwszyStatusDokumentuOTypie(
                             Helpers.StringDocType(DocType),
                             (int)Enums.DocumentStatusTypes.Wykonany
                         );
@@ -414,12 +415,12 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                     AutoException.ThrowIfNotNull(ctx, Resource.String.global_define_statuses);
 
                 if (Globalne.CurrentSettings.StatusesToSetOnDocumentFinishIncorrect[DocType] >= 0)
-                    StatusNOK = Globalne.dokumentBL.PobierzStatusDokumentu(
+                    StatusNOK = Serwer.dokumentBL.PobierzStatusDokumentu(
                         Globalne.CurrentSettings.StatusesToSetOnDocumentFinishIncorrect[DocType]
                     );
 
                 if (StatusNOK == null || StatusNOK.ID < 0)
-                    StatusNOK = Globalne.dokumentBL.PobierzPierwszyStatusDokumentuOTypie(
+                    StatusNOK = Serwer.dokumentBL.PobierzPierwszyStatusDokumentuOTypie(
                         Helpers.StringDocType(DocType),
                         (int)Enums.DocumentStatusTypes.Wstrzymany
                     );
@@ -436,8 +437,8 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                 {
                     case DocumentLeaveAction.Leave:
                     {
-                        Globalne.dokumentBL.UstawOperatoraEdytującegoDokument(Doc.ID, -1);
-                        Globalne.dokumentBL.UstawStatusDokumentu(Doc.ID, StatusOK.ID);
+                        Serwer.dokumentBL.UstawOperatoraEdytującegoDokument(Doc.ID, -1);
+                        Serwer.dokumentBL.UstawStatusDokumentu(Doc.ID, StatusOK.ID);
 
                         if (
                             !Doc.bZlecenie
@@ -449,11 +450,11 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                         {
                             // blokowanie usuwania dokumentow IN bez pozycji
                             if (
-                                Globalne.dokumentBL.PobierzListęIDPozycji(Doc.ID).Count == 0
+                                Serwer.dokumentBL.PobierzListęIDPozycji(Doc.ID).Count == 0
                                 && DocType != DocTypes.IN
                             )
                             {
-                                Globalne.dokumentBL.UsuńDokument(Doc.ID);
+                                Serwer.dokumentBL.UsuńDokument(Doc.ID);
                                 Helpers.CenteredToast(
                                     ctx,
                                     Resource.String.document_was_empty_and_was_deleted,
@@ -467,13 +468,13 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                     case DocumentLeaveAction.Pause:
                     {
                         if (StatusOK != null)
-                            Globalne.dokumentBL.UstawStatusDokumentu(Doc.ID, StatusOK.ID);
+                            Serwer.dokumentBL.UstawStatusDokumentu(Doc.ID, StatusOK.ID);
 
                         break;
                     }
                     case DocumentLeaveAction.Close:
                     {
-                        if (!Globalne.dokumentBL.SprawdźCzyDokumentMożeZostaćZamknięty(Doc.ID))
+                        if (!Serwer.dokumentBL.SprawdźCzyDokumentMożeZostaćZamknięty(Doc.ID))
                             CannotBeClosed.Add(Doc.ID);
 
                         if (
@@ -486,13 +487,13 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                         {
                             // blokowanie usuwania dokumentow IN bez pozycji
                             if (
-                                Globalne.dokumentBL.PobierzListęIDPozycji(Doc.ID).Count == 0
+                                Serwer.dokumentBL.PobierzListęIDPozycji(Doc.ID).Count == 0
                                 && DocType != DocTypes.IN
                             )
                             {
-                                Globalne.dokumentBL.UstawOperatoraEdytującegoDokument(Doc.ID, -1);
-                                Globalne.dokumentBL.UstawStatusDokumentu(Doc.ID, StatusOK.ID);
-                                Globalne.dokumentBL.UsuńDokument(Doc.ID);
+                                Serwer.dokumentBL.UstawOperatoraEdytującegoDokument(Doc.ID, -1);
+                                Serwer.dokumentBL.UstawStatusDokumentu(Doc.ID, StatusOK.ID);
+                                Serwer.dokumentBL.UsuńDokument(Doc.ID);
                                 Helpers.CenteredToast(
                                     ctx,
                                     Resource.String.document_was_empty_and_was_deleted,
@@ -529,11 +530,11 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                 foreach (DokumentVO Doc in Documents)
                 {
                     if (CannotBeClosed.Contains(Doc.ID))
-                        Globalne.dokumentBL.UstawStatusDokumentu(Doc.ID, StatusNOK.ID);
+                        Serwer.dokumentBL.UstawStatusDokumentu(Doc.ID, StatusNOK.ID);
                     else
-                        Globalne.dokumentBL.UstawStatusDokumentu(Doc.ID, StatusOK.ID);
+                        Serwer.dokumentBL.UstawStatusDokumentu(Doc.ID, StatusOK.ID);
 
-                    Globalne.dokumentBL.UstawOperatoraEdytującegoDokument(Doc.ID, -1);
+                    Serwer.dokumentBL.UstawOperatoraEdytującegoDokument(Doc.ID, -1);
 
                     //Przy wlaczonej opcji MultipickingAutoKompletacjaAfterFinish usuwamy lokalizacje kuwet
                     //Nastepuje Autokompletacja
@@ -541,7 +542,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                         Multipicking
                         && Globalne.CurrentSettings.MultipickingAutoKompletacjaAfterFinish
                     )
-                        Globalne.dokumentBL.UstawLokalizacjęDokumentu(Doc.ID, -1);
+                        Serwer.dokumentBL.UstawLokalizacjęDokumentu(Doc.ID, -1);
                 }
             }
 
@@ -555,7 +556,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
 
             foreach (int ID in DocIDs)
             {
-                DokumentVO Doc = Globalne.dokumentBL.PobierzDokument(ID, "", "", -1, -1, "");
+                DokumentVO Doc = Serwer.dokumentBL.PobierzDokument(ID, "", "", -1, -1, "");
 
                 if (Doc.ID < 0)
                     AutoException.ThrowIfNotNull(ctx, Resource.String.documents_cantedit_deleted);
@@ -567,7 +568,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                         Resource.String.documents_cantedit_many_of_this_type
                     );
 
-                int St = Globalne.dokumentBL.PobierzTypStatusuDokumentu(ID, "", "", -1, -1, "");
+                int St = Serwer.dokumentBL.PobierzTypStatusuDokumentu(ID, "", "", -1, -1, "");
 
                 if (St < 0)
                     AutoException.ThrowIfNotNull(ctx, Resource.String.documents_cantedit_deleted);
@@ -641,7 +642,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                         );
                 }
 
-                int St = Globalne.dokumentBL.PobierzTypStatusuDokumentu(Doc.ID, "", "", -1, -1, "");
+                int St = Serwer.dokumentBL.PobierzTypStatusuDokumentu(Doc.ID, "", "", -1, -1, "");
 
                 if (St < 0)
                     AutoException.ThrowIfNotNull(ctx, Resource.String.documents_cantedit_deleted);
@@ -679,12 +680,12 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
             StatusDokumentuO Status;
 
             if (Globalne.CurrentSettings.StatusesToSetOnDocumentEnter[DocType] < 0)
-                Status = Globalne.dokumentBL.PobierzPierwszyStatusDokumentuOTypie(
+                Status = Serwer.dokumentBL.PobierzPierwszyStatusDokumentuOTypie(
                     Helpers.StringDocType(DocType),
                     (int)Enums.DocumentStatusTypes.WRealizacji
                 );
             else
-                Status = Globalne.dokumentBL.PobierzStatusDokumentu(
+                Status = Serwer.dokumentBL.PobierzStatusDokumentu(
                     Globalne.CurrentSettings.StatusesToSetOnDocumentEnter[DocType]
                 );
 
@@ -694,16 +695,16 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
             {
                 foreach (DokumentVO Doc in Documents)
                 {
-                    Globalne.dokumentBL.UstawOperatoraEdytującegoDokument(
+                    Serwer.dokumentBL.UstawOperatoraEdytującegoDokument(
                         Doc.ID,
                         Globalne.Operator.ID
                     );
 
                     if (
-                        Globalne.dokumentBL.PobierzTypStatusuDokumentu(Doc.ID, "", "", -1, -1, "")
+                        Serwer.dokumentBL.PobierzTypStatusuDokumentu(Doc.ID, "", "", -1, -1, "")
                         <= (int)DocumentStatusTypes.Wykonany
                     )
-                        Globalne.dokumentBL.UstawStatusDokumentu(Doc.ID, Status.ID);
+                        Serwer.dokumentBL.UstawStatusDokumentu(Doc.ID, Status.ID);
                 }
             }
 
@@ -735,7 +736,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                 {
                     foreach (int[] Doc in Docs)
                     {
-                        int Status = Globalne.dokumentBL.PobierzTypStatusuDokumentu(
+                        int Status = Serwer.dokumentBL.PobierzTypStatusuDokumentu(
                             Doc[1],
                             "",
                             "",
@@ -769,7 +770,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                     AutoException.ThrowIfNotNull(
                         ctx,
                         ErrorType.DocumentDeletionError,
-                        Globalne.dokumentBL.UsuńDokument(IDDoc)
+                        Serwer.dokumentBL.UsuńDokument(IDDoc)
                     );
                     return true;
                 }
@@ -807,7 +808,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                             ErrorsHappened = true;
                         else
                         {
-                            int Resp = Globalne.dokumentBL.UsuńDokument(IDDoc);
+                            int Resp = Serwer.dokumentBL.UsuńDokument(IDDoc);
 
                             if (Resp != 0)
                                 ErrorsHappened = true;

@@ -11,6 +11,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS.BusinessLogicHelpers
@@ -25,7 +26,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
         {
             try
             {
-                List<UstawienieMobilneOpe> Settings = Globalne.menuBL.PobierzListęUstawieńMobOpe();
+                List<UstawienieMobilneOpe> Settings = Serwer.menuBL.PobierzListęUstawieńMobOpe();
 
                 if (AddNewOption)
                     Settings.Add(
@@ -69,7 +70,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                                 strNazwa = NewResp.Text,
                                 strUstawienie = JsonConvert.SerializeObject(new UserSettings())
                             };
-                            int ID = Globalne.menuBL.WstawUstawienieMobOpe(OpeMob);
+                            int ID = Serwer.menuBL.WstawUstawienieMobOpe(OpeMob);
 
                             if (ID == -1)
                             {

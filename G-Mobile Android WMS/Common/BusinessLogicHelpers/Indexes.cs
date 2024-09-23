@@ -11,6 +11,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS.BusinessLogicHelpers
@@ -23,7 +24,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
             TextView v = null
         )
         {
-            List<FunkcjaLogistycznaO> FLogs = Globalne.funklogBL.PobierzListęFunkcjiLogistycznych(
+            List<FunkcjaLogistycznaO> FLogs = Serwer.funklogBL.PobierzListęFunkcjiLogistycznych(
                 WarehouseID
             );
 
@@ -59,7 +60,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
         )
         {
             List<RejestrRow> Regs =
-                Globalne.rejestrBL.PobierzListęRejestrówDostępnychDlaOperatoraNaTerminalu(
+                Serwer.rejestrBL.PobierzListęRejestrówDostępnychDlaOperatoraNaTerminalu(
                     Helpers.StringDocType(DocType),
                     WarehouseID,
                     Globalne.Operator.ID
@@ -99,7 +100,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
             TextView v = null
         )
         {
-            List<JednostkaPrzeliczO> Units = Globalne.towarBL.PobierzWszystkieJednostkiTowaru(
+            List<JednostkaPrzeliczO> Units = Serwer.towarBL.PobierzWszystkieJednostkiTowaru(
                 ArticleID
             );
 
@@ -149,7 +150,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                             TowarJedn.IDTowaru
                         )
                         .ToString();
-                    string S = Globalne.towarBL.PobierzTowar(TowarJedn.IDTowaru).strSymbol;
+                    string S = Serwer.towarBL.PobierzTowar(TowarJedn.IDTowaru).strSymbol;
                     string J = Helpers
                         .HiveInvoke(
                             typeof(WMSServerAccess.JednostkaMiary.JednostkaMiaryBL),

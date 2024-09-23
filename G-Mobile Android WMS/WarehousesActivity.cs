@@ -177,7 +177,7 @@ namespace G_Mobile_Android_WMS
 
         private List<MagazynO> GetData()
         {
-            List<MagazynO> Magazyny = Globalne.magazynBL.PobierzListęDostępnychDlaOperatora(
+            List<MagazynO> Magazyny = Serwer.magazynBL.PobierzListęDostępnychDlaOperatora(
                 Globalne.Operator.ID
             );
 
@@ -202,7 +202,7 @@ namespace G_Mobile_Android_WMS
 
                     if (Res)
                     {
-                        Globalne.operatorBL.WylogujOperatora(Globalne.Operator.ID);
+                        Serwer.operatorBL.WylogujOperatora(Globalne.Operator.ID);
                         Globalne.Operator = null;
                         Globalne.Magazyn = null;
                         Helpers.SwitchAndFinishCurrentActivity(this, typeof(UsersActivity));

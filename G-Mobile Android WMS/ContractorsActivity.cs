@@ -18,6 +18,7 @@ using Android.Widget;
 using G_Mobile_Android_WMS.SQL;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
@@ -132,7 +133,7 @@ namespace G_Mobile_Android_WMS
 
         private async System.Threading.Tasks.Task<int> ParseBarcode(string Data)
         {
-            KontrahentVO Kod = Globalne.podmiotBL.PobierzKontrahentaWgKodu(Data);
+            KontrahentVO Kod = Serwer.podmiotBL.PobierzKontrahentaWgKodu(Data);
 
             if (Kod.ID < 0)
             {
@@ -164,7 +165,7 @@ namespace G_Mobile_Android_WMS
                         Selected[(int)Contractors.Contractors_Results.idKontrahenta]
                     );
 
-                    KontrahentVO Ktr = Globalne.podmiotBL.PobierzKontrahenta(IDKontrahenta);
+                    KontrahentVO Ktr = Serwer.podmiotBL.PobierzKontrahenta(IDKontrahenta);
 
                     if (Ktr.ID != -1 && Ktr.bAktywny && !Ktr.bZablokowany)
                         SelectLocationAndCloseActivity(Ktr);

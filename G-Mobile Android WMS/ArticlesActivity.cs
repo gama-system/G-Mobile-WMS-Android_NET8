@@ -19,6 +19,7 @@ using Android.Widget;
 using G_Mobile_Android_WMS.Enums;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
@@ -99,8 +100,8 @@ namespace G_Mobile_Android_WMS
 
             if (IDTowaru > -1)
             {
-                if (Globalne.towarBL.PobierzTowar(IDTowaru).strSymbol.Length > 0)
-                    FilterText = Globalne.towarBL.PobierzTowar(IDTowaru).strSymbol;
+                if (Serwer.towarBL.PobierzTowar(IDTowaru).strSymbol.Length > 0)
+                    FilterText = Serwer.towarBL.PobierzTowar(IDTowaru).strSymbol;
             }
 
             if (AskOnStart)
@@ -196,7 +197,7 @@ namespace G_Mobile_Android_WMS
                     return -1;
                 else
                 {
-                    TowarVO T = Globalne.towarBL.PobierzTowar(TwJedn.IDTowaru);
+                    TowarVO T = Serwer.towarBL.PobierzTowar(TwJedn.IDTowaru);
 
                     if (T.ID != -1)
                         SelectArticleAndCloseActivity(T);
@@ -206,7 +207,7 @@ namespace G_Mobile_Android_WMS
             }
             else
             {
-                TowarVO T = Globalne.towarBL.PobierzTowar(Kod.TowaryJednostkiWBazie[0].IDTowaru);
+                TowarVO T = Serwer.towarBL.PobierzTowar(Kod.TowaryJednostkiWBazie[0].IDTowaru);
 
                 if (T.ID != -1)
                     SelectArticleAndCloseActivity(T);
@@ -240,7 +241,7 @@ namespace G_Mobile_Android_WMS
                     TowarRowTerminal Selected = (ArticlesList.Adapter as ArticlesListAdapter)[
                         e.Position
                     ];
-                    TowarVO T = (TowarVO)Globalne.towarBL.PobierzTowar(Selected.ID);
+                    TowarVO T = (TowarVO)Serwer.towarBL.PobierzTowar(Selected.ID);
 
                     if (T.ID != -1)
                         SelectArticleAndCloseActivity(T);
@@ -319,7 +320,7 @@ namespace G_Mobile_Android_WMS
         private List<TowarRowTerminal> GetData(string Filtr)
         {
             List<TowarRowTerminal> Towary =
-                Globalne.towarBL.PobierzListęDostępnychTowarówZeStanemWedług(
+                Serwer.towarBL.PobierzListęDostępnychTowarówZeStanemWedług(
                     IDDokumentu,
                     IDMagazynu,
                     IDLokalizacji,

@@ -209,7 +209,7 @@ namespace G_Mobile_Android_WMS
             {
                 try
                 {
-                    Globalne.dokumentBL.UstawLokalizacjęDokumentu(CurrentDoc.ID, -1);
+                    Serwer.dokumentBL.UstawLokalizacjęDokumentu(CurrentDoc.ID, -1);
                     await BusinessLogicHelpers.Documents.ShowAndApplyDocumentExitOptions(
                         this,
                         new List<DokumentVO>() { CurrentDoc },
@@ -236,7 +236,7 @@ namespace G_Mobile_Android_WMS
 
                 try
                 {
-                    DrukarkaO Etykieta = Globalne.drukarkaBL.PowiadomienieEtykiet();
+                    DrukarkaO Etykieta = Serwer.drukarkaBL.PowiadomienieEtykiet();
                     bool Resp2 = await Helpers.QuestionAlertAsyncEtykieta(
                         this,
                         Resource.String.Etykieta,
@@ -246,7 +246,7 @@ namespace G_Mobile_Android_WMS
                     if (!Resp2) { }
                     else
                     {
-                        DrukarkaO drukarka = Globalne.drukarkaBL.PobierzDrukarkeEtykiet();
+                        DrukarkaO drukarka = Serwer.drukarkaBL.PobierzDrukarkeEtykiet();
                         bool PrintIsPossible = await Helpers.DoesPrintPossible(this);
 
                         if (PrintIsPossible)
@@ -254,11 +254,11 @@ namespace G_Mobile_Android_WMS
                             try
                             {
                                 LokalizacjaVO intlokalizacja =
-                                    Globalne.lokalizacjaBL.PobierzLokalizację(
+                                    Serwer.lokalizacjaBL.PobierzLokalizację(
                                         CurrentDoc.intLokalizacja
                                     );
 
-                                Globalne.dokumentBL.WydrukEty(
+                                Serwer.dokumentBL.WydrukEty(
                                     CurrentDoc.strERP,
                                     intlokalizacja.strNazwa,
                                     1
@@ -353,7 +353,7 @@ namespace G_Mobile_Android_WMS
                     int licznik = 0;
                     foreach (object[] wiersz in Zap.ListaWierszy)
                     {
-                        var basePoz = Globalne.dokumentBL.PustaPozycjaRow();
+                        var basePoz = Serwer.dokumentBL.PustaPozycjaRow();
                         basePoz.strNazwaTowaru =
                             wiersz[1].ToString() + " / " + wiersz[2].ToString();
                         basePoz.idDokumentu = Convert.ToInt32(wiersz[0]);
@@ -419,7 +419,7 @@ namespace G_Mobile_Android_WMS
 
 
                     // maybe like this
-                    //string TypDoc1 = Globalne.dokumentBL.PobierzTypDokumentu( Doc.ID, "", "", -1, -1, "");
+                    //string TypDoc1 = Serwer.dokumentBL.PobierzTypDokumentu( Doc.ID, "", "", -1, -1, "");
 #warning HiveInvoke
                     string TypDoc = (string)
                         Helpers.HiveInvoke(
@@ -567,7 +567,7 @@ namespace G_Mobile_Android_WMS
                     // dodano skanowanie dokumnetu po numerze w ERP -> StrERP
                     if (IDLok < 0)
                     {
-                        CurrentDoc = Globalne.dokumentBL.PobierzDokument(
+                        CurrentDoc = Serwer.dokumentBL.PobierzDokument(
                             -1,
                             "",
                             "",
@@ -577,7 +577,7 @@ namespace G_Mobile_Android_WMS
                         );
                         if (CurrentDoc.ID > 0)
                         {
-                            Globalne.dokumentBL.UstawOperatoraEdytującegoDokument(
+                            Serwer.dokumentBL.UstawOperatoraEdytującegoDokument(
                                 IDLok,
                                 Globalne.Operator.ID
                             );
@@ -599,9 +599,9 @@ namespace G_Mobile_Android_WMS
                     }
 
                     if (IDLok >= 0)
-                        CurrentDoc = Globalne.dokumentBL.PobierzDokument(-1, "", "", -1, IDLok, "");
+                        CurrentDoc = Serwer.dokumentBL.PobierzDokument(-1, "", "", -1, IDLok, "");
                     else
-                        CurrentDoc = Globalne.dokumentBL.PobierzDokument(
+                        CurrentDoc = Serwer.dokumentBL.PobierzDokument(
                             -1,
                             Scanned[0],
                             "",
@@ -635,7 +635,7 @@ namespace G_Mobile_Android_WMS
                         return;
                     }
                     else
-                        Globalne.dokumentBL.UstawOperatoraEdytującegoDokument(
+                        Serwer.dokumentBL.UstawOperatoraEdytującegoDokument(
                             IDLok,
                             Globalne.Operator.ID
                         );

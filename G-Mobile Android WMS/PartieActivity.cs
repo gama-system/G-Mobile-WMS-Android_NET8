@@ -164,7 +164,7 @@ namespace G_Mobile_Android_WMS
 
         private async Task<int> ParseBarcode(string Data)
         {
-            PartiaO Kod = Globalne.partiaBL.PobierzPartię(-1, Data);
+            PartiaO Kod = Serwer.partiaBL.PobierzPartię(-1, Data);
 
             if (Kod.ID < 0)
             {
@@ -207,7 +207,7 @@ namespace G_Mobile_Android_WMS
                     PartiaRowTerminal Selected = (PartieList.Adapter as PartieListAdapter)[
                         e.Position
                     ];
-                    PartiaO Par = Globalne.partiaBL.PobierzPartię(Selected.ID, "");
+                    PartiaO Par = Serwer.partiaBL.PobierzPartię(Selected.ID, "");
 
                     if (Par.ID != -1)
                         SelectPartiaAndCloseActivity(Par);
@@ -284,7 +284,7 @@ namespace G_Mobile_Android_WMS
         private List<PartiaRowTerminal> GetData()
         {
             List<PartiaRowTerminal> Lokalizacje =
-                Globalne.partiaBL.PobierzListęDostępnychPartiiZeStanemWedług(
+                Serwer.partiaBL.PobierzListęDostępnychPartiiZeStanemWedług(
                     IDMagazynu,
                     IDTowaru,
                     IDFunkcjiLogistycznej,

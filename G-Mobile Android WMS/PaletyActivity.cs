@@ -169,7 +169,7 @@ namespace G_Mobile_Android_WMS
 
         private async Task<int> ParseBarcode(string Data)
         {
-            PaletaO Kod = Globalne.paletaBL.PobierzPaletę(-1, Data);
+            PaletaO Kod = Serwer.paletaBL.PobierzPaletę(-1, Data);
 
             if (Kod.ID < 0)
             {
@@ -212,7 +212,7 @@ namespace G_Mobile_Android_WMS
                     PaletaRowTerminal Selected = (PaletyList.Adapter as PaletyListAdapter)[
                         e.Position
                     ];
-                    PaletaO Pal = Globalne.paletaBL.PobierzPaletę(Selected.ID, "");
+                    PaletaO Pal = Serwer.paletaBL.PobierzPaletę(Selected.ID, "");
 
                     if (Pal.ID != -1)
                         SelectPaletaAndCloseActivity(Pal);
@@ -289,7 +289,7 @@ namespace G_Mobile_Android_WMS
         private List<PaletaRowTerminal> GetData()
         {
             List<PaletaRowTerminal> Lokalizacje =
-                Globalne.paletaBL.PobierzListęDostępnychPaletNaTerminalZeStanemWedług(
+                Serwer.paletaBL.PobierzListęDostępnychPaletNaTerminalZeStanemWedług(
                     IDMagazynu,
                     IDTowaru,
                     IDFunkcjiLogistycznej,

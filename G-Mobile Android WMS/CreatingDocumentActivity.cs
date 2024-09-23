@@ -17,6 +17,7 @@ using Android.Views;
 using Android.Widget;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
@@ -396,7 +397,7 @@ namespace G_Mobile_Android_WMS
                 try
                 {
                     List<RejestrRow> Rejestry =
-                        Globalne.rejestrBL.PobierzListęRejestrówDostępnychDlaOperatoraNaTerminalu(
+                        Serwer.rejestrBL.PobierzListęRejestrówDostępnychDlaOperatoraNaTerminalu(
                             Helpers.StringDocType(DocType),
                             Globalne.Magazyn.ID,
                             Globalne.Operator.ID
@@ -420,7 +421,7 @@ namespace G_Mobile_Android_WMS
 
                 try
                 {
-                    List<MagazynO> Magazyny = Globalne.magazynBL.PobierzListęDostępnychDlaOperatora(
+                    List<MagazynO> Magazyny = Serwer.magazynBL.PobierzListęDostępnychDlaOperatora(
                         Globalne.Operator.ID
                     );
 
@@ -593,7 +594,7 @@ namespace G_Mobile_Android_WMS
                     try
                     {
                         string strERP = Globalne.CurrentSettings.SetRejestrForMM;
-                        RejestrVO rejestr = Globalne.rejestrBL.PobierzRejestrWgSymbolu(strERP);
+                        RejestrVO rejestr = Serwer.rejestrBL.PobierzRejestrWgSymbolu(strERP);
 
                         Helpers.SetTextOnTextView(this, Registry, rejestr.strNazwaRej);
                         Registry.Tag = rejestr.ID;
@@ -603,7 +604,7 @@ namespace G_Mobile_Android_WMS
                     try
                     {
                         string NazwaMagazynu = Globalne.CurrentSettings.SetMagazineForMM;
-                        MagazynO mag = Globalne.magazynBL.PobierzMagazyn(NazwaMagazynu);
+                        MagazynO mag = Serwer.magazynBL.PobierzMagazyn(NazwaMagazynu);
                         if (Globalne.Magazyn.Nazwa != NazwaMagazynu)
                         {
                             Helpers.SetTextOnTextView(this, TargetWarehouse, mag.Nazwa);
@@ -689,9 +690,9 @@ namespace G_Mobile_Android_WMS
                 {
                     try
                     {
-                        //      List<RejestrRow> Rejestry = Globalne.rejestrBL.PobierzListęRejestrówDostępnychDlaOperatoraNaTerminalu(Helpers.StringDocType(DocType), Globalne.Magazyn.ID, Globalne.Operator.ID);
+                        //      List<RejestrRow> Rejestry = Serwer.rejestrBL.PobierzListęRejestrówDostępnychDlaOperatoraNaTerminalu(Helpers.StringDocType(DocType), Globalne.Magazyn.ID, Globalne.Operator.ID);
                         string strERP = Globalne.CurrentSettings.SetRejestrForDetal;
-                        RejestrVO rejestr = Globalne.rejestrBL.PobierzRejestrWgSymbolu(strERP);
+                        RejestrVO rejestr = Serwer.rejestrBL.PobierzRejestrWgSymbolu(strERP);
 
                         Helpers.SetTextOnTextView(this, Registry, rejestr.strNazwaRej);
                         //  Helpers.SetTextOnTextView(this, Registry, Rejestry[0].strNazwaRej);
@@ -702,7 +703,7 @@ namespace G_Mobile_Android_WMS
                     try
                     {
                         string NazwaKontrahenta = Globalne.CurrentSettings.SetContrahForDetal;
-                        KontrahentVO Ktr = Globalne.podmiotBL.PobierzKontrahentaWgNazwy(
+                        KontrahentVO Ktr = Serwer.podmiotBL.PobierzKontrahentaWgNazwy(
                             NazwaKontrahenta
                         );
 

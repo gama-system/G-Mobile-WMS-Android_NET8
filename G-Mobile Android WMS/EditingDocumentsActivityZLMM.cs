@@ -286,7 +286,7 @@ namespace G_Mobile_Android_WMS
 
         private void SetDefaultLocationTo(int lokalizacjaId)
         {
-            var Loc = Globalne.lokalizacjaBL.PobierzLokalizację(lokalizacjaId);
+            var Loc = Serwer.lokalizacjaBL.PobierzLokalizację(lokalizacjaId);
 
             if (Loc == null)
             {
@@ -694,7 +694,7 @@ namespace G_Mobile_Android_WMS
                 IsSwitchingActivity = true;
 
                 foreach (DokumentVO Doc in Documents)
-                    Globalne.dokumentBL.UstawOperatoraEdytującegoDokument(Doc.ID, -1);
+                    Serwer.dokumentBL.UstawOperatoraEdytującegoDokument(Doc.ID, -1);
 
                 Intent i = new Intent(this, typeof(DocumentsActivity));
                 i.PutExtra(DocumentsActivity.Vars.DocType, (int)DocType);
@@ -941,7 +941,7 @@ namespace G_Mobile_Android_WMS
             List<PozycjaŚcieżkiO> PathOrder = new List<PozycjaŚcieżkiO>();
 
             if (!Documents[0].bZlecenie && !(Mode == Enums.ZLMMMode.TwoStep && CurrentOperation == Enums.Operation.In) && Mode != Enums.ZLMMMode.OneStep)
-                PathOrder = Globalne.lokalizacjaBL.PobierzŚcieżkęZbiórki(Globalne.Magazyn.ID);
+                PathOrder = Serwer.lokalizacjaBL.PobierzŚcieżkęZbiórki(Globalne.Magazyn.ID);
 
             foreach (DokumentVO Doc in Documents)
             {
@@ -981,7 +981,7 @@ namespace G_Mobile_Android_WMS
                 }
                 else
                 {
-                    List<PozycjaRow> Pozycje = Globalne.dokumentBL.PobierzListęPozycjiRow(Doc.ID);
+                    List<PozycjaRow> Pozycje = Serwer.dokumentBL.PobierzListęPozycjiRow(Doc.ID);
 
                     foreach (PozycjaRow R in Pozycje)
                     {
@@ -1024,11 +1024,11 @@ namespace G_Mobile_Android_WMS
         private List<DocumentItemRow> GetData_Old()
         {
             List<DocumentItemRow> Items = new List<DocumentItemRow>();
-            List<PozycjaŚcieżkiO> PathOrder = Globalne.lokalizacjaBL.PobierzŚcieżkęZbiórki(Globalne.Magazyn.ID);
+            List<PozycjaŚcieżkiO> PathOrder = Serwer.lokalizacjaBL.PobierzŚcieżkęZbiórki(Globalne.Magazyn.ID);
 
             foreach (DokumentVO Doc in Documents)
             {
-                List<PozycjaRow> Pozycje = Globalne.dokumentBL.PobierzListęPozycjiRow(Doc.ID);
+                List<PozycjaRow> Pozycje = Serwer.dokumentBL.PobierzListęPozycjiRow(Doc.ID);
 
                 string LocDefault = "";
                 if (Doc.intLokalizacjaPozycji >= 0)
@@ -1044,7 +1044,7 @@ namespace G_Mobile_Android_WMS
 
                         if (R.idLokalizacjaW < 0 && Doc.intLokalizacjaPozycji < 0)
                         {
-                            PodpowiedźLokalizacjiO Pdp = Globalne.przychrozchBL.ZaproponujLokalizacjęDlaRozchodu_Nazwa_PozycjaNaŚć(R.idTowaru,
+                            PodpowiedźLokalizacjiO Pdp = Serwer.przychRozchBL.ZaproponujLokalizacjęDlaRozchodu_Nazwa_PozycjaNaŚć(R.idTowaru,
                                                                                                                                    Doc.intMagazynW,
                                                                                                                                    R.idPartia,
                                                                                                                                    "",
@@ -1071,7 +1071,7 @@ namespace G_Mobile_Android_WMS
 
                         if (R.idLokalizacjaP < 0 && Doc.intLokalizacjaPozycji < 0)
                         {
-                            PodpowiedźLokalizacjiO Pdp = Globalne.przychrozchBL.ZaproponujLokalizacjęDlaPrzychodu_Nazwa_PozycjaNaŚć(R.idTowaru, Doc.intMagazynP,
+                            PodpowiedźLokalizacjiO Pdp = Serwer.przychRozchBL.ZaproponujLokalizacjęDlaPrzychodu_Nazwa_PozycjaNaŚć(R.idTowaru, Doc.intMagazynP,
                                                                                                                                     new List<int>() { DocItem.ExIDLokalizacjaW });
 
 

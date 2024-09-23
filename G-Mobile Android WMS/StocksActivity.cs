@@ -270,7 +270,7 @@ namespace G_Mobile_Android_WMS
 
         private async System.Threading.Tasks.Task<int> ParseBarcode(List<string> Data)
         {
-            LokalizacjaVO KodL = Globalne.lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(
+            LokalizacjaVO KodL = Serwer.lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(
                 Data[0],
                 Globalne.Magazyn.ID,
                 true
@@ -394,10 +394,10 @@ namespace G_Mobile_Android_WMS
                     : Kod?.TowaryJednostkiWBazie[0]?.IDTowaru.ToString();
 
             if (Kod != null && Kod.Paleta != null && Kod.Paleta != "")
-                Pal = Globalne.paletaBL.PobierzIDPalety(Kod.Paleta).ToString();
+                Pal = Serwer.paletaBL.PobierzIDPalety(Kod.Paleta).ToString();
 
             if (Kod != null && Kod.Partia != null && Kod.Partia != "")
-                Par = Globalne.partiaBL.PobierzIDPartii(Kod.Partia).ToString();
+                Par = Serwer.partiaBL.PobierzIDPartii(Kod.Partia).ToString();
 
             string Sum =
                 SQL.Stocks.GetStocks_Where_Mag.Replace("<<ID_MAG>>", Globalne.Magazyn.ID.ToString())

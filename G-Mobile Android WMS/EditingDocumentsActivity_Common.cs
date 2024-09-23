@@ -179,7 +179,7 @@ namespace G_Mobile_Android_WMS
                     );
 
                     List<PozycjaRowZPodpowiedzią> Res =
-                        Globalne.dokumentBL.PobierzPozycjeIZaproponujLokalizacjeDlaDokumentu(
+                        Serwer.dokumentBL.PobierzPozycjeIZaproponujLokalizacjeDlaDokumentu(
                             Doc.ID,
                             lokPrzychodu,
                             lokRozchodu,
@@ -227,7 +227,7 @@ namespace G_Mobile_Android_WMS
                 }
                 else
                 {
-                    List<PozycjaRow> Pozycje = Globalne.dokumentBL.PobierzListęPozycjiRow(Doc.ID);
+                    List<PozycjaRow> Pozycje = Serwer.dokumentBL.PobierzListęPozycjiRow(Doc.ID);
 
                     Parallel.ForEach(
                         Pozycje,

@@ -366,7 +366,7 @@ namespace G_Mobile_Android_WMS
 
             if (Globalne.CurrentSettings.Partie)
             {
-                Edited.idPartia = Globalne.partiaBL.PobierzIDPartii(Partia.Text);
+                Edited.idPartia = Serwer.partiaBL.PobierzIDPartii(Partia.Text);
                 Edited.strPartia = Partia.Text;
             }
             else
@@ -377,7 +377,7 @@ namespace G_Mobile_Android_WMS
 
             if (Globalne.CurrentSettings.Palety)
             {
-                Edited.idPaletaW = Globalne.paletaBL.PobierzIDPalety(Paleta.Text);
+                Edited.idPaletaW = Serwer.paletaBL.PobierzIDPalety(Paleta.Text);
                 Edited.strPaletaW = Paleta.Text;
             }
             else
@@ -532,7 +532,7 @@ namespace G_Mobile_Android_WMS
                 if (NumAmount.Value <= 0)
                     return true;
 
-                PozycjaVO Original = Globalne.dokumentBL.PobierzPozycję(CurrentItem.Base.ID);
+                PozycjaVO Original = Serwer.dokumentBL.PobierzPozycję(CurrentItem.Base.ID);
                 PozycjaVO Edited = GetDBObject(Original);
 
                 if (!await CheckSanity(Edited))
@@ -553,7 +553,7 @@ namespace G_Mobile_Android_WMS
                     AutoException.ThrowIfNotNull(
                         this,
                         ErrorType.ItemCreationError,
-                        Globalne.dokumentBL.EdytujPozycję(
+                        Serwer.dokumentBL.EdytujPozycję(
                             Helpers.StringDocType(DocType),
                             Edited,
                             CurrentDoc.bIgnorujBlokadePartii
@@ -578,7 +578,7 @@ namespace G_Mobile_Android_WMS
                         AutoException.ThrowIfNotNull(
                             this,
                             ErrorType.ItemCreationError,
-                            Globalne.dokumentBL.ZróbPozycję(
+                            Serwer.dokumentBL.ZróbPozycję(
                                 Helpers.StringDocType(DocType),
                                 Edited,
                                 CurrentDoc.bIgnorujBlokadePartii
@@ -635,7 +635,7 @@ namespace G_Mobile_Android_WMS
                 );
 
                 if (ItemsNotYetDoneWithSameLocation == null)
-                    LowestPathID = Globalne.lokalizacjaBL.PobierzNumerLokalizacjiNaŚcieżce(
+                    LowestPathID = Serwer.lokalizacjaBL.PobierzNumerLokalizacjiNaŚcieżce(
                         CurrentItem.ExIDLokalizacjaW
                     );
 
@@ -764,7 +764,7 @@ namespace G_Mobile_Android_WMS
             else
                 Description.Visibility = ViewStates.Gone;
 
-            decimal InWarehouse = Globalne.przychrozchBL.PobierzStanTowaruWJednostce(
+            decimal InWarehouse = Serwer.przychRozchBL.PobierzStanTowaruWJednostce(
                 CurrentItem.Base.idTowaru,
                 CurrentDoc.intMagazynW,
                 CurrentItem.ExIDLokalizacjaW,
@@ -948,7 +948,7 @@ namespace G_Mobile_Android_WMS
                 IsSwitchingActivity = true;
 
                 foreach (DokumentVO Doc in Documents)
-                    Globalne.dokumentBL.UstawOperatoraEdytującegoDokument(Doc.ID, -1);
+                    Serwer.dokumentBL.UstawOperatoraEdytującegoDokument(Doc.ID, -1);
 
                 Intent i = new Intent(this, typeof(DocumentsActivity));
                 i.PutExtra(DocumentsActivity.Vars.DocType, (int)DocType);
@@ -1199,8 +1199,7 @@ namespace G_Mobile_Android_WMS
                     if (CurrentItem.Base.idPartia >= 0)
                     {
                         if (
-                            Globalne.partiaBL.PobierzIDPartii(Kod.Partia)
-                            != CurrentItem.Base.idPartia
+                            Serwer.partiaBL.PobierzIDPartii(Kod.Partia) != CurrentItem.Base.idPartia
                         )
                         {
                             Helpers.HideProgressDialog();
@@ -1219,8 +1218,7 @@ namespace G_Mobile_Android_WMS
                     if (CurrentItem.Base.idPaletaW >= 0)
                     {
                         if (
-                            Globalne.paletaBL.PobierzIDPalety(Kod.Paleta)
-                            != CurrentItem.Base.idPartia
+                            Serwer.paletaBL.PobierzIDPalety(Kod.Paleta) != CurrentItem.Base.idPartia
                         )
                         {
                             Helpers.HideProgressDialog();
@@ -1252,7 +1250,7 @@ namespace G_Mobile_Android_WMS
                 }
                 //todo: rzyjrzec sie czy dziala poprawnie
                 // Sprawdzamy, czy towar który zeskanowano występuje faktycznie w takiej ilości w lokalizacji
-                decimal Stan = Globalne.przychrozchBL.PobierzStanTowaru(
+                decimal Stan = Serwer.przychRozchBL.PobierzStanTowaru(
                     CurrentItem.Base.idTowaru,
                     CurrentDoc.intMagazynW,
                     CurrentItem.ExIDLokalizacjaW,

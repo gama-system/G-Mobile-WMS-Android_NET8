@@ -17,10 +17,8 @@ using Android.Net.Wifi;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
-using Hive.Serialization.Core;
 using Newtonsoft.Json;
-using WMSServerAccess.Drukarka;
-using WMSServerAccess.Towar;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
@@ -172,7 +170,7 @@ namespace G_Mobile_Android_WMS
             Enums.DocTypes Type
         )
         {
-            KodKreskowyZSzablonuO Ksk = Globalne.kodykreskoweBL.PustyKodKreskowyZSzablonu();
+            KodKreskowyZSzablonuO Ksk = Serwer.kodykreskoweBL.PustyKodKreskowyZSzablonu();
 
             List<int> Order = Globalne.CurrentSettings.BarcodeScanningOrder[Type];
 
@@ -189,7 +187,7 @@ namespace G_Mobile_Android_WMS
                         }
                     }
 
-                Ksk = Globalne.kodykreskoweBL.ParsujWedługGS1(ToParse);
+                Ksk = Serwer.kodykreskoweBL.ParsujWedługGS1(ToParse);
             }
 
             for (int i = 0; i < Order.Count; i++)
@@ -203,18 +201,18 @@ namespace G_Mobile_Android_WMS
                     {
                         Ksk = MergeResults(
                             Ksk,
-                            Globalne.kodykreskoweBL.WyszukajKodKreskowy(Barcodes[i])
+                            Serwer.kodykreskoweBL.WyszukajKodKreskowy(Barcodes[i])
                         );
 
                         if (Ksk.Towar == "")
                         {
-                            var kodKreskowy = Globalne.kodykreskoweBL.PobierzKodKreskowyZNrKat(
+                            var kodKreskowy = Serwer.kodykreskoweBL.PobierzKodKreskowyZNrKat(
                                 Barcodes[i]
                             );
                             if (kodKreskowy.strKod != "")
                                 Ksk = MergeResults(
                                     Ksk,
-                                    Globalne.kodykreskoweBL.WyszukajKodKreskowy(kodKreskowy.strKod)
+                                    Serwer.kodykreskoweBL.WyszukajKodKreskowy(kodKreskowy.strKod)
                                 );
                         }
                         break;
@@ -233,7 +231,7 @@ namespace G_Mobile_Android_WMS
                     case Enums.BarcodeOrder.Article:
                     {
                         List<TowarJednostkaO> IDs =
-                            Globalne.towarBL.PobierzTowarJednostkęDlaKoduKreskowego(Barcodes[i]);
+                            Serwer.towarBL.PobierzTowarJednostkęDlaKoduKreskowego(Barcodes[i]);
 
                         if (IDs.Count != 0)
                         {
@@ -567,7 +565,7 @@ namespace G_Mobile_Android_WMS
         {
             var result = false;
 
-            DrukarkaO drukarka = Globalne.drukarkaBL.PobierzDrukarkeEtykiet();
+            DrukarkaO drukarka = Serwer.drukarkaBL.PobierzDrukarkeEtykiet();
 
             if (drukarka.strNazwa.Trim().Length > 2 && drukarka.strERP.Trim().Length > 2)
             {
@@ -734,21 +732,21 @@ namespace G_Mobile_Android_WMS
             }
         }
 
-        public static object HiveInvoke(Type Namespace, string Method, params object[] Params)
-        {
-            try
-            {
-                MethodInfo MI = Namespace.GetMethod(Method);
-                return JsonConvert.DeserializeObject(
-                    Globalne.ogólneBL.GetAsJson(Method, Namespace, Params).Json,
-                    MI.ReturnType
-                );
-            }
-            catch (DeserializingException)
-            {
-                return null;
-            }
-        }
+        //public static object HiveInvoke(Type Namespace, string Method, params object[] Params)
+        //{
+        //    try
+        //    {
+        //        MethodInfo MI = Namespace.GetMethod(Method);
+        //        return JsonConvert.DeserializeObject(
+        //            Serwer.ogólneBL.GetAsJson(Method, Namespace, Params).Json,
+        //            MI.ReturnType
+        //        );
+        //    }
+        //    catch (DeserializingException)
+        //    {
+        //        return null;
+        //    }
+        //}
 
         public static async Task<bool> AskToLogOut(Activity ctx)
         {
@@ -832,14 +830,14 @@ namespace G_Mobile_Android_WMS
                 if (!BestBefore)
                 {
                     if (Globalne.CurrentSettings.InsertProdDate)
-                        Ret = Globalne
+                        Ret = Serwer
                             .ogólneBL.GetDate()
                             .AddDays(Globalne.CurrentSettings.DaysToAddToProdDate);
                 }
                 else
                 {
                     if (Globalne.CurrentSettings.InsertBestBeforeDate)
-                        Ret = Globalne
+                        Ret = Serwer
                             .ogólneBL.GetDate()
                             .AddDays(Globalne.CurrentSettings.DaysToAddToBestBeforeDate);
                 }
@@ -933,7 +931,7 @@ namespace G_Mobile_Android_WMS
                         + ", IP: "
                         + DecodeIpAddress(wifiManager.DhcpInfo.IpAddress)
                         + ", Ping-Pong: "
-                        + Globalne.ogólneBL.Ping()
+                        + Serwer.ogólneBL.Ping()
                         + ", NET_ID: "
                         + wifiManager?.ConnectionInfo.NetworkId;
 

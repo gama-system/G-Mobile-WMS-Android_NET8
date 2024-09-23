@@ -59,7 +59,7 @@ namespace G_Mobile_Android_WMS
                 Helpers.ShowProgressDialog(GetString(Resource.String.global_wait));
 
                 Settings.Clear();
-                Settings = Globalne.menuBL.PobierzListęUstawieńMobOpe();
+                Settings = Serwer.menuBL.PobierzListęUstawieńMobOpe();
                 Settings.Add(
                     new UstawienieMobilneOpe
                     {
@@ -97,14 +97,14 @@ namespace G_Mobile_Android_WMS
 
         private Dictionary<OperatorRow, UstawienieMobilneOpe> GetData()
         {
-            List<OperatorRow> Operatorzy = Globalne.operatorBL.PobierzListęNaTerminal();
+            List<OperatorRow> Operatorzy = Serwer.operatorBL.PobierzListęNaTerminal();
 
             OperatorRow A = Operatorzy.Find(x => x.ID == Int32.MaxValue);
 
             if (A != null)
                 Operatorzy.Remove(A);
 
-            OperatorRow Admin = Globalne.operatorBL.PobierzOperatorRow(Int32.MaxValue);
+            OperatorRow Admin = Serwer.operatorBL.PobierzOperatorRow(Int32.MaxValue);
             Admin.ID = Int32.MaxValue;
             Admin.Login = "SYSADM";
             Admin.Nazwa = "SERWIS";
@@ -150,7 +150,7 @@ namespace G_Mobile_Android_WMS
                         return;
                     else
                     {
-                        Globalne.operatorBL.UstawUstawienieMobOpe(User.Key.ID, Set.ID);
+                        Serwer.operatorBL.UstawUstawienieMobOpe(User.Key.ID, Set.ID);
                         (ListView.Adapter as UserSettingIDsActivityAdapter).Items[User.Key] = Set;
                         (ListView.Adapter as UserSettingIDsActivityAdapter).NotifyDataSetChanged();
                     }

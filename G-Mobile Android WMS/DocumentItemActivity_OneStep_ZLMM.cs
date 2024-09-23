@@ -16,6 +16,7 @@ using G_Mobile_Android_WMS.Common.BusinessLogicHelpers;
 using G_Mobile_Android_WMS.Controls;
 using G_Mobile_Android_WMS.Enums;
 using Symbol.XamarinEMDK.Barcode;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
@@ -593,7 +594,7 @@ namespace G_Mobile_Android_WMS
             if (Globalne.CurrentSettings.Partie)
             {
                 Poz.strPartia = Partia.Text;
-                Poz.idPartia = Globalne.partiaBL.PobierzIDPartii(Partia.Text);
+                Poz.idPartia = Serwer.partiaBL.PobierzIDPartii(Partia.Text);
             }
             else
             {
@@ -604,9 +605,9 @@ namespace G_Mobile_Android_WMS
             if (Globalne.CurrentSettings.Palety)
             {
                 Poz.strPaletaP = PaletaIn.Text;
-                Poz.idPaletaP = Globalne.paletaBL.PobierzIDPalety(PaletaIn.Text);
+                Poz.idPaletaP = Serwer.paletaBL.PobierzIDPalety(PaletaIn.Text);
                 Poz.strPaletaW = PaletaOut.Text;
-                Poz.idPaletaW = Globalne.paletaBL.PobierzIDPalety(PaletaOut.Text);
+                Poz.idPaletaW = Serwer.paletaBL.PobierzIDPalety(PaletaOut.Text);
             }
             else
             {
@@ -855,19 +856,19 @@ namespace G_Mobile_Android_WMS
                             }
 
                             int IDPozIst =
-                                Globalne.dokumentBL.PobierzIDPozycjiIdentycznejNaDokumencie(Poz);
+                                Serwer.dokumentBL.PobierzIDPozycjiIdentycznejNaDokumencie(Poz);
 
                             int Res = -1;
 
                             if (IDPozIst != -1)
                             {
-                                PozycjaVO PozIst = Globalne.dokumentBL.PobierzPozycję(IDPozIst);
+                                PozycjaVO PozIst = Serwer.dokumentBL.PobierzPozycję(IDPozIst);
                                 PozIst.intZmodyfikowanyPrzez = Globalne.Operator.ID;
                                 PozIst.numIloscZrealizowana += NumAmount.Value;
                                 PozIst.numIloscZlecona += NumAmount.Value;
                                 PozIst.numIloscZebrana += NumAmount.Value;
 
-                                Res = Globalne.dokumentBL.EdytujPozycję(
+                                Res = Serwer.dokumentBL.EdytujPozycję(
                                     Helpers.StringDocType(DocType),
                                     PozIst,
                                     Dokument.bIgnorujBlokadePartii
@@ -876,8 +877,8 @@ namespace G_Mobile_Android_WMS
 
                             if (IDPozIst < 0 || Res < 0)
                             {
-                                var przychod = Globalne.przychrozchBL.PobierzPrzychód(
-                                    Globalne.lokalizacjaBL.PobierIdLokalizacjaWgNazwy(
+                                var przychod = Serwer.przychRozchBL.PobierzPrzychód(
+                                    Serwer.lokalizacjaBL.PobierIdLokalizacjaWgNazwy(
                                         LocationIn.Text,
                                         Globalne.Magazyn.ID
                                     ),
@@ -895,7 +896,7 @@ namespace G_Mobile_Android_WMS
                                 AutoException.ThrowIfNotNull(
                                     this,
                                     ErrorType.ItemCreationError,
-                                    Globalne.dokumentBL.ZróbPozycję(
+                                    Serwer.dokumentBL.ZróbPozycję(
                                         Helpers.StringDocType(DocType),
                                         Poz,
                                         Dokument.bIgnorujBlokadePartii
@@ -932,7 +933,7 @@ namespace G_Mobile_Android_WMS
                             AutoException.ThrowIfNotNull(
                                 this,
                                 ErrorType.ItemCreationError,
-                                Globalne.dokumentBL.EdytujPozycję(
+                                Serwer.dokumentBL.EdytujPozycję(
                                     Helpers.StringDocType(DocType),
                                     Poz,
                                     Dokument.bIgnorujBlokadePartii
@@ -961,7 +962,7 @@ namespace G_Mobile_Android_WMS
                             AutoException.ThrowIfNotNull(
                                 this,
                                 ErrorType.ItemCreationError,
-                                Globalne.dokumentBL.EdytujPozycję(
+                                Serwer.dokumentBL.EdytujPozycję(
                                     Helpers.StringDocType(DocType),
                                     Poz,
                                     Dokument.bIgnorujBlokadePartii
@@ -971,7 +972,7 @@ namespace G_Mobile_Android_WMS
                         }
                         case ItemActivityMode.Split:
                         {
-                            PozycjaVO Original = Globalne.dokumentBL.PobierzPozycję(Poz.ID);
+                            PozycjaVO Original = Serwer.dokumentBL.PobierzPozycję(Poz.ID);
 
                             Poz.dataModyfikacji = DateTime.Now;
 
@@ -1003,7 +1004,7 @@ namespace G_Mobile_Android_WMS
                                 AutoException.ThrowIfNotNull(
                                     this,
                                     ErrorType.ItemCreationError,
-                                    Globalne.dokumentBL.EdytujPozycję(
+                                    Serwer.dokumentBL.EdytujPozycję(
                                         Helpers.StringDocType(DocType),
                                         Poz,
                                         Dokument.bIgnorujBlokadePartii
@@ -1015,7 +1016,7 @@ namespace G_Mobile_Android_WMS
                                 AutoException.ThrowIfNotNull(
                                     this,
                                     ErrorType.ItemCreationError,
-                                    Globalne.dokumentBL.EdytujPozycję(
+                                    Serwer.dokumentBL.EdytujPozycję(
                                         Helpers.StringDocType(DocType),
                                         Poz,
                                         Dokument.bIgnorujBlokadePartii
@@ -1042,7 +1043,7 @@ namespace G_Mobile_Android_WMS
                                     AutoException.ThrowIfNotNull(
                                         this,
                                         ErrorType.ItemCreationError,
-                                        Globalne.dokumentBL.ZróbPozycję(
+                                        Serwer.dokumentBL.ZróbPozycję(
                                             Helpers.StringDocType(DocType),
                                             Poz,
                                             Dokument.bIgnorujBlokadePartii
@@ -1282,16 +1283,16 @@ namespace G_Mobile_Android_WMS
             {
                 if (Set[DocumentItemDisplayElements.Partia] && Globalne.CurrentSettings.Partie)
                 {
-                    int ID = Globalne.partiaBL.PobierzIDPartii(Partia.Text);
+                    int ID = Serwer.partiaBL.PobierzIDPartii(Partia.Text);
                     Partia.Tag = ID;
                 }
 
                 if (Set[DocumentItemDisplayElements.Paleta] && Globalne.CurrentSettings.Palety)
                 {
-                    int ID = Globalne.paletaBL.PobierzIDPalety(PaletaIn.Text);
+                    int ID = Serwer.paletaBL.PobierzIDPalety(PaletaIn.Text);
                     PaletaIn.Tag = ID;
 
-                    ID = Globalne.paletaBL.PobierzIDPalety(PaletaOut.Text);
+                    ID = Serwer.paletaBL.PobierzIDPalety(PaletaOut.Text);
 
                     if ((int)PaletaOut.Tag != ID)
                         Paleta_Refresh();
@@ -1318,7 +1319,7 @@ namespace G_Mobile_Android_WMS
             {
                 if ((int)Article.Tag >= 0)
                 {
-                    decimal Amount = Globalne.przychrozchBL.PobierzStanTowaru(
+                    decimal Amount = Serwer.przychRozchBL.PobierzStanTowaru(
                         (int)Article.Tag,
                         Dokument.intMagazynW,
                         (int)LocationOut.Tag,
@@ -1333,7 +1334,7 @@ namespace G_Mobile_Android_WMS
 
                     if ((int)Unit.Tag >= 0)
                     {
-                        JednostkaPrzeliczO Jm = Globalne.jednostkaMiaryBL.PobierzJednostkęPrzelicz(
+                        JednostkaPrzeliczO Jm = Serwer.jednostkaMiaryBL.PobierzJednostkęPrzelicz(
                             (int)Unit.Tag,
                             (int)Article.Tag
                         );
@@ -1354,7 +1355,7 @@ namespace G_Mobile_Android_WMS
             {
                 if ((int)LocationIn.Tag >= 0 && (int)Article.Tag >= 0)
                 {
-                    int Value = Globalne.przychrozchBL.ObliczIleCałkTowaruZmieściSięWLokalizacji(
+                    int Value = Serwer.przychRozchBL.ObliczIleCałkTowaruZmieściSięWLokalizacji(
                         (int)Article.Tag,
                         (int)Unit.Tag,
                         (int)LocationIn.Tag
@@ -1403,7 +1404,7 @@ namespace G_Mobile_Android_WMS
                                 Article.Tag = Art.ID;
 
                                 JednostkaMiaryO Jedn =
-                                    Globalne.towarBL.PobierzJednostkęDomyślnąTowaru(Art.ID);
+                                    Serwer.towarBL.PobierzJednostkęDomyślnąTowaru(Art.ID);
                                 Unit.Tag = Jedn.ID;
                                 Unit.Text = Jedn.strNazwa;
                                 Refresh();
@@ -1654,8 +1655,7 @@ namespace G_Mobile_Android_WMS
                                 )
                                 ?.ID != -1;
                         var skanowanyTowarNieIstnieje =
-                            Globalne.kodykreskoweBL.WyszukajKodKreskowy(LastScanData[0])?.Towar
-                            == "";
+                            Serwer.kodykreskoweBL.WyszukajKodKreskowy(LastScanData[0])?.Towar == "";
                         if (skanowanyTowarNieIstnieje && !czyLokalizacja)
                         {
                             AutoException.ThrowIfNotNull(this, Resource.String.articles_not_found);

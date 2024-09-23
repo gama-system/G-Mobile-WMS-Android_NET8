@@ -15,6 +15,7 @@ using Android.Support.V7.Content.Res;
 using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
+using WMS_DESKTOP_API;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
@@ -251,7 +252,7 @@ namespace G_Mobile_Android_WMS
                     return;
 
                 if (
-                    !Globalne.operatorBL.SprawdźHasłoOperatora(
+                    !Serwer.operatorBL.SprawdźHasłoOperatora(
                         Int32.MaxValue,
                         Encryption.RSAEncrypt(Res.Text)
                     )
@@ -314,7 +315,7 @@ namespace G_Mobile_Android_WMS
 
                 if (Res == 0)
                 {
-                    Globalne.Licencja = Globalne.licencjaBL.GetLicence_Portable();
+                    Globalne.Licencja = Serwer.licencjaBL.GetLicence_Portable();
                     BusinessLogicHelpers.Config.GetDatabaseConfig();
                     RunOnUiThread(
                         () =>

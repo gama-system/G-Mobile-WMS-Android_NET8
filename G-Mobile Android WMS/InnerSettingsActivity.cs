@@ -563,7 +563,7 @@ namespace G_Mobile_Android_WMS
                 Edited.MultipickingSelectDocuments = MultipDocSelection.Checked;
                 Edited.MultipickingDelayBeforeClose = (int)MultipDelayBeforeClose.Value;
 
-                Globalne.menuBL.ZapiszUstawienie(
+                Serwer.menuBL.ZapiszUstawienie(
                     (int)Enums.Ustawienia.KonfiguracjaAndroid,
                     Encryption.AESEncrypt(Helpers.SerializeJSON(Edited))
                 );
@@ -818,7 +818,7 @@ namespace G_Mobile_Android_WMS
                 try
                 {
                     List<StatusDokumentuO> Statusy =
-                        Globalne.dokumentBL.PobierzListęStatusówDokumentów(
+                        Serwer.dokumentBL.PobierzListęStatusówDokumentów(
                             ResDict[Res].ToString().Substring(0, 2)
                         );
                     Statusy.Add(

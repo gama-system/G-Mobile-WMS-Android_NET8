@@ -71,7 +71,7 @@ namespace G_Mobile_Android_WMS
         {
             try
             {
-                EditedDBObject = Globalne.menuBL.PobierzUstawienieMobOpe(ID);
+                EditedDBObject = Serwer.menuBL.PobierzUstawienieMobOpe(ID);
 
                 if (EditedDBObject.ID != -1 && EditedDBObject.strUstawienie != "")
                 {
@@ -177,7 +177,7 @@ namespace G_Mobile_Android_WMS
                     return;
                 else
                 {
-                    UstawienieMobilneOpe MobSet = Globalne.menuBL.PobierzUstawienieMobOpe(ID);
+                    UstawienieMobilneOpe MobSet = Serwer.menuBL.PobierzUstawienieMobOpe(ID);
 
                     if (MobSet.ID == -1)
                     {
@@ -222,7 +222,7 @@ namespace G_Mobile_Android_WMS
 
                 if (Resp)
                 {
-                    Globalne.menuBL.UsuńUstawienieMobilneOpe(EditedDBObject.ID);
+                    Serwer.menuBL.UsuńUstawienieMobilneOpe(EditedDBObject.ID);
                     Intent i = new Intent();
                     SetResult(Result.Ok, i);
                     Finish();
@@ -287,7 +287,7 @@ namespace G_Mobile_Android_WMS
 
                 EditedDBObject.strUstawienie = JsonConvert.SerializeObject(Edited);
 
-                Globalne.menuBL.AktualizujUstawienieMobilneOpe(EditedDBObject);
+                Serwer.menuBL.AktualizujUstawienieMobilneOpe(EditedDBObject);
 
                 return 0;
             }

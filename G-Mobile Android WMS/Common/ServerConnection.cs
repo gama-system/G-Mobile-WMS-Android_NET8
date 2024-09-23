@@ -12,6 +12,7 @@ using Android.Renderscripts;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using WMS_DESKTOP_API;
 using WMS_Model.Interfejsy;
 
 namespace G_Mobile_Android_WMS
@@ -52,98 +53,103 @@ namespace G_Mobile_Android_WMS
 
         static int ConnectInternal()
         {
-            try
-            {
-                if (Globalne.CurrentTerminalSettings == null)
-                    return -1;
+            //todo: dodac poaclzenie zz serwem
+            return -1;
+            //try
+            //{
+            //    if (Globalne.CurrentTerminalSettings == null)
+            //        return -1;
 
-                Globalne.client = new Hive.Rpc.Client();
+            //    Globalne.client = new Hive.Rpc.Client();
 
-                Globalne.client.Connect(
-                    "tcp://"
-                        + Globalne.CurrentTerminalSettings.IP
-                        + ":"
-                        + Globalne.CurrentTerminalSettings.Port
-                );
+            //    Globalne.client.Connect(
+            //        "tcp://"
+            //            + Globalne.CurrentTerminalSettings.IP
+            //            + ":"
+            //            + Globalne.CurrentTerminalSettings.Port
+            //    );
 
-                System.Net.NetworkCredential nc = new System.Net.NetworkCredential();
+            //    System.Net.NetworkCredential nc = new System.Net.NetworkCredential();
 
-                nc.UserName = Globalne.CurrentTerminalSettings.User;
-                nc.Password = Globalne.CurrentTerminalSettings.Password;
-                nc.Domain = "";
+            //    nc.UserName = Globalne.CurrentTerminalSettings.User;
+            //    nc.Password = Globalne.CurrentTerminalSettings.Password;
+            //    nc.Domain = "";
 
-                Globalne.client.Authenticate(nc);
+            //    Globalne.client.Authenticate(nc);
 
-                Connected = true;
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Blad poleczenia api: " + ex.Message);
-                Connected = false;
-                return -1;
-            }
+            //    Connected = true;
+            //    return 0;
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine("Blad poleczenia api: " + ex.Message);
+            //    Connected = false;
+            //    return -1;
+            //}
         }
 
         public static void CloseConnections()
         {
-            try
-            {
-                if (ServerConnection.Connected)
-                {
-                    if (Globalne.operatorBL != null)
-                        Globalne.operatorBL.ZamknijPołączenie();
+            //todo: dostwac do api
 
-                    if (Globalne.magazynBL != null)
-                        Globalne.magazynBL.ZamknijPołączenie();
 
-                    if (Globalne.ogólneBL != null)
-                        Globalne.ogólneBL.ZamknijPołączenie();
+            //try
+            //{
+            //    if (ServerConnection.Connected)
+            //    {
+            //        if (Serwer.operatorBL != null)
+            //            Serwer.operatorBL.ZamknijPołączenie();
 
-                    if (Globalne.podmiotBL != null)
-                        Globalne.podmiotBL.ZamknijPołączenie();
+            //        if (Serwer.magazynBL != null)
+            //            Serwer.magazynBL.ZamknijPołączenie();
 
-                    if (Globalne.jednostkaMiaryBL != null)
-                        Globalne.jednostkaMiaryBL.ZamknijPołączenie();
+            //        if (Serwer.ogólneBL != null)
+            //            Serwer.ogólneBL.ZamknijPołączenie();
 
-                    if (Globalne.towarBL != null)
-                        Globalne.towarBL.ZamknijPołączenie();
+            //        if (Serwer.podmiotBL != null)
+            //            Serwer.podmiotBL.ZamknijPołączenie();
 
-                    if (Globalne.wymaganiaBL != null)
-                        Globalne.wymaganiaBL.ZamknijPołączenie();
+            //        if (Serwer.jednostkaMiaryBL != null)
+            //            Serwer.jednostkaMiaryBL.ZamknijPołączenie();
 
-                    if (Globalne.lokalizacjaBL != null)
-                        Globalne.lokalizacjaBL.ZamknijPołączenie();
+            //        if (Serwer.towarBL != null)
+            //            Serwer.towarBL.ZamknijPołączenie();
 
-                    if (Globalne.rejestrBL != null)
-                        Globalne.rejestrBL.ZamknijPołączenie();
+            //        if (Globalne.wymaganiaBL != null)
+            //            Globalne.wymaganiaBL.ZamknijPołączenie();
 
-                    if (Globalne.dokumentBL != null)
-                        Globalne.dokumentBL.ZamknijPołączenie();
+            //        if (Serwer.lokalizacjaBL != null)
+            //            Serwer.lokalizacjaBL.ZamknijPołączenie();
 
-                    if (Globalne.przychrozchBL != null)
-                        Globalne.przychrozchBL.ZamknijPołączenie();
+            //        if (Serwer.rejestrBL != null)
+            //            Serwer.rejestrBL.ZamknijPołączenie();
 
-                    if (Globalne.kodykreskoweBL != null)
-                        Globalne.kodykreskoweBL.ZamknijPołączenie();
+            //        if (Serwer.dokumentBL != null)
+            //            Serwer.dokumentBL.ZamknijPołączenie();
 
-                    if (Globalne.partiaBL != null)
-                        Globalne.partiaBL.ZamknijPołączenie();
+            //        if (Serwer.przychRozchBL != null)
+            //            Serwer.przychRozchBL.ZamknijPołączenie();
 
-                    if (Globalne.paletaBL != null)
-                        Globalne.paletaBL.ZamknijPołączenie();
+            //        if (Serwer.kodykreskoweBL != null)
+            //            Serwer.kodykreskoweBL.ZamknijPołączenie();
 
-                    if (Globalne.funklogBL != null)
-                        Globalne.funklogBL.ZamknijPołączenie();
+            //        if (Serwer.partiaBL != null)
+            //            Serwer.partiaBL.ZamknijPołączenie();
 
-                    if (Globalne.menuBL != null)
-                        Globalne.menuBL.ZamknijPołączenie();
+            //        if (Serwer.paletaBL != null)
+            //            Serwer.paletaBL.ZamknijPołączenie();
 
-                    if (Globalne.drukarkaBL != null)
-                        Globalne.drukarkaBL.ZamknijPołączenie();
-                }
-            }
-            catch (Exception) { }
+            //        if (Serwer.funklogBL != null)
+            //            Serwer.funklogBL.ZamknijPołączenie();
+
+            //        if (Serwer.menuBL != null)
+            //            Serwer.menuBL.ZamknijPołączenie();
+
+            //        if (Serwer.drukarkaBL != null)
+            //            Serwer.drukarkaBL.ZamknijPołączenie();
+            //    }
+            //}
+            //catch (Exception) { }
         }
 
         public static bool PingServer()
@@ -152,7 +158,7 @@ namespace G_Mobile_Android_WMS
             {
                 try
                 {
-                    return Globalne.ogólneBL.Ping();
+                    return Serwer.ogólneBL.Ping();
                 }
                 catch (Exception)
                 {
@@ -165,118 +171,121 @@ namespace G_Mobile_Android_WMS
 
         public static int CreateObjects()
         {
-            try
-            {
-                Globalne.aktualizacjeBL = (WMSServerAccess.Aktualizacje.AktualizacjeBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.Aktualizacje.AktualizacjeBL)
-                    );
-                Globalne.licencjaBL = (WMSServerAccess.Licencja.LicencjaBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.Licencja.LicencjaBL)
-                    );
-                Globalne.ogólneBL = (WMSServerAccess.Ogólne.OgólneBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.Ogólne.OgólneBL)
-                    );
-                Globalne.drukarkaBL = (WMSServerAccess.Drukarka.DrukarkaBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.Drukarka.DrukarkaBL)
-                    );
-                Globalne.operatorBL = (WMSServerAccess.Operator.OperatorBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.Operator.OperatorBL)
-                    );
-                Globalne.magazynBL = (WMSServerAccess.Magazyn.MagazynBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.Magazyn.MagazynBL)
-                    );
-                Globalne.podmiotBL = (WMSServerAccess.Podmiot.PodmiotBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.Podmiot.PodmiotBL)
-                    );
-                Globalne.jednostkaMiaryBL = (WMSServerAccess.JednostkaMiary.JednostkaMiaryBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.JednostkaMiary.JednostkaMiaryBL)
-                    );
-                Globalne.towarBL = (WMSServerAccess.Towar.TowarBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.Towar.TowarBL)
-                    );
-                Globalne.wymaganiaBL = (WMSServerAccess.Wymagania.WymaganiaBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.Wymagania.WymaganiaBL)
-                    );
-                Globalne.lokalizacjaBL = (WMSServerAccess.Lokalizacja.LokalizacjaBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.Lokalizacja.LokalizacjaBL)
-                    );
-                Globalne.rejestrBL = (WMSServerAccess.Rejestr.RejestrBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.Rejestr.RejestrBL)
-                    );
-                Globalne.dokumentBL = (WMSServerAccess.Dokument.DokumentBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.Dokument.DokumentBL)
-                    );
-                Globalne.przychrozchBL = (WMSServerAccess.PrzychRozch.PrzychRozchBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.PrzychRozch.PrzychRozchBL)
-                    );
-                Globalne.kodykreskoweBL = (WMSServerAccess.KodyKreskowe.KodyKreskoweBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.KodyKreskowe.KodyKreskoweBL)
-                    );
-                Globalne.partiaBL = (WMSServerAccess.Partia.PartiaBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.Partia.PartiaBL)
-                    );
-                Globalne.funklogBL = (WMSServerAccess.FunkcjaLogistyczna.FunkcjaLogistycznaBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.FunkcjaLogistyczna.FunkcjaLogistycznaBL)
-                    );
-                Globalne.paletaBL = (WMSServerAccess.Paleta.PaletaBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.Paleta.PaletaBL)
-                    );
-                Globalne.menuBL = (WMSServerAccess.Menu.MenuBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.Menu.MenuBL)
-                    );
-                Globalne.numerSeryjnyBL = (WMSServerAccess.NumerSeryjny.NumerSeryjnyBL)
-                    Globalne.client.Activate(
-                        "WMSServerAccess",
-                        typeof(WMSServerAccess.NumerSeryjny.NumerSeryjnyBL)
-                    );
+            //todo: dostować do api
+            return 0;
 
-                ServerConnection.Connected = true;
+            //try
+            //{
+            //    Serwer.aktualizacjeBL = (WMSServerAccess.Aktualizacje.AktualizacjeBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.Aktualizacje.AktualizacjeBL)
+            //        );
+            //    Serwer.licencjaBL = (WMSServerAccess.Licencja.LicencjaBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.Licencja.LicencjaBL)
+            //        );
+            //    Serwer.ogólneBL = (WMSServerAccess.Ogólne.OgólneBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.Ogólne.OgólneBL)
+            //        );
+            //    Serwer.drukarkaBL = (WMSServerAccess.Drukarka.DrukarkaBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.Drukarka.DrukarkaBL)
+            //        );
+            //    Serwer.operatorBL = (WMSServerAccess.Operator.OperatorBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.Operator.OperatorBL)
+            //        );
+            //    Serwer.magazynBL = (WMSServerAccess.Magazyn.MagazynBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.Magazyn.MagazynBL)
+            //        );
+            //    Serwer.podmiotBL = (WMSServerAccess.Podmiot.PodmiotBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.Podmiot.PodmiotBL)
+            //        );
+            //    Serwer.jednostkaMiaryBL = (WMSServerAccess.JednostkaMiary.JednostkaMiaryBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.JednostkaMiary.JednostkaMiaryBL)
+            //        );
+            //    Serwer.towarBL = (WMSServerAccess.Towar.TowarBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.Towar.TowarBL)
+            //        );
+            //    Globalne.wymaganiaBL = (WMSServerAccess.Wymagania.WymaganiaBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.Wymagania.WymaganiaBL)
+            //        );
+            //    Serwer.lokalizacjaBL = (WMSServerAccess.Lokalizacja.LokalizacjaBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.Lokalizacja.LokalizacjaBL)
+            //        );
+            //    Serwer.rejestrBL = (WMSServerAccess.Rejestr.RejestrBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.Rejestr.RejestrBL)
+            //        );
+            //    Serwer.dokumentBL = (WMSServerAccess.Dokument.DokumentBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.Dokument.DokumentBL)
+            //        );
+            //    Serwer.przychRozchBL = (WMSServerAccess.PrzychRozch.PrzychRozchBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.PrzychRozch.PrzychRozchBL)
+            //        );
+            //    Serwer.kodykreskoweBL = (WMSServerAccess.KodyKreskowe.KodyKreskoweBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.KodyKreskowe.KodyKreskoweBL)
+            //        );
+            //    Serwer.partiaBL = (WMSServerAccess.Partia.PartiaBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.Partia.PartiaBL)
+            //        );
+            //    Serwer.funklogBL = (WMSServerAccess.FunkcjaLogistyczna.FunkcjaLogistycznaBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.FunkcjaLogistyczna.FunkcjaLogistycznaBL)
+            //        );
+            //    Serwer.paletaBL = (WMSServerAccess.Paleta.PaletaBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.Paleta.PaletaBL)
+            //        );
+            //    Serwer.menuBL = (WMSServerAccess.Menu.MenuBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.Menu.MenuBL)
+            //        );
+            //    Globalne.numerSeryjnyBL = (WMSServerAccess.NumerSeryjny.NumerSeryjnyBL)
+            //        Globalne.client.Activate(
+            //            "WMSServerAccess",
+            //            typeof(WMSServerAccess.NumerSeryjny.NumerSeryjnyBL)
+            //        );
 
-                return 0;
-            }
-            catch (Exception)
-            {
-                ServerConnection.Connected = false;
-                return -1;
-            }
+            //    ServerConnection.Connected = true;
+
+            //    return 0;
+            //}
+            //catch (Exception)
+            //{
+            //    ServerConnection.Connected = false;
+            //    return -1;
+            //}
         }
     }
 }

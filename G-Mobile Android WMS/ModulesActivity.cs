@@ -1,31 +1,39 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using Android.App;
+using Android.Content;
+using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
+using Android.Support.V7.Content.Res;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Android.Util;
-using System.Collections.Generic;
-using System.Threading;
-using Android.Media;
-using System.Reflection;
-
-using WMSServerAccess.Model;
-using Android.Content;
-using System.Threading.Tasks;
-using Android.Support.V7.Content.Res;
 using G_Mobile_Android_WMS.Enums;
+using WMS_DESKTOP_API;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, MainLauncher = false)]
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        MainLauncher = false
+    )]
     public class ModulesActivity : BaseWMSActivity
     {
         LinearLayout ButtonContainer;
 
-        readonly System.Timers.Timer Timer = new System.Timers.Timer() { Interval = Globalne.CurrentSettings.ModulesCheckRefreshRate };
+        readonly System.Timers.Timer Timer = new System.Timers.Timer()
+        {
+            Interval = Globalne.CurrentSettings.ModulesCheckRefreshRate
+        };
 
         public enum ResultCodes
         {
@@ -52,7 +60,8 @@ namespace G_Mobile_Android_WMS
             {
                 Helpers.SetActivityHeader(this, GetString(Resource.String.modules_activity_name));
 
-                FindViewById<FloatingActionButton>(Resource.Id.modules_btn_prev).Click += Back_Click;
+                FindViewById<FloatingActionButton>(Resource.Id.modules_btn_prev).Click +=
+                    Back_Click;
                 FindViewById<Button>(Resource.Id.modules_btn_pw).Click += Module_Click;
                 FindViewById<Button>(Resource.Id.modules_btn_pz).Click += Module_Click;
                 FindViewById<Button>(Resource.Id.modules_btn_rw).Click += Module_Click;
@@ -64,14 +73,21 @@ namespace G_Mobile_Android_WMS
                 Button Stan = FindViewById<Button>(Resource.Id.modules_btn_stan);
                 Button Kompletacja = FindViewById<Button>(Resource.Id.modules_btn_kompletacja);
 
-                FloatingActionButton ChangeWarehouse = FindViewById<FloatingActionButton>(Resource.Id.modules_btn_changewarehouse);
-                FindViewById<FloatingActionButton>(Resource.Id.modules_btn_checkdocs).Click += ModulesActivity_Click;
+                FloatingActionButton ChangeWarehouse = FindViewById<FloatingActionButton>(
+                    Resource.Id.modules_btn_changewarehouse
+                );
+                FindViewById<FloatingActionButton>(Resource.Id.modules_btn_checkdocs).Click +=
+                    ModulesActivity_Click;
                 ButtonContainer = FindViewById<LinearLayout>(Resource.Id.modules_button_container);
 
-                // Wyłączenie modułów które nie są przypisane do operatora 
+                // Wyłączenie modułów które nie są przypisane do operatora
                 foreach (Enums.Modules m in Enum.GetValues(typeof(Enums.Modules)))
                 {
-                    if (Globalne.CurrentSettings.Modules.ContainsKey(m) && !Globalne.CurrentUserSettings.Modules[m] || !Globalne.CurrentSettings.Modules[m])
+                    if (
+                        Globalne.CurrentSettings.Modules.ContainsKey(m)
+                            && !Globalne.CurrentUserSettings.Modules[m]
+                        || !Globalne.CurrentSettings.Modules[m]
+                    )
                     {
                         Button B = (Button)Helpers.GetViewWithTag(ButtonContainer, m.ToString());
                         B.Visibility = ViewStates.Gone;
@@ -102,7 +118,9 @@ namespace G_Mobile_Android_WMS
                 ChangeWarehouse.Click += ChangeWarehouse_Click;
                 Timer.Elapsed += Timer_Elapsed;
 
-                List<MagazynO> Magazyny = Globalne.magazynBL.PobierzListęDostępnychDlaOperatora(Globalne.Operator.ID);
+                List<MagazynO> Magazyny = Serwer.magazynBL.PobierzListęDostępnychDlaOperatora(
+                    Globalne.Operator.ID
+                );
 
                 if (Magazyny.Count == 1)
                 {
@@ -129,21 +147,35 @@ namespace G_Mobile_Android_WMS
         private void ChangeWarehouse_Click(object sender, EventArgs e)
         {
             Intent i = new Intent(this, typeof(WarehousesActivity));
-            RunOnUiThread(() => StartActivityForResult(i, (int)ResultCodes.WarehousesActivityResult));
+            RunOnUiThread(
+                () => StartActivityForResult(i, (int)ResultCodes.WarehousesActivityResult)
+            );
         }
 
-        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        protected override void OnActivityResult(
+            int requestCode,
+            [GeneratedEnum] Result resultCode,
+            Intent data
+        )
         {
             base.OnActivityResult(requestCode, resultCode, data);
 
             if (requestCode == (int)ResultCodes.WarehousesActivityResult && resultCode == Result.Ok)
             {
-                MagazynO Selected = (MagazynO)Helpers.DeserializePassedJSON(data, WarehousesActivity.Results.SelectedWarehouseJson, typeof(MagazynO));
+                MagazynO Selected = (MagazynO)
+                    Helpers.DeserializePassedJSON(
+                        data,
+                        WarehousesActivity.Results.SelectedWarehouseJson,
+                        typeof(MagazynO)
+                    );
 
                 if (Selected.ID != -1)
                 {
                     Globalne.Magazyn = Selected;
-                    Helpers.SetActivityHeader(this, GetString(Resource.String.modules_activity_name));
+                    Helpers.SetActivityHeader(
+                        this,
+                        GetString(Resource.String.modules_activity_name)
+                    );
                     CheckForNewDocuments();
                 }
             }
@@ -171,18 +203,28 @@ namespace G_Mobile_Android_WMS
 
                     if (B != null)
                     {
-                        if (Globalne.dokumentBL.SprawdźCzySąZleconeDokumentyTypu(m.ToString(), Globalne.Operator.ID, Globalne.Magazyn.ID))
-                            B.BackgroundTintList = AppCompatResources.GetColorStateList(this, Resource.Color.floating_button_red);
+                        if (
+                            Serwer.dokumentBL.SprawdźCzySąZleconeDokumentyTypu(
+                                m.ToString(),
+                                Globalne.Operator.ID,
+                                Globalne.Magazyn.ID
+                            )
+                        )
+                            B.BackgroundTintList = AppCompatResources.GetColorStateList(
+                                this,
+                                Resource.Color.floating_button_red
+                            );
                         else
-                            B.BackgroundTintList = AppCompatResources.GetColorStateList(this, Resource.Color.button_blue);
+                            B.BackgroundTintList = AppCompatResources.GetColorStateList(
+                                this,
+                                Resource.Color.button_blue
+                            );
                     }
                 }
 
                 IsBusy = false;
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) { }
         }
 
         async Task DoLogOut()
@@ -193,7 +235,7 @@ namespace G_Mobile_Android_WMS
 
                 if (Res)
                 {
-                    Globalne.operatorBL.WylogujOperatora(Globalne.Operator.ID);
+                    Serwer.operatorBL.WylogujOperatora(Globalne.Operator.ID);
                     Globalne.Operator = null;
                     Globalne.Magazyn = null;
                     Helpers.SwitchAndFinishCurrentActivity(this, typeof(UsersActivity));
@@ -207,7 +249,6 @@ namespace G_Mobile_Android_WMS
                 return;
             }
         }
-
 
         async void Back_Click(object sender, EventArgs e)
         {
@@ -245,40 +286,47 @@ namespace G_Mobile_Android_WMS
                     case "IN":
                     case "ZL":
                     case "MM":
-                        {
-                            if (IsSwitchingActivity)
-                                return;
+                    {
+                        if (IsSwitchingActivity)
+                            return;
 
-                            ActivityWithScanner.DocType = (DocTypes)Enum.Parse(typeof(DocTypes), (sender as Button).Tag.ToString(), true);
+                        ActivityWithScanner.DocType = (DocTypes)
+                            Enum.Parse(typeof(DocTypes), (sender as Button).Tag.ToString(), true);
 
-                            IsSwitchingActivity = true;
+                        IsSwitchingActivity = true;
 
-                            Intent i = new Intent(this, typeof(DocumentsActivity));
-                            i.PutExtra(DocumentsActivity.Vars.DocType, (int)Enum.Parse(typeof(Enums.DocTypes), (sender as Button).Tag.ToString()));
-                            i.SetFlags(ActivityFlags.NewTask);
-                            
-                            StartActivity(i);
-                            Finish();
+                        Intent i = new Intent(this, typeof(DocumentsActivity));
+                        i.PutExtra(
+                            DocumentsActivity.Vars.DocType,
+                            (int)
+                                Enum.Parse(
+                                    typeof(Enums.DocTypes),
+                                    (sender as Button).Tag.ToString()
+                                )
+                        );
+                        i.SetFlags(ActivityFlags.NewTask);
 
-                            break;
-                        }
+                        StartActivity(i);
+                        Finish();
+
+                        break;
+                    }
                     case "STAN":
-                        {
-                            ActivityWithScanner.DocType = DocTypes.Error;
-                            StocksActivity.ExitToModules = true;
-                            Helpers.SwitchAndFinishCurrentActivity(this, typeof(StocksActivity));
-                            break;
-                        }
+                    {
+                        ActivityWithScanner.DocType = DocTypes.Error;
+                        StocksActivity.ExitToModules = true;
+                        Helpers.SwitchAndFinishCurrentActivity(this, typeof(StocksActivity));
+                        break;
+                    }
                     case "KOMPLETACJA":
-                        {
-                            Helpers.SwitchAndFinishCurrentActivity(this, typeof(KompletacjaActivity));
-                            break;
-                        }
-                    default: break;
+                    {
+                        Helpers.SwitchAndFinishCurrentActivity(this, typeof(KompletacjaActivity));
+                        break;
+                    }
+                    default:
+                        break;
                 }
             });
         }
-
     }
 }
-

@@ -1,30 +1,34 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Acr.UserDialogs;
 using Android.App;
+using Android.Content;
+using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
-using Android.Views;
-using Android.Widget;
 using Android.Util;
-using System.Collections.Generic;
-using System.Threading;
-using Android.Media;
+using Android.Views;
 using Android.Views.InputMethods;
-
+using Android.Widget;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
-
-using Acr.UserDialogs;
-
-using WMSServerAccess.Model;
-using Android.Content;
-using System.Threading.Tasks;
+using WMS_DESKTOP_API;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar",  MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
-        WindowSoftInputMode = Android.Views.SoftInput.AdjustNothing | Android.Views.SoftInput.StateHidden)]
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        MainLauncher = false,
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        WindowSoftInputMode = Android.Views.SoftInput.AdjustNothing
+            | Android.Views.SoftInput.StateHidden
+    )]
     public class WarehousesActivity : BaseWMSActivity
     {
         FloatingActionButton Back;
@@ -67,18 +71,26 @@ namespace G_Mobile_Android_WMS
             Task.Run(() => InsertData());
         }
 
-
         private void GetAndSetControls()
         {
             if (Mode == Modes.Normal)
             {
                 if (CallingActivity == null)
-                    Helpers.SetActivityHeader(this, GetString(Resource.String.warehouses_activity_name_context));
+                    Helpers.SetActivityHeader(
+                        this,
+                        GetString(Resource.String.warehouses_activity_name_context)
+                    );
                 else
-                    Helpers.SetActivityHeader(this, GetString(Resource.String.warehouses_activity_name_change));
+                    Helpers.SetActivityHeader(
+                        this,
+                        GetString(Resource.String.warehouses_activity_name_change)
+                    );
             }
             else
-                Helpers.SetActivityHeader(this, GetString(Resource.String.warehouses_activity_name_target));
+                Helpers.SetActivityHeader(
+                    this,
+                    GetString(Resource.String.warehouses_activity_name_target)
+                );
 
             Back = FindViewById<FloatingActionButton>(Resource.Id.warehouses_btn_prev);
             Refresh = FindViewById<FloatingActionButton>(Resource.Id.warehouses_btn_refresh);
@@ -128,7 +140,9 @@ namespace G_Mobile_Android_WMS
 
                 Helpers.ShowProgressDialog(GetString(Resource.String.warehouses_loading));
 
-                List<MagazynO> Magazyny = await System.Threading.Tasks.Task.Factory.StartNew(() => GetData());
+                List<MagazynO> Magazyny = await System.Threading.Tasks.Task.Factory.StartNew(
+                    () => GetData()
+                );
 
                 MagazynO Skipped = Magazyny.Find(x => x.ID == SkipWarehouse);
 
@@ -138,8 +152,14 @@ namespace G_Mobile_Android_WMS
                 RunOnUiThread(() =>
                 {
                     WarehousesList.Adapter = new WarehousesListAdapter(this, Magazyny);
-                    Helpers.SetTextOnTextView(this, ItemCount, GetString(Resource.String.global_liczba_pozycji) + " " + WarehousesList.Adapter.Count.ToString());
-                });               
+                    Helpers.SetTextOnTextView(
+                        this,
+                        ItemCount,
+                        GetString(Resource.String.global_liczba_pozycji)
+                            + " "
+                            + WarehousesList.Adapter.Count.ToString()
+                    );
+                });
 
                 Helpers.HideProgressDialog();
                 return true;
@@ -158,7 +178,9 @@ namespace G_Mobile_Android_WMS
 
         private List<MagazynO> GetData()
         {
-            List<MagazynO> Magazyny = Globalne.magazynBL.PobierzListęDostępnychDlaOperatora(Globalne.Operator.ID);
+            List<MagazynO> Magazyny = Serwer.magazynBL.PobierzListęDostępnychDlaOperatora(
+                Globalne.Operator.ID
+            );
 
             if (Mode == Modes.Target)
                 Magazyny.Remove(Globalne.Magazyn);
@@ -181,7 +203,7 @@ namespace G_Mobile_Android_WMS
 
                     if (Res)
                     {
-                        Globalne.operatorBL.WylogujOperatora(Globalne.Operator.ID);
+                        Serwer.operatorBL.WylogujOperatora(Globalne.Operator.ID);
                         Globalne.Operator = null;
                         Globalne.Magazyn = null;
                         Helpers.SwitchAndFinishCurrentActivity(this, typeof(UsersActivity));
@@ -206,7 +228,8 @@ namespace G_Mobile_Android_WMS
         readonly List<MagazynO> Items;
         readonly Activity Ctx;
 
-        public WarehousesListAdapter(Activity Ctx, List<MagazynO> Items) : base()
+        public WarehousesListAdapter(Activity Ctx, List<MagazynO> Items)
+            : base()
         {
             this.Ctx = Ctx;
             this.Items = Items;
@@ -216,6 +239,7 @@ namespace G_Mobile_Android_WMS
         {
             return position;
         }
+
         public override MagazynO this[int position]
         {
             get { return Items[position]; }
@@ -224,6 +248,7 @@ namespace G_Mobile_Android_WMS
         {
             get { return Items.Count; }
         }
+
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
             var Magazyn = Items[position];
@@ -236,7 +261,5 @@ namespace G_Mobile_Android_WMS
 
             return view;
         }
-
     }
 }
-

@@ -1,36 +1,40 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Acr.UserDialogs;
 using Android.App;
+using Android.Content;
+using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
+using Android.Support.V4.Content;
 using Android.Support.V7.App;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Android.Util;
-using System.Collections.Generic;
-using System.Threading;
-using Android.Media;
-using System.Linq;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
-using Android.Content;
-
-using WMSServerAccess.Model;
-using System.Threading.Tasks;
-
-using Android.Support.V4.Content;
-using Acr.UserDialogs;
+using WMS_DESKTOP_API;
+using WMS_DESKTOP_API;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, MainLauncher = false)]
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        MainLauncher = false
+    )]
     public class CreatingDocumentActivity : ActivityWithScanner
     {
         FloatingActionButton OKButton = null;
         FloatingActionButton CancelButton = null;
         FloatingActionButton DETALButton = null;
         FloatingActionButton QuickMM = null;
-
 
         TextView Registry;
         TextView TargetWarehouse;
@@ -44,7 +48,6 @@ namespace G_Mobile_Android_WMS
         FloatingActionButton TargetLogisticFunctionButton;
         FloatingActionButton RegistryButton;
         FloatingActionButton DodajTekstOpis;
-
 
         LinearLayout RegistryView;
         LinearLayout TargetWarehouseView;
@@ -92,68 +95,118 @@ namespace G_Mobile_Android_WMS
         {
             try
             {
-                Helpers.SetActivityHeader(this, GetString(Resource.String.creating_documents_activity_name));
+                Helpers.SetActivityHeader(
+                    this,
+                    GetString(Resource.String.creating_documents_activity_name)
+                );
 
                 Registry = FindViewById<TextView>(Resource.Id.creating_documents_registry);
                 TargetWarehouse = FindViewById<TextView>(Resource.Id.creating_documents_warehouse);
                 Contractor = FindViewById<TextView>(Resource.Id.creating_documents_contractor);
-                SourceLogisticFunction = FindViewById<TextView>(Resource.Id.creating_documents_funclog_src);
-                TargetLogisticFunction = FindViewById<TextView>(Resource.Id.creating_documents_funclog_tar);
+                SourceLogisticFunction = FindViewById<TextView>(
+                    Resource.Id.creating_documents_funclog_src
+                );
+                TargetLogisticFunction = FindViewById<TextView>(
+                    Resource.Id.creating_documents_funclog_tar
+                );
 
-                TargetWarehouseButton = FindViewById<FloatingActionButton>(Resource.Id.creating_documents_btn_warehouse);
-                ContractorButton = FindViewById<FloatingActionButton>(Resource.Id.creating_documents_btn_contractor);
-                SourceLogisticFunctionButton = FindViewById<FloatingActionButton>(Resource.Id.creating_documents_btn_funclog_src);
-                TargetLogisticFunctionButton = FindViewById<FloatingActionButton>(Resource.Id.creating_documents_btn_funclog_tar);
+                TargetWarehouseButton = FindViewById<FloatingActionButton>(
+                    Resource.Id.creating_documents_btn_warehouse
+                );
+                ContractorButton = FindViewById<FloatingActionButton>(
+                    Resource.Id.creating_documents_btn_contractor
+                );
+                SourceLogisticFunctionButton = FindViewById<FloatingActionButton>(
+                    Resource.Id.creating_documents_btn_funclog_src
+                );
+                TargetLogisticFunctionButton = FindViewById<FloatingActionButton>(
+                    Resource.Id.creating_documents_btn_funclog_tar
+                );
 
-                DodajTekstOpis = FindViewById<FloatingActionButton>(Resource.Id.creating_documents_btn_dodajtekst);
+                DodajTekstOpis = FindViewById<FloatingActionButton>(
+                    Resource.Id.creating_documents_btn_dodajtekst
+                );
 
-                CancelButton = FindViewById<FloatingActionButton>(Resource.Id.creating_documents_btn_cancel);
-                OKButton = FindViewById<FloatingActionButton>(Resource.Id.creating_documents_btn_ok);
-                RegistryButton = FindViewById<FloatingActionButton>(Resource.Id.creating_documents_btn_registry);
+                CancelButton = FindViewById<FloatingActionButton>(
+                    Resource.Id.creating_documents_btn_cancel
+                );
+                OKButton = FindViewById<FloatingActionButton>(
+                    Resource.Id.creating_documents_btn_ok
+                );
+                RegistryButton = FindViewById<FloatingActionButton>(
+                    Resource.Id.creating_documents_btn_registry
+                );
 
-                if (Globalne.CurrentSettings.AutoDetal is true) {
-                    DETALButton = FindViewById<FloatingActionButton>(Resource.Id.creating_documents_btn_DETAL);
+                if (Globalne.CurrentSettings.AutoDetal is true)
+                {
+                    DETALButton = FindViewById<FloatingActionButton>(
+                        Resource.Id.creating_documents_btn_DETAL
+                    );
                     DETALButton.Hide();
                 }
                 if (Globalne.CurrentSettings.AutoDetal is false)
                 {
-                    DETALButton = FindViewById<FloatingActionButton>(Resource.Id.creating_documents_btn_DETAL);
+                    DETALButton = FindViewById<FloatingActionButton>(
+                        Resource.Id.creating_documents_btn_DETAL
+                    );
                     DETALButton.SetBackgroundColor(Android.Graphics.Color.Gray);
                     DETALButton.Hide();
                 }
                 if (Globalne.CurrentSettings.AutoDetal is true && DocType == Enums.DocTypes.WZ)
                 {
-                    DETALButton = FindViewById<FloatingActionButton>(Resource.Id.creating_documents_btn_DETAL);
+                    DETALButton = FindViewById<FloatingActionButton>(
+                        Resource.Id.creating_documents_btn_DETAL
+                    );
                     DETALButton.Show();
                 }
                 //
                 if (Globalne.CurrentSettings.QuickMM is true)
                 {
-                    QuickMM = FindViewById<FloatingActionButton>(Resource.Id.creating_documents_btn_QuickMM);
+                    QuickMM = FindViewById<FloatingActionButton>(
+                        Resource.Id.creating_documents_btn_QuickMM
+                    );
                     QuickMM.Hide();
                 }
                 if (Globalne.CurrentSettings.QuickMM is false)
                 {
-                    QuickMM = FindViewById<FloatingActionButton>(Resource.Id.creating_documents_btn_QuickMM);
+                    QuickMM = FindViewById<FloatingActionButton>(
+                        Resource.Id.creating_documents_btn_QuickMM
+                    );
                     QuickMM.SetBackgroundColor(Android.Graphics.Color.Gray);
                     QuickMM.Hide();
                 }
                 if (Globalne.CurrentSettings.QuickMM is true && DocType == Enums.DocTypes.MM)
                 {
-                    QuickMM = FindViewById<FloatingActionButton>(Resource.Id.creating_documents_btn_QuickMM);
+                    QuickMM = FindViewById<FloatingActionButton>(
+                        Resource.Id.creating_documents_btn_QuickMM
+                    );
                     QuickMM.Show();
                 }
 
                 Description = FindViewById<EditText>(Resource.Id.creating_documents_description);
                 RelatedDocument = FindViewById<EditText>(Resource.Id.creating_documents_docrelated);
 
-                RegistryView = FindViewById<LinearLayout>(Resource.Id.creating_documents_layout_registry);
-                TargetWarehouseView = FindViewById<LinearLayout>(Resource.Id.creating_documents_layout_warehouse);
-                ContractorView = FindViewById<LinearLayout>(Resource.Id.creating_documents_layout_contractor);
-                SourceFlogView = FindViewById<LinearLayout>(Resource.Id.creating_documents_layout_funclog_src);
-                TargetFlogView = FindViewById<LinearLayout>(Resource.Id.creating_documents_layout_funclog_tar);
-                DescriptionView = FindViewById<LinearLayout>(Resource.Id.creating_documents_layout_description);
-                RelatedDocumentView = FindViewById<LinearLayout>(Resource.Id.creating_documents_layout_docrelated);
+                RegistryView = FindViewById<LinearLayout>(
+                    Resource.Id.creating_documents_layout_registry
+                );
+                TargetWarehouseView = FindViewById<LinearLayout>(
+                    Resource.Id.creating_documents_layout_warehouse
+                );
+                ContractorView = FindViewById<LinearLayout>(
+                    Resource.Id.creating_documents_layout_contractor
+                );
+                SourceFlogView = FindViewById<LinearLayout>(
+                    Resource.Id.creating_documents_layout_funclog_src
+                );
+                TargetFlogView = FindViewById<LinearLayout>(
+                    Resource.Id.creating_documents_layout_funclog_tar
+                );
+                DescriptionView = FindViewById<LinearLayout>(
+                    Resource.Id.creating_documents_layout_description
+                );
+                RelatedDocumentView = FindViewById<LinearLayout>(
+                    Resource.Id.creating_documents_layout_docrelated
+                );
 
                 CancelButton.Click += CancelButton_Click;
                 TargetWarehouseButton.Click += TargetWarehouseButton_Click;
@@ -197,43 +250,60 @@ namespace G_Mobile_Android_WMS
                     if (!CheckIfFieldsFilled())
                     {
                         Helpers.PlaySound(this, Resource.Raw.sound_error);
-                        Helpers.CenteredToast(GetString(Resource.String.creating_documents_not_complete), ToastLength.Long);
+                        Helpers.CenteredToast(
+                            GetString(Resource.String.creating_documents_not_complete),
+                            ToastLength.Long
+                        );
                         return;
                     }
                     else
                     {
                         Enums.ZLMMMode ZLMMMode = Globalne.CurrentSettings.DefaultZLMode;
 
-                        if ((DocType == Enums.DocTypes.MM || DocType == Enums.DocTypes.ZL) && ZLMMMode == Enums.ZLMMMode.None)
+                        if (
+                            (DocType == Enums.DocTypes.MM || DocType == Enums.DocTypes.ZL)
+                            && ZLMMMode == Enums.ZLMMMode.None
+                        )
                         {
-
-                            ZLMMMode = await BusinessLogicHelpers.Documents.AskZLMMMode(this, DocType);
+                            ZLMMMode = await BusinessLogicHelpers.Documents.AskZLMMMode(
+                                this,
+                                DocType
+                            );
                             if (ZLMMMode == Enums.ZLMMMode.None)
                                 return;
                         }
 
-                        Helpers.ShowProgressDialog(GetString(Resource.String.creating_documents_progress));
+                        Helpers.ShowProgressDialog(
+                            GetString(Resource.String.creating_documents_progress)
+                        );
 
                         int Added = await Task.Run(() =>
                         {
-                            int Added = BusinessLogicHelpers.Documents.CreateDocument(this,
-                                                                                              DocType,
-                                                                                              (int)Registry.Tag,
-                                                                                              (int)Contractor.Tag,
-                                                                                              (int)SourceLogisticFunction.Tag,
-                                                                                              (int)TargetLogisticFunction.Tag,
-                                                                                              (int)TargetWarehouse.Tag,
-                                                                                              -1,
-                                                                                              -1,
-                                                                                              RelatedDocument.Text,
-                                                                                              Description.Text);
+                            int Added = BusinessLogicHelpers.Documents.CreateDocument(
+                                this,
+                                DocType,
+                                (int)Registry.Tag,
+                                (int)Contractor.Tag,
+                                (int)SourceLogisticFunction.Tag,
+                                (int)TargetLogisticFunction.Tag,
+                                (int)TargetWarehouse.Tag,
+                                -1,
+                                -1,
+                                RelatedDocument.Text,
+                                Description.Text
+                            );
 
                             return Added;
                         });
 
                         Helpers.HideProgressDialog();
 
-                        BusinessLogicHelpers.Documents.EditDocuments(this, new List<int> { Added }, DocType, ZLMMMode);
+                        BusinessLogicHelpers.Documents.EditDocuments(
+                            this,
+                            new List<int> { Added },
+                            DocType,
+                            ZLMMMode
+                        );
                     }
                 }
                 catch (Exception ex)
@@ -246,71 +316,79 @@ namespace G_Mobile_Android_WMS
 
         private bool CheckIfFieldsFilled()
         {
-            foreach (KeyValuePair<Enums.DocumentFields, bool> Field in Globalne.CurrentSettings.CreatingDocumentsRequiredFields[DocType].Where(x => x.Value == true).ToList())
+            foreach (
+                KeyValuePair<Enums.DocumentFields, bool> Field in Globalne
+                    .CurrentSettings.CreatingDocumentsRequiredFields[DocType]
+                    .Where(x => x.Value == true)
+                    .ToList()
+            )
             {
                 switch (Field.Key)
                 {
                     case Enums.DocumentFields.Contractor:
-                        {
-                            if ((int)Contractor.Tag == -1)
-                                return false;
-                            else
-                                continue;
-                        }
+                    {
+                        if ((int)Contractor.Tag == -1)
+                            return false;
+                        else
+                            continue;
+                    }
                     case Enums.DocumentFields.TargetWarehouse:
-                        {
-                            if ((int)TargetWarehouse.Tag == -1)
-                                return false;
-                            else
-                                continue;
-                        }
+                    {
+                        if ((int)TargetWarehouse.Tag == -1)
+                            return false;
+                        else
+                            continue;
+                    }
                     case Enums.DocumentFields.Registry:
-                        {
-                            if ((int)Registry.Tag == -1)
-                                return false;
-                            else
-                                continue;
-                        }
+                    {
+                        if ((int)Registry.Tag == -1)
+                            return false;
+                        else
+                            continue;
+                    }
                     case Enums.DocumentFields.SourceFlog:
-                        {
-                            if ((int)SourceLogisticFunction.Tag == -1)
-                                return false;
-                            else
-                                continue;
-                        }
+                    {
+                        if ((int)SourceLogisticFunction.Tag == -1)
+                            return false;
+                        else
+                            continue;
+                    }
                     case Enums.DocumentFields.TargetFlog:
-                        {
-                            if ((int)TargetLogisticFunction.Tag == -1)
-                                return false;
-                            else
-                                continue;
-                        }
+                    {
+                        if ((int)TargetLogisticFunction.Tag == -1)
+                            return false;
+                        else
+                            continue;
+                    }
                     case Enums.DocumentFields.RelatedDoc:
-                        {
-                            if (RelatedDocument.Text == "")
-                                return false;
-                            else
-                                continue;
-                        }
+                    {
+                        if (RelatedDocument.Text == "")
+                            return false;
+                        else
+                            continue;
+                    }
                     case Enums.DocumentFields.Description:
-                        {
-                            if (Description.Text == "")
-                                return false;
-                            else
-                                continue;
-                        }
+                    {
+                        if (Description.Text == "")
+                            return false;
+                        else
+                            continue;
+                    }
                 }
             }
 
             return true;
-
         }
 
         private void SetViewBasedOnDocTypeSettings()
         {
-            Dictionary<Enums.DocumentFields, bool> Settings = Globalne.CurrentSettings.CreatingDocumentsRequiredFields[DocType];
+            Dictionary<Enums.DocumentFields, bool> Settings = Globalne
+                .CurrentSettings
+                .CreatingDocumentsRequiredFields[DocType];
 
-            Android.Graphics.Color RequiredTextField = new Android.Graphics.Color(ContextCompat.GetColor(this, Resource.Color.required_text_field));
+            Android.Graphics.Color RequiredTextField = new Android.Graphics.Color(
+                ContextCompat.GetColor(this, Resource.Color.required_text_field)
+            );
 
             if (Settings.ContainsKey(Enums.DocumentFields.Registry))
             {
@@ -319,7 +397,12 @@ namespace G_Mobile_Android_WMS
 
                 try
                 {
-                    List<RejestrRow> Rejestry = Globalne.rejestrBL.PobierzListęRejestrówDostępnychDlaOperatoraNaTerminalu(Helpers.StringDocType(DocType), Globalne.Magazyn.ID, Globalne.Operator.ID);
+                    List<RejestrRow> Rejestry =
+                        Serwer.rejestrBL.PobierzListęRejestrówDostępnychDlaOperatoraNaTerminalu(
+                            Helpers.StringDocType(DocType),
+                            Globalne.Magazyn.ID,
+                            Globalne.Operator.ID
+                        );
 
                     if (Rejestry.Count == 1)
                     {
@@ -327,8 +410,7 @@ namespace G_Mobile_Android_WMS
                         Registry.Tag = Rejestry[0].ID;
                     }
                 }
-                catch (Exception)
-                { }
+                catch (Exception) { }
             }
             else
                 RegistryView.Visibility = ViewStates.Gone;
@@ -340,7 +422,9 @@ namespace G_Mobile_Android_WMS
 
                 try
                 {
-                    List<MagazynO> Magazyny = Globalne.magazynBL.PobierzListęDostępnychDlaOperatora(Globalne.Operator.ID);
+                    List<MagazynO> Magazyny = Serwer.magazynBL.PobierzListęDostępnychDlaOperatora(
+                        Globalne.Operator.ID
+                    );
 
                     MagazynO Skipped = Magazyny.Find(x => x.ID == Globalne.Magazyn.ID);
 
@@ -353,8 +437,7 @@ namespace G_Mobile_Android_WMS
                         TargetWarehouse.Tag = Magazyny[0].ID;
                     }
                 }
-                catch (Exception)
-                { }
+                catch (Exception) { }
             }
             else
                 TargetWarehouseView.Visibility = ViewStates.Gone;
@@ -367,7 +450,10 @@ namespace G_Mobile_Android_WMS
             else
                 ContractorView.Visibility = ViewStates.Gone;
 
-            if (Settings.ContainsKey(Enums.DocumentFields.SourceFlog) && Globalne.CurrentSettings.FunkcjeLogistyczne)
+            if (
+                Settings.ContainsKey(Enums.DocumentFields.SourceFlog)
+                && Globalne.CurrentSettings.FunkcjeLogistyczne
+            )
             {
                 if (Settings[Enums.DocumentFields.SourceFlog] == true)
                     SourceLogisticFunction.SetBackgroundColor(RequiredTextField);
@@ -375,7 +461,10 @@ namespace G_Mobile_Android_WMS
             else
                 SourceFlogView.Visibility = ViewStates.Gone;
 
-            if (Settings.ContainsKey(Enums.DocumentFields.TargetFlog) && Globalne.CurrentSettings.FunkcjeLogistyczne)
+            if (
+                Settings.ContainsKey(Enums.DocumentFields.TargetFlog)
+                && Globalne.CurrentSettings.FunkcjeLogistyczne
+            )
             {
                 if (Settings[Enums.DocumentFields.TargetFlog] == true)
                     TargetLogisticFunction.SetBackgroundColor(RequiredTextField);
@@ -402,7 +491,15 @@ namespace G_Mobile_Android_WMS
 
         async void RegistryButton_Click(object sender, EventArgs e)
         {
-            await RunIsBusyTaskAsync(() => BusinessLogicHelpers.Indexes.ShowRegistryListAndSet(this, DocType, Globalne.Magazyn.ID, Registry));
+            await RunIsBusyTaskAsync(
+                () =>
+                    BusinessLogicHelpers.Indexes.ShowRegistryListAndSet(
+                        this,
+                        DocType,
+                        Globalne.Magazyn.ID,
+                        Registry
+                    )
+            );
         }
 
         async void TargetLogisticFunction_Click(object sender, EventArgs e)
@@ -415,34 +512,64 @@ namespace G_Mobile_Android_WMS
 
                 if (WarehouseID < 0)
                 {
-                    Helpers.CenteredToast(GetString(Resource.String.creating_documents_target_warehouse_not_set), ToastLength.Long);
+                    Helpers.CenteredToast(
+                        GetString(Resource.String.creating_documents_target_warehouse_not_set),
+                        ToastLength.Long
+                    );
                     return;
                 }
             }
 
-            await RunIsBusyTaskAsync(() => BusinessLogicHelpers.Indexes.ShowLogisticFunctionsListAndSet(this, WarehouseID, TargetLogisticFunction));
+            await RunIsBusyTaskAsync(
+                () =>
+                    BusinessLogicHelpers.Indexes.ShowLogisticFunctionsListAndSet(
+                        this,
+                        WarehouseID,
+                        TargetLogisticFunction
+                    )
+            );
         }
 
         async void SourceLogisticFunction_Click(object sender, EventArgs e)
         {
-            await RunIsBusyTaskAsync(() => BusinessLogicHelpers.Indexes.ShowLogisticFunctionsListAndSet(this, Globalne.Magazyn.ID, SourceLogisticFunction));
+            await RunIsBusyTaskAsync(
+                () =>
+                    BusinessLogicHelpers.Indexes.ShowLogisticFunctionsListAndSet(
+                        this,
+                        Globalne.Magazyn.ID,
+                        SourceLogisticFunction
+                    )
+            );
         }
 
         async void DodajTekstOpis_Click(object sender, EventArgs e)
         {
-
             RunIsBusyAction(() =>
             {
                 ActionSheetConfig Conf1 = new ActionSheetConfig()
-                                        .SetCancel(GetString(Resource.String.global_cancel))
-                                        .SetTitle(GetString(Resource.String.stocks_search_by_what));
+                    .SetCancel(GetString(Resource.String.global_cancel))
+                    .SetTitle(GetString(Resource.String.stocks_search_by_what));
 
-                Conf1.Add(GetString(Resource.String.Dopotwierdzenia), () => Helpers.SetTextOnTextView(this, Description, "Do Potwierdzenia"));
-                Conf1.Add(GetString(Resource.String.Uszkodzenie), () => Helpers.SetTextOnTextView(this, Description, "Uszkodzenie"));
-                Conf1.Add(GetString(Resource.String.Brakfaktury), () => Helpers.SetTextOnTextView(this, Description, "Brak Faktury"));
-                Conf1.Add(GetString(Resource.String.Brakitowarowe), () => Helpers.SetTextOnTextView(this, Description, "Braki Towarowe"));
-                Conf1.Add(GetString(Resource.String.Dostawaniekompletna), () => Helpers.SetTextOnTextView(this, Description, "Dostawa niekompletna"));
-
+                Conf1.Add(
+                    GetString(Resource.String.Dopotwierdzenia),
+                    () => Helpers.SetTextOnTextView(this, Description, "Do Potwierdzenia")
+                );
+                Conf1.Add(
+                    GetString(Resource.String.Uszkodzenie),
+                    () => Helpers.SetTextOnTextView(this, Description, "Uszkodzenie")
+                );
+                Conf1.Add(
+                    GetString(Resource.String.Brakfaktury),
+                    () => Helpers.SetTextOnTextView(this, Description, "Brak Faktury")
+                );
+                Conf1.Add(
+                    GetString(Resource.String.Brakitowarowe),
+                    () => Helpers.SetTextOnTextView(this, Description, "Braki Towarowe")
+                );
+                Conf1.Add(
+                    GetString(Resource.String.Dostawaniekompletna),
+                    () => Helpers.SetTextOnTextView(this, Description, "Dostawa niekompletna")
+                );
 
                 UserDialogs.Instance.ActionSheet(Conf1);
             });
@@ -463,25 +590,22 @@ namespace G_Mobile_Android_WMS
         {
             RunIsBusyAction(async () =>
             {
-
                 if (DocType == Enums.DocTypes.MM || DocType == Enums.DocTypes.MM)
                 {
                     try
                     {
                         string strERP = Globalne.CurrentSettings.SetRejestrForMM;
-                        RejestrVO rejestr = Globalne.rejestrBL.PobierzRejestrWgSymbolu(strERP);
+                        RejestrVO rejestr = Serwer.rejestrBL.PobierzRejestrWgSymbolu(strERP);
 
                         Helpers.SetTextOnTextView(this, Registry, rejestr.strNazwaRej);
                         Registry.Tag = rejestr.ID;
                     }
-                    catch (Exception ex)
-                    {
-                    }
+                    catch (Exception ex) { }
 
                     try
                     {
                         string NazwaMagazynu = Globalne.CurrentSettings.SetMagazineForMM;
-                        MagazynO mag = Globalne.magazynBL.PobierzMagazyn(NazwaMagazynu);
+                        MagazynO mag = Serwer.magazynBL.PobierzMagazyn(NazwaMagazynu);
                         if (Globalne.Magazyn.Nazwa != NazwaMagazynu)
                         {
                             Helpers.SetTextOnTextView(this, TargetWarehouse, mag.Nazwa);
@@ -489,106 +613,112 @@ namespace G_Mobile_Android_WMS
                             TargetWarehouse.Tag = mag.ID;
                         }
                     }
-                    catch (Exception ex)
-                    {
-                    }
+                    catch (Exception ex) { }
                 }
-
             });
             if (!CheckIfFieldsFilled())
             {
                 Helpers.PlaySound(this, Resource.Raw.sound_error);
-                Helpers.CenteredToast(GetString(Resource.String.creating_documents_not_complete), ToastLength.Long);
+                Helpers.CenteredToast(
+                    GetString(Resource.String.creating_documents_not_complete),
+                    ToastLength.Long
+                );
                 return;
             }
             else
             {
                 await RunIsBusyTaskAsync(async () =>
+                {
+                    try
                     {
-                        try
+                        if (!CheckIfFieldsFilled())
                         {
-                            if (!CheckIfFieldsFilled())
-                            {
-                                Helpers.PlaySound(this, Resource.Raw.sound_error);
-                                Helpers.CenteredToast(GetString(Resource.String.creating_documents_not_complete), ToastLength.Long);
-                                return;
-                            }
-                            else
-                            {
-                               Enums.ZLMMMode ZLMMMode = Enums.ZLMMMode.OneStep;
-                                    if (DocType == Enums.DocTypes.MM || DocType == Enums.DocTypes.ZL)
-                                     {
-                                     }
-                                     Helpers.ShowProgressDialog(GetString(Resource.String.creating_documents_progress));
-                                int Added = await Task.Run(() =>
-                                {
-                                    int Added = BusinessLogicHelpers.Documents.CreateDocument(this,
-                                                                                                      DocType,
-                                                                                                      (int)Registry.Tag,
-                                                                                                      (int)Contractor.Tag,
-                                                                                                      (int)SourceLogisticFunction.Tag,
-                                                                                                      (int)TargetLogisticFunction.Tag,
-                                                                                                      (int)TargetWarehouse.Tag,
-                                                                                                      -1,
-                                                                                                      -1,
-                                                                                                      RelatedDocument.Text,
-                                                                                                      Description.Text);
-
-                                    return Added;
-                                });
-                                Helpers.HideProgressDialog();
-                                BusinessLogicHelpers.Documents.EditDocuments(this, new List<int> { Added }, DocType, ZLMMMode);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Helpers.HandleError(this, ex);
+                            Helpers.PlaySound(this, Resource.Raw.sound_error);
+                            Helpers.CenteredToast(
+                                GetString(Resource.String.creating_documents_not_complete),
+                                ToastLength.Long
+                            );
                             return;
                         }
-                    });
-            }
-        } 
+                        else
+                        {
+                            Enums.ZLMMMode ZLMMMode = Enums.ZLMMMode.OneStep;
+                            if (DocType == Enums.DocTypes.MM || DocType == Enums.DocTypes.ZL) { }
+                            Helpers.ShowProgressDialog(
+                                GetString(Resource.String.creating_documents_progress)
+                            );
+                            int Added = await Task.Run(() =>
+                            {
+                                int Added = BusinessLogicHelpers.Documents.CreateDocument(
+                                    this,
+                                    DocType,
+                                    (int)Registry.Tag,
+                                    (int)Contractor.Tag,
+                                    (int)SourceLogisticFunction.Tag,
+                                    (int)TargetLogisticFunction.Tag,
+                                    (int)TargetWarehouse.Tag,
+                                    -1,
+                                    -1,
+                                    RelatedDocument.Text,
+                                    Description.Text
+                                );
 
-                private void DETALButton_Click(object sender, EventArgs e)
+                                return Added;
+                            });
+                            Helpers.HideProgressDialog();
+                            BusinessLogicHelpers.Documents.EditDocuments(
+                                this,
+                                new List<int> { Added },
+                                DocType,
+                                ZLMMMode
+                            );
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Helpers.HandleError(this, ex);
+                        return;
+                    }
+                });
+            }
+        }
+
+        private void DETALButton_Click(object sender, EventArgs e)
         {
             RunIsBusyAction(() =>
-             {
+            {
+                if (DocType == Enums.DocTypes.WZ || DocType == Enums.DocTypes.RW)
+                {
+                    try
+                    {
+                        //      List<RejestrRow> Rejestry = Serwer.rejestrBL.PobierzListęRejestrówDostępnychDlaOperatoraNaTerminalu(Helpers.StringDocType(DocType), Globalne.Magazyn.ID, Globalne.Operator.ID);
+                        string strERP = Globalne.CurrentSettings.SetRejestrForDetal;
+                        RejestrVO rejestr = Serwer.rejestrBL.PobierzRejestrWgSymbolu(strERP);
 
-                 if (DocType == Enums.DocTypes.WZ || DocType == Enums.DocTypes.RW)
-                 {
-                     try
-                     {
-                   //      List<RejestrRow> Rejestry = Globalne.rejestrBL.PobierzListęRejestrówDostępnychDlaOperatoraNaTerminalu(Helpers.StringDocType(DocType), Globalne.Magazyn.ID, Globalne.Operator.ID);
-                         string strERP = Globalne.CurrentSettings.SetRejestrForDetal;
-                         RejestrVO rejestr = Globalne.rejestrBL.PobierzRejestrWgSymbolu(strERP);
+                        Helpers.SetTextOnTextView(this, Registry, rejestr.strNazwaRej);
+                        //  Helpers.SetTextOnTextView(this, Registry, Rejestry[0].strNazwaRej);
+                        Registry.Tag = rejestr.ID;
+                    }
+                    catch (Exception ex) { }
 
-                         Helpers.SetTextOnTextView(this, Registry, rejestr.strNazwaRej);
-                           //  Helpers.SetTextOnTextView(this, Registry, Rejestry[0].strNazwaRej);
-                             Registry.Tag = rejestr.ID;
-                     }
-                     catch (Exception ex)
-                     { 
-                     }
+                    try
+                    {
+                        string NazwaKontrahenta = Globalne.CurrentSettings.SetContrahForDetal;
+                        KontrahentVO Ktr = Serwer.podmiotBL.PobierzKontrahentaWgNazwy(
+                            NazwaKontrahenta
+                        );
 
-                     try
-                     {
-                         string NazwaKontrahenta = Globalne.CurrentSettings.SetContrahForDetal;
-                         KontrahentVO Ktr = Globalne.podmiotBL.PobierzKontrahentaWgNazwy(NazwaKontrahenta);
+                        if (Ktr.bAktywny && !Ktr.bZablokowany)
+                        {
+                            Helpers.SetTextOnTextView(this, Contractor, Ktr.strNazwa);
 
-                         if (Ktr.bAktywny && !Ktr.bZablokowany)
-                         {
-                             Helpers.SetTextOnTextView(this, Contractor, Ktr.strNazwa);
-
-                             Contractor.Tag = Ktr.ID;
-                         }
-                     }
-                     catch (Exception ex) { 
-                     }
-                 }
-             });
-        } 
-    
-
+                            Contractor.Tag = Ktr.ID;
+                        }
+                    }
+                    catch (Exception ex) { }
+                }
+            });
+        }
 
         private void TargetWarehouseButton_Click(object sender, EventArgs e)
         {
@@ -597,15 +727,22 @@ namespace G_Mobile_Android_WMS
                 Intent i = new Intent(this, typeof(WarehousesActivity));
                 i.PutExtra(WarehousesActivity.Vars.Mode, (int)WarehousesActivity.Modes.Target);
 
-                if (DocType == Enums.DocTypes.MM || DocType == Enums.DocTypes.MMDistribution || DocType == Enums.DocTypes.MMGathering)
+                if (
+                    DocType == Enums.DocTypes.MM
+                    || DocType == Enums.DocTypes.MMDistribution
+                    || DocType == Enums.DocTypes.MMGathering
+                )
                     i.PutExtra(WarehousesActivity.Vars.SkipWarehouse, Globalne.Magazyn.ID);
-
 
                 StartActivityForResult(i, (int)ResultCodes.WarehouseActivityResult);
             });
         }
 
-        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        protected override void OnActivityResult(
+            int requestCode,
+            [GeneratedEnum] Result resultCode,
+            Intent data
+        )
         {
             base.OnActivityResult(requestCode, resultCode, data);
 
@@ -614,22 +751,31 @@ namespace G_Mobile_Android_WMS
                 switch (requestCode)
                 {
                     case (int)ResultCodes.WarehouseActivityResult:
-                        {
-                            MagazynO Selected = (MagazynO)Helpers.DeserializePassedJSON(data, WarehousesActivity.Results.SelectedWarehouseJson, typeof(MagazynO));
-                            Helpers.SetTextOnTextView(this, TargetWarehouse, Selected.Nazwa);
-                            TargetWarehouse.Tag = Selected.ID;
-                            break;
-                        }
+                    {
+                        MagazynO Selected = (MagazynO)
+                            Helpers.DeserializePassedJSON(
+                                data,
+                                WarehousesActivity.Results.SelectedWarehouseJson,
+                                typeof(MagazynO)
+                            );
+                        Helpers.SetTextOnTextView(this, TargetWarehouse, Selected.Nazwa);
+                        TargetWarehouse.Tag = Selected.ID;
+                        break;
+                    }
                     case (int)ResultCodes.ContractorsActivityResult:
-                        {
-                            KontrahentVO Selected = (KontrahentVO)Helpers.DeserializePassedJSON(data, ContractorsActivity.Results.SelectedJSON, typeof(KontrahentVO));
-                            Helpers.SetTextOnTextView(this, Contractor, Selected.strNazwa);
-                            Contractor.Tag = Selected.ID;
-                            break;
-                        }
+                    {
+                        KontrahentVO Selected = (KontrahentVO)
+                            Helpers.DeserializePassedJSON(
+                                data,
+                                ContractorsActivity.Results.SelectedJSON,
+                                typeof(KontrahentVO)
+                            );
+                        Helpers.SetTextOnTextView(this, Contractor, Selected.strNazwa);
+                        Contractor.Tag = Selected.ID;
+                        break;
+                    }
                 }
             }
-
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
@@ -651,4 +797,3 @@ namespace G_Mobile_Android_WMS
         }
     }
 }
-

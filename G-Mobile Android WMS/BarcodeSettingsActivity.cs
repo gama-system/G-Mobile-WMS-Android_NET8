@@ -1,38 +1,43 @@
-﻿using Acr.UserDialogs;
-using Android.App;
-using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Widget;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Linq;
-
-using WMSServerAccess.Model;
-using Android.Content;
-using Android.Runtime;
-using Android.Views;
-using System.Timers;
-using System.Threading.Tasks;
-using System.Reflection;
-using G_Mobile_Android_WMS.ExtendedModel;
 using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
+using Acr.UserDialogs;
+using Android.App;
+using Android.Content;
+using Android.OS;
+using Android.Runtime;
+using Android.Support.Design.Widget;
+using Android.Views;
+using Android.Widget;
+using G_Mobile_Android_WMS.ExtendedModel;
+using WMS_DESKTOP_API;
+using WMS_DESKTOP_API;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, MainLauncher = false)]
-
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        MainLauncher = false
+    )]
     public class BarcodeSettingsActivity : BaseWMSActivity
     {
         ListView ListView;
         List<BarcodeSetting> CodeParsingSettings = new List<BarcodeSetting>();
         readonly List<string> Skip = new List<string>()
-            {
-                nameof(KodKreskowyZSzablonuO.DataProdukcji),
-                nameof(KodKreskowyZSzablonuO.DataPrzydatności),
-                nameof(KodKreskowyZSzablonuO.TowaryJednostkiWBazie),
-                nameof(KodKreskowyZSzablonuO.Producent)
-            };
+        {
+            nameof(KodKreskowyZSzablonuO.DataProdukcji),
+            nameof(KodKreskowyZSzablonuO.DataPrzydatności),
+            nameof(KodKreskowyZSzablonuO.TowaryJednostkiWBazie),
+            nameof(KodKreskowyZSzablonuO.Producent)
+        };
 
         internal static class Vars
         {
@@ -50,7 +55,13 @@ namespace G_Mobile_Android_WMS
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_genericlist);
 
-            Dictionary<string, string> Set = (Dictionary<string, string>)Helpers.DeserializePassedJSON(Intent, Vars.Settings, typeof(Dictionary<string, string>));
+            Dictionary<string, string> Set =
+                (Dictionary<string, string>)
+                    Helpers.DeserializePassedJSON(
+                        Intent,
+                        Vars.Settings,
+                        typeof(Dictionary<string, string>)
+                    );
 
             CodeParsingSettings = GetBarcodeItems(Set);
 
@@ -96,13 +107,15 @@ namespace G_Mobile_Android_WMS
         private async void ListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
             BarcodeSetting S = (ListView.Adapter as BarcodeSettingsActivityAdapter)[e.Position];
-            
+
             if (Skip.Find(x => x == S.SetA) != null)
             {
-                Helpers.CenteredToast(GetString(Resource.String.barcodesettings_shouldntedit), ToastLength.Long);
+                Helpers.CenteredToast(
+                    GetString(Resource.String.barcodesettings_shouldntedit),
+                    ToastLength.Long
+                );
                 return;
             }
-
 
             PropertyDescriptorCollection propertyInfosA;
             PropertyDescriptorCollection propertyInfosB;
@@ -120,7 +133,11 @@ namespace G_Mobile_Android_WMS
                     Options.Add(">> " + Prop.Name + "<< ");
                 else
                 {
-                    if (Prop.Name != nameof(DocumentItemVO.Base) && Prop.Name != nameof(DocumentItemVO.DefaultAmount) && Prop.Name != nameof(DocumentItemVO.EditMode))
+                    if (
+                        Prop.Name != nameof(DocumentItemVO.Base)
+                        && Prop.Name != nameof(DocumentItemVO.DefaultAmount)
+                        && Prop.Name != nameof(DocumentItemVO.EditMode)
+                    )
                         Options.Add(Prop.Name);
                 }
             }
@@ -136,12 +153,13 @@ namespace G_Mobile_Android_WMS
                     Options.Add(Prop.Name);
             }
 
-
-            string Res = await UserDialogs.Instance.ActionSheetAsync(GetString(Resource.String.barcodesettings_target),
-                                                                     GetString(Resource.String.global_cancel),
-                                                                     "",
-                                                                     null,
-                                                                     Options.ToArray());
+            string Res = await UserDialogs.Instance.ActionSheetAsync(
+                GetString(Resource.String.barcodesettings_target),
+                GetString(Resource.String.global_cancel),
+                "",
+                null,
+                Options.ToArray()
+            );
 
             if (Res == GetString(Resource.String.global_cancel))
                 return;
@@ -176,7 +194,10 @@ namespace G_Mobile_Android_WMS
             IsSwitchingActivity = true;
 
             Intent i = new Intent();
-            i.PutExtra(Results.Settings, Helpers.SerializeJSON(GetReturnDictionary(CodeParsingSettings)));
+            i.PutExtra(
+                Results.Settings,
+                Helpers.SerializeJSON(GetReturnDictionary(CodeParsingSettings))
+            );
 
             SetResult(Result.Ok, i);
             Finish();
@@ -187,7 +208,11 @@ namespace G_Mobile_Android_WMS
             public List<BarcodeSetting> Items;
             readonly BarcodeSettingsActivity Ctx;
 
-            public BarcodeSettingsActivityAdapter(BarcodeSettingsActivity Ctx, List<BarcodeSetting> Items) : base()
+            public BarcodeSettingsActivityAdapter(
+                BarcodeSettingsActivity Ctx,
+                List<BarcodeSetting> Items
+            )
+                : base()
             {
                 this.Ctx = Ctx;
                 this.Items = Items;
@@ -197,6 +222,7 @@ namespace G_Mobile_Android_WMS
             {
                 return position;
             }
+
             public override BarcodeSetting this[int position]
             {
                 get { return Items[position]; }
@@ -234,4 +260,3 @@ namespace G_Mobile_Android_WMS
         }
     }
 }
-

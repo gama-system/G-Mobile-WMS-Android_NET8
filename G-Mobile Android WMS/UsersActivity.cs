@@ -1,4 +1,8 @@
-﻿using Acr.UserDialogs;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using Acr.UserDialogs;
 using Android;
 using Android.App;
 using Android.Content;
@@ -9,15 +13,19 @@ using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
 using Plugin.DeviceInfo;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using WMSServerAccess.Model;
+using WMS_DESKTOP_API;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, WindowSoftInputMode = Android.Views.SoftInput.AdjustPan | Android.Views.SoftInput.StateHidden)]
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        MainLauncher = false,
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        WindowSoftInputMode = Android.Views.SoftInput.AdjustPan
+            | Android.Views.SoftInput.StateHidden
+    )]
     public class UsersActivity : ActivityWithScanner
     {
         FloatingActionButton Back;
@@ -50,18 +58,35 @@ namespace G_Mobile_Android_WMS
             GetAndSetControls();
             Task.Run(() => InsertData());
 
-            Helpers.CheckAndRequestPermissions(this, new string[] { Manifest.Permission.ReadPhoneState, Manifest.Permission.WriteExternalStorage });
-
+            Helpers.CheckAndRequestPermissions(
+                this,
+                new string[]
+                {
+                    Manifest.Permission.ReadPhoneState,
+                    Manifest.Permission.WriteExternalStorage
+                }
+            );
         }
-
 
         private void GetAndSetControls()
         {
             switch (Mode)
             {
-                case UsersActivityModes.IsAllowedToCloseApplication: Helpers.SetActivityHeader(this, GetString(Resource.String.users_activity_closing_name)); break;
-                case UsersActivityModes.IsAllowedToEditSettings: Helpers.SetActivityHeader(this, GetString(Resource.String.users_activity_settings_name)); break;
-                default: Helpers.SetActivityHeader(this, GetString(Resource.String.users_activity_name)); break;
+                case UsersActivityModes.IsAllowedToCloseApplication:
+                    Helpers.SetActivityHeader(
+                        this,
+                        GetString(Resource.String.users_activity_closing_name)
+                    );
+                    break;
+                case UsersActivityModes.IsAllowedToEditSettings:
+                    Helpers.SetActivityHeader(
+                        this,
+                        GetString(Resource.String.users_activity_settings_name)
+                    );
+                    break;
+                default:
+                    Helpers.SetActivityHeader(this, GetString(Resource.String.users_activity_name));
+                    break;
             }
 
             if (!Globalne.CurrentSettings.CheckCanBarcodeLogin)
@@ -72,7 +97,6 @@ namespace G_Mobile_Android_WMS
                     Scn.Visibility = ViewStates.Gone;
             }
 
-
             Back = FindViewById<FloatingActionButton>(Resource.Id.UsersBtnPrev);
             Refresh = FindViewById<FloatingActionButton>(Resource.Id.UsersBtnRefresh);
             OperatorList = FindViewById<ListView>(Resource.Id.list_view_users);
@@ -82,6 +106,7 @@ namespace G_Mobile_Android_WMS
             Refresh.Click += Refresh_ClickAsync;
             OperatorList.ItemClick += OperatorList_ItemClick;
         }
+
         async Task DoLogin(OperatorRow Selected)
         {
             PromptResult Res;
@@ -89,10 +114,19 @@ namespace G_Mobile_Android_WMS
 
             while (true)
             {
-                var tryEmptyPassword = Globalne.operatorBL.SprawdźHasłoOperatora(Selected.ID, Encryption.RSAEncrypt(""));
+                var tryEmptyPassword = Serwer.operatorBL.SprawdźHasłoOperatora(
+                    Selected.ID,
+                    Encryption.RSAEncrypt("")
+                );
                 if (!tryEmptyPassword)
                 {
-                    Res = await Helpers.AlertAsyncWithPrompt(this, Resource.String.users_getpass, null, "", InputType.Password);
+                    Res = await Helpers.AlertAsyncWithPrompt(
+                        this,
+                        Resource.String.users_getpass,
+                        null,
+                        "",
+                        InputType.Password
+                    );
 
                     if (!Res.Ok)
                         break;
@@ -107,40 +141,58 @@ namespace G_Mobile_Android_WMS
                 switch (ResLogin)
                 {
                     case 0:
+                    {
+                        try
                         {
-                            try
+                            UstawienieMobilneOpe Ust = Serwer.menuBL.PobierzUstawienieMobOpe(
+                                Selected.idUstawienieMobOpe
+                            );
+
+                            if (Ust.ID < 0)
                             {
-                                UstawienieMobilneOpe Ust = Globalne.menuBL.PobierzUstawienieMobOpe(Selected.idUstawienieMobOpe);
-
-                                if (Ust.ID < 0)
-                                {
-                                    await Helpers.AlertAsyncWithConfirm(this, Resource.String.users_no_settings);
-                                    return;
-                                }
-                                else
-                                    Globalne.CurrentUserSettings = (UserSettings)JsonConvert.DeserializeObject(Ust.strUstawienie, typeof(UserSettings));
-
-
-                                List<MagazynO> Magazyny = Globalne.magazynBL.PobierzListęDostępnychDlaOperatora(Globalne.Operator.ID);
-
-                                if (Magazyny.Count == 1)
-                                {
-                                    Globalne.Magazyn = Magazyny[0];
-                                    Helpers.SwitchAndFinishCurrentActivity(this, typeof(ModulesActivity));
-                                }
-                                else
-                                    Helpers.SwitchAndFinishCurrentActivity(this, typeof(WarehousesActivity));
+                                await Helpers.AlertAsyncWithConfirm(
+                                    this,
+                                    Resource.String.users_no_settings
+                                );
                                 return;
                             }
-                            catch (Exception ex)
+                            else
+                                Globalne.CurrentUserSettings = (UserSettings)
+                                    JsonConvert.DeserializeObject(
+                                        Ust.strUstawienie,
+                                        typeof(UserSettings)
+                                    );
+
+                            List<MagazynO> Magazyny =
+                                Serwer.magazynBL.PobierzListęDostępnychDlaOperatora(
+                                    Globalne.Operator.ID
+                                );
+
+                            if (Magazyny.Count == 1)
                             {
-                                Helpers.HandleError(this, ex);
-                                return;
+                                Globalne.Magazyn = Magazyny[0];
+                                Helpers.SwitchAndFinishCurrentActivity(
+                                    this,
+                                    typeof(ModulesActivity)
+                                );
                             }
+                            else
+                                Helpers.SwitchAndFinishCurrentActivity(
+                                    this,
+                                    typeof(WarehousesActivity)
+                                );
+                            return;
                         }
-                    case -1: return;
-                    default: break;
-
+                        catch (Exception ex)
+                        {
+                            Helpers.HandleError(this, ex);
+                            return;
+                        }
+                    }
+                    case -1:
+                        return;
+                    default:
+                        break;
                 }
             }
         }
@@ -154,41 +206,60 @@ namespace G_Mobile_Android_WMS
                 switch (ResLogin)
                 {
                     case 0:
+                    {
+                        try
                         {
-                            try
+                            UstawienieMobilneOpe Ust = Serwer.menuBL.PobierzUstawienieMobOpe(
+                                Globalne.Operator.idUstawienieMobOpe
+                            );
+
+                            if (Ust.ID < 0)
                             {
-                                UstawienieMobilneOpe Ust = Globalne.menuBL.PobierzUstawienieMobOpe(Globalne.Operator.idUstawienieMobOpe);
-
-                                if (Ust.ID < 0)
-                                {
-                                    await Helpers.AlertAsyncWithConfirm(this, Resource.String.users_no_settings);
-                                    Globalne.Operator = null;
-                                    return;
-                                }
-                                else
-                                    Globalne.CurrentUserSettings = (UserSettings)JsonConvert.DeserializeObject(Ust.strUstawienie, typeof(UserSettings));
-
-
-                                List<MagazynO> Magazyny = Globalne.magazynBL.PobierzListęDostępnychDlaOperatora(Globalne.Operator.ID);
-
-                                if (Magazyny.Count == 1)
-                                {
-                                    Globalne.Magazyn = Magazyny[0];
-                                    Helpers.SwitchAndFinishCurrentActivity(this, typeof(ModulesActivity));
-                                }
-                                else
-                                    Helpers.SwitchAndFinishCurrentActivity(this, typeof(WarehousesActivity));
-
+                                await Helpers.AlertAsyncWithConfirm(
+                                    this,
+                                    Resource.String.users_no_settings
+                                );
+                                Globalne.Operator = null;
                                 return;
                             }
-                            catch (Exception ex)
+                            else
+                                Globalne.CurrentUserSettings = (UserSettings)
+                                    JsonConvert.DeserializeObject(
+                                        Ust.strUstawienie,
+                                        typeof(UserSettings)
+                                    );
+
+                            List<MagazynO> Magazyny =
+                                Serwer.magazynBL.PobierzListęDostępnychDlaOperatora(
+                                    Globalne.Operator.ID
+                                );
+
+                            if (Magazyny.Count == 1)
                             {
-                                Helpers.HandleError(this, ex);
-                                return;
+                                Globalne.Magazyn = Magazyny[0];
+                                Helpers.SwitchAndFinishCurrentActivity(
+                                    this,
+                                    typeof(ModulesActivity)
+                                );
                             }
+                            else
+                                Helpers.SwitchAndFinishCurrentActivity(
+                                    this,
+                                    typeof(WarehousesActivity)
+                                );
+
+                            return;
                         }
-                    case -1: return;
-                    default: return;
+                        catch (Exception ex)
+                        {
+                            Helpers.HandleError(this, ex);
+                            return;
+                        }
+                    }
+                    case -1:
+                        return;
+                    default:
+                        return;
                 }
             }
             catch (Exception ex)
@@ -211,62 +282,65 @@ namespace G_Mobile_Android_WMS
             switch (Mode)
             {
                 case UsersActivityModes.LogIn:
-                    {
-                        bool? Res = await TryUpdate();
+                {
+                    bool? Res = await TryUpdate();
 
-                        if (Res == true)
-                            await RunIsBusyTaskAsync(() => DoLogin(Selected));
-                        else if (Res == false)
-                            Helpers.CenteredToast(GetString(Resource.String.update_failed), ToastLength.Long);
-                        else if (Res == null)
-                            return;
+                    if (Res == true)
+                        await RunIsBusyTaskAsync(() => DoLogin(Selected));
+                    else if (Res == false)
+                        Helpers.CenteredToast(
+                            GetString(Resource.String.update_failed),
+                            ToastLength.Long
+                        );
+                    else if (Res == null)
+                        return;
 
-                        break;
-                    }
+                    break;
+                }
                 case UsersActivityModes.IsAllowedToEditSettings:
+                {
+                    bool Ret = false;
+
+                    await RunIsBusyTaskAsync(async () =>
                     {
-                        bool Ret = false;
+                        Ret = await LoginAndCheckIfCanEditSettings(Selected);
+                    });
 
-                        await RunIsBusyTaskAsync(async () =>
-                        {
-                            Ret = await LoginAndCheckIfCanEditSettings(Selected);
-                        });
+                    if (!Ret)
+                        return;
+                    else
+                    {
+                        IsSwitchingActivity = true;
 
-                        if (!Ret)
-                            return;
-                        else
-                        {
-                            IsSwitchingActivity = true;
-
-                            Intent i = new Intent();
-                            SetResult(Result.Ok, i);
-                            Finish();
-                        }
-
-                        break;
+                        Intent i = new Intent();
+                        SetResult(Result.Ok, i);
+                        Finish();
                     }
+
+                    break;
+                }
                 case UsersActivityModes.IsAllowedToCloseApplication:
+                {
+                    bool Ret = false;
+
+                    await RunIsBusyTaskAsync(async () =>
                     {
-                        bool Ret = false;
+                        Ret = await LoginAndCheckIfCanCloseApplication(Selected);
+                    });
 
-                        await RunIsBusyTaskAsync(async () =>
-                        {
-                            Ret = await LoginAndCheckIfCanCloseApplication(Selected);
-                        });
+                    if (!Ret)
+                        return;
+                    else
+                    {
+                        IsSwitchingActivity = true;
 
-                        if (!Ret)
-                            return;
-                        else
-                        {
-                            IsSwitchingActivity = true;
-
-                            Intent i = new Intent();
-                            SetResult(Result.Ok, i);
-                            Finish();
-                        }
-
-                        break;
+                        Intent i = new Intent();
+                        SetResult(Result.Ok, i);
+                        Finish();
                     }
+
+                    break;
+                }
             }
         }
 
@@ -276,15 +350,23 @@ namespace G_Mobile_Android_WMS
             {
                 if (!Selected.bMozeZarzadzacUprawnieniamiMobilnymi && Selected.ID != Int32.MaxValue)
                 {
-                    await Helpers.AlertAsyncWithConfirm(this,
-                                                        Resource.String.user_cannot_edit_settings,
-                                                        Resource.Raw.sound_error);
+                    await Helpers.AlertAsyncWithConfirm(
+                        this,
+                        Resource.String.user_cannot_edit_settings,
+                        Resource.Raw.sound_error
+                    );
 
                     return false;
                 }
                 else
                 {
-                    var Res = await Helpers.AlertAsyncWithPrompt(this, Resource.String.users_getpass, null, "", InputType.Password);
+                    var Res = await Helpers.AlertAsyncWithPrompt(
+                        this,
+                        Resource.String.users_getpass,
+                        null,
+                        "",
+                        InputType.Password
+                    );
 
                     if (!Res.Ok)
                         return false;
@@ -303,18 +385,20 @@ namespace G_Mobile_Android_WMS
         {
             try
             {
-                int ID = Globalne.operatorBL.SprawdźLegitymacjęOperatora(Barcode);
+                int ID = Serwer.operatorBL.SprawdźLegitymacjęOperatora(Barcode);
 
                 if (ID == -1)
                     return false;
 
-                OperatorRow Selected = Globalne.operatorBL.PobierzOperatorRow(ID);
+                OperatorRow Selected = Serwer.operatorBL.PobierzOperatorRow(ID);
 
                 if (!Selected.bMozeZarzadzacUprawnieniamiMobilnymi && Selected.ID != Int32.MaxValue)
                 {
-                    await Helpers.AlertAsyncWithConfirm(this,
-                                                        Resource.String.user_cannot_edit_settings,
-                                                        Resource.Raw.sound_error);
+                    await Helpers.AlertAsyncWithConfirm(
+                        this,
+                        Resource.String.user_cannot_edit_settings,
+                        Resource.Raw.sound_error
+                    );
 
                     return false;
                 }
@@ -337,31 +421,42 @@ namespace G_Mobile_Android_WMS
 
                 if (Selected.ID != Int32.MaxValue)
                 {
-                    MobOpe = Globalne.menuBL.PobierzUstawienieMobOpe(Selected.idUstawienieMobOpe);
+                    MobOpe = Serwer.menuBL.PobierzUstawienieMobOpe(Selected.idUstawienieMobOpe);
 
                     if (Selected.idUstawienieMobOpe == -1 || MobOpe.strUstawienie == "")
                     {
-                        await Helpers.AlertAsyncWithConfirm(this,
-                                    Resource.String.user_cannot_leave_app,
-                                    Resource.Raw.sound_error);
+                        await Helpers.AlertAsyncWithConfirm(
+                            this,
+                            Resource.String.user_cannot_leave_app,
+                            Resource.Raw.sound_error
+                        );
 
                         return false;
                     }
 
-                    Set = (UserSettings)JsonConvert.DeserializeObject(MobOpe.strUstawienie, typeof(UserSettings));
+                    Set = (UserSettings)
+                        JsonConvert.DeserializeObject(MobOpe.strUstawienie, typeof(UserSettings));
                 }
 
                 if (Selected.ID != Int32.MaxValue && !Set.CanCloseApp)
                 {
-                    await Helpers.AlertAsyncWithConfirm(this,
-                                                        Resource.String.user_cannot_leave_app,
-                                                        Resource.Raw.sound_error);
+                    await Helpers.AlertAsyncWithConfirm(
+                        this,
+                        Resource.String.user_cannot_leave_app,
+                        Resource.Raw.sound_error
+                    );
 
                     return false;
                 }
                 else
                 {
-                    var Res = await Helpers.AlertAsyncWithPrompt(this, Resource.String.users_getpass, null, "", InputType.Password);
+                    var Res = await Helpers.AlertAsyncWithPrompt(
+                        this,
+                        Resource.String.users_getpass,
+                        null,
+                        "",
+                        InputType.Password
+                    );
 
                     if (!Res.Ok)
                         return false;
@@ -380,37 +475,42 @@ namespace G_Mobile_Android_WMS
         {
             try
             {
-                int ID = Globalne.operatorBL.SprawdźLegitymacjęOperatora(Barcode);
+                int ID = Serwer.operatorBL.SprawdźLegitymacjęOperatora(Barcode);
 
                 if (ID == -1)
                     return false;
 
-                OperatorRow Selected = Globalne.operatorBL.PobierzOperatorRow(ID);
+                OperatorRow Selected = Serwer.operatorBL.PobierzOperatorRow(ID);
 
                 UstawienieMobilneOpe MobOpe = null;
                 UserSettings Set = null;
 
                 if (Selected.ID != Int32.MaxValue)
                 {
-                    MobOpe = Globalne.menuBL.PobierzUstawienieMobOpe(Selected.idUstawienieMobOpe);
+                    MobOpe = Serwer.menuBL.PobierzUstawienieMobOpe(Selected.idUstawienieMobOpe);
 
                     if (Selected.idUstawienieMobOpe == -1 || MobOpe.strUstawienie == "")
                     {
-                        await Helpers.AlertAsyncWithConfirm(this,
-                                    Resource.String.user_cannot_leave_app,
-                                    Resource.Raw.sound_error);
+                        await Helpers.AlertAsyncWithConfirm(
+                            this,
+                            Resource.String.user_cannot_leave_app,
+                            Resource.Raw.sound_error
+                        );
 
                         return false;
                     }
 
-                    Set = (UserSettings)JsonConvert.DeserializeObject(MobOpe.strUstawienie, typeof(UserSettings));
+                    Set = (UserSettings)
+                        JsonConvert.DeserializeObject(MobOpe.strUstawienie, typeof(UserSettings));
                 }
 
                 if (Selected.ID != Int32.MaxValue && !Set.CanCloseApp)
                 {
-                    await Helpers.AlertAsyncWithConfirm(this,
-                                                        Resource.String.user_cannot_leave_app,
-                                                        Resource.Raw.sound_error);
+                    await Helpers.AlertAsyncWithConfirm(
+                        this,
+                        Resource.String.user_cannot_leave_app,
+                        Resource.Raw.sound_error
+                    );
 
                     return false;
                 }
@@ -433,9 +533,7 @@ namespace G_Mobile_Android_WMS
 
                 IsBusy = true;
 
-                string WersjaNaSerwerze = (string)Helpers.HiveInvoke(typeof(WMSServerAccess.Aktualizacje.AktualizacjeBL),
-                                                                     "PobierzNajnowsząWersję",
-                                                                     new object[] { "Android" });
+                string WersjaNaSerwerze = Serwer.aktualizacjeBL.PobierzNajnowsząWersję("Android");
 
                 if (WersjaNaSerwerze == "0")
                 {
@@ -445,11 +543,16 @@ namespace G_Mobile_Android_WMS
                 var versionOnServerWithoutDots = WersjaNaSerwerze.Replace(".", "");
                 var programVersionWithoutDots = Globalne.AppVer.Replace(".", "");
 
-                if (Convert.ToInt32(versionOnServerWithoutDots) > Convert.ToInt32(programVersionWithoutDots))
+                if (
+                    Convert.ToInt32(versionOnServerWithoutDots)
+                    > Convert.ToInt32(programVersionWithoutDots)
+                )
                 {
-                    bool Resp = await Helpers.QuestionAlertAsync(this,
-                                                                 Resource.String.update_available,
-                                                                 Resource.Raw.sound_alert);
+                    bool Resp = await Helpers.QuestionAlertAsync(
+                        this,
+                        Resource.String.update_available,
+                        Resource.Raw.sound_alert
+                    );
 
                     if (!Resp)
                     {
@@ -459,10 +562,16 @@ namespace G_Mobile_Android_WMS
 
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
                     {
-                        Helpers.CheckAndRequestPermissions(this, new string[] { Manifest.Permission.WriteExternalStorage,
-                                                                                Manifest.Permission.ReadExternalStorage,
-                                                                                Manifest.Permission.RequestInstallPackages,
-                                                                                Manifest.Permission.InstallPackages });
+                        Helpers.CheckAndRequestPermissions(
+                            this,
+                            new string[]
+                            {
+                                Manifest.Permission.WriteExternalStorage,
+                                Manifest.Permission.ReadExternalStorage,
+                                Manifest.Permission.RequestInstallPackages,
+                                Manifest.Permission.InstallPackages
+                            }
+                        );
                     }
 
                     Helpers.ShowProgressDialog(GetString(Resource.String.updating));
@@ -493,7 +602,11 @@ namespace G_Mobile_Android_WMS
                     }
                     else
                     {
-                        Android.Net.Uri u = FileProvider.GetUriForFile(this, ApplicationContext.PackageName + ".provider", new Java.IO.File(Path));
+                        Android.Net.Uri u = FileProvider.GetUriForFile(
+                            this,
+                            ApplicationContext.PackageName + ".provider",
+                            new Java.IO.File(Path)
+                        );
                         Intent intentS = new Intent(Intent.ActionInstallPackage);
                         intentS.SetData(u);
                         intentS.SetFlags(ActivityFlags.GrantReadUriPermission);
@@ -522,13 +635,28 @@ namespace G_Mobile_Android_WMS
         {
             try
             {
-                List<AktualizacjaO> Akt = Globalne.aktualizacjeBL.PobierzAktualizację("Android", WersjaNaSerwerze);
+                List<AktualizacjaO> Akt = Serwer.aktualizacjeBL.PobierzAktualizację(
+                    "Android",
+                    WersjaNaSerwerze
+                );
 
-                if (Android.OS.Environment.DirectoryDownloads == null || Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads) == null)
+                if (
+                    Android.OS.Environment.DirectoryDownloads == null
+                    || Android.OS.Environment.GetExternalStoragePublicDirectory(
+                        Android.OS.Environment.DirectoryDownloads
+                    ) == null
+                )
                     return null;
                 else
                 {
-                    string Path = System.IO.Path.Combine(Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDownloads).ToString(), Akt[0].NazwaPliku);
+                    string Path = System.IO.Path.Combine(
+                        Android
+                            .OS.Environment.GetExternalStoragePublicDirectory(
+                                Android.OS.Environment.DirectoryDownloads
+                            )
+                            .ToString(),
+                        Akt[0].NazwaPliku
+                    );
 
                     if (File.Exists(Path))
                         File.Delete(Path);
@@ -563,19 +691,22 @@ namespace G_Mobile_Android_WMS
                 return null;
             }
         }
+
 #nullable disable
 
         private async Task<bool> CheckNumberOfAvailableLicences()
         {
             try
             {
-                int LoggedIn = Globalne.operatorBL.SprawdźIlośćZalogowań();
+                int LoggedIn = Serwer.operatorBL.SprawdźIlośćZalogowań();
 
                 if (LoggedIn >= Globalne.Licencja.Stanowisk)
                 {
-                    await Helpers.AlertAsyncWithConfirm(this,
-                                                        Resource.String.global_licence_occupied,
-                                                        Resource.Raw.sound_miss);
+                    await Helpers.AlertAsyncWithConfirm(
+                        this,
+                        Resource.String.global_licence_occupied,
+                        Resource.Raw.sound_miss
+                    );
 
                     return false;
                 }
@@ -594,12 +725,14 @@ namespace G_Mobile_Android_WMS
             try
             {
                 Helpers.PlaySound(this, Resource.Raw.sound_miss);
-                bool Resp = await Helpers.QuestionAlertAsync(this,
-                                                             Resource.String.users_already_logged_in,
-                                                             Resource.Raw.sound_miss);
+                bool Resp = await Helpers.QuestionAlertAsync(
+                    this,
+                    Resource.String.users_already_logged_in,
+                    Resource.Raw.sound_miss
+                );
 
                 if (Resp)
-                    Globalne.operatorBL.WylogujOperatora(IDOperatora);
+                    Serwer.operatorBL.WylogujOperatora(IDOperatora);
 
                 return Resp;
             }
@@ -616,40 +749,54 @@ namespace G_Mobile_Android_WMS
             {
                 if (!Globalne.Licencja.Aktywna)
                 {
-                    await Helpers.AlertAsyncWithConfirm(this,
-                                                        Resource.String.global_licence_inactive,
-                                                        Resource.Raw.sound_error);
+                    await Helpers.AlertAsyncWithConfirm(
+                        this,
+                        Resource.String.global_licence_inactive,
+                        Resource.Raw.sound_error
+                    );
 
                     return false;
                 }
 
-                DateTime DateNow = Globalne.ogólneBL.GetDate();
+                DateTime DateNow = Serwer.ogólneBL.GetDate();
                 DateTime TwoMonthsWhen = Globalne.Licencja.TerminLicencji.AddDays(-60);
 
-                if (((DateNow < Globalne.Licencja.PoczLicencji) || (DateNow > Globalne.Licencja.TerminLicencji)) && (Globalne.Licencja.LicencjaCzasowa))
+                if (
+                    (
+                        (DateNow < Globalne.Licencja.PoczLicencji)
+                        || (DateNow > Globalne.Licencja.TerminLicencji)
+                    ) && (Globalne.Licencja.LicencjaCzasowa)
+                )
                 {
-                    await Helpers.AlertAsyncWithConfirm(this,
-                                                        Resource.String.global_licence_expired,
-                                                        Resource.Raw.sound_error);
+                    await Helpers.AlertAsyncWithConfirm(
+                        this,
+                        Resource.String.global_licence_expired,
+                        Resource.Raw.sound_error
+                    );
 
                     return false;
                 }
 
                 if ((DateNow > TwoMonthsWhen) && (Globalne.Licencja.LicencjaCzasowa))
                 {
-                    await Helpers.AlertAsyncWithConfirm(this,
-                                                        GetString(Resource.String.global_licence_nearly_expired) + " "
-                                                        + (Globalne.Licencja.TerminLicencji - DateTime.Now).Days,
-                                                        Resource.Raw.sound_message);
+                    await Helpers.AlertAsyncWithConfirm(
+                        this,
+                        GetString(Resource.String.global_licence_nearly_expired)
+                            + " "
+                            + (Globalne.Licencja.TerminLicencji - DateTime.Now).Days,
+                        Resource.Raw.sound_message
+                    );
                 }
 
                 return true;
             }
             catch (Exception)
             {
-                await Helpers.AlertAsyncWithConfirm(this,
-                                                    Resource.String.global_licence_invalid,
-                                                    Resource.Raw.sound_error);
+                await Helpers.AlertAsyncWithConfirm(
+                    this,
+                    Resource.String.global_licence_invalid,
+                    Resource.Raw.sound_error
+                );
 
                 return false;
             }
@@ -657,11 +804,13 @@ namespace G_Mobile_Android_WMS
 
         private async Task<bool> CheckPassword(OperatorRow Selected, string Pass)
         {
-            if (!Globalne.operatorBL.SprawdźHasłoOperatora(Selected.ID, Encryption.RSAEncrypt(Pass)))
+            if (!Serwer.operatorBL.SprawdźHasłoOperatora(Selected.ID, Encryption.RSAEncrypt(Pass)))
             {
-                await Helpers.AlertAsyncWithConfirm(this,
-                                                    Resource.String.users_password_incorrect,
-                                                    Resource.Raw.sound_error);
+                await Helpers.AlertAsyncWithConfirm(
+                    this,
+                    Resource.String.users_password_incorrect,
+                    Resource.Raw.sound_error
+                );
 
                 return false;
             }
@@ -670,38 +819,44 @@ namespace G_Mobile_Android_WMS
         }
 
         async Task<int> TryLoginFromBarcode(string Legitymacja)
-
         {
-
             if (!await CheckLicence())
                 return -1;
 
-            int ID = Globalne.operatorBL.SprawdźLegitymacjęOperatora(Legitymacja);
+            int ID = Serwer.operatorBL.SprawdźLegitymacjęOperatora(Legitymacja);
 
             if (ID == -1)
             {
-                await Helpers.AlertAsyncWithConfirm(this,
-                                                    Resource.String.users_passport_incorrect,
-                                                    Resource.Raw.sound_error);
+                await Helpers.AlertAsyncWithConfirm(
+                    this,
+                    Resource.String.users_passport_incorrect,
+                    Resource.Raw.sound_error
+                );
 
                 return -2;
             }
 
 #pragma warning disable CS0618
-            if (Globalne.operatorBL.SprawdźCzyZalogowanyNaInnymUrządzeniu(ID, (Build.VERSION.SdkInt >= BuildVersionCodes.O) ? CrossDeviceInfo.Current.Id.ToString() : Build.Serial))
+            if (
+                Serwer.operatorBL.SprawdźCzyZalogowanyNaInnymUrządzeniu(
+                    ID,
+                    (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                        ? CrossDeviceInfo.Current.Id.ToString()
+                        : Build.Serial
+                )
+            )
 #pragma warning restore CS0618
             {
                 var Res = await LogOutElsewhere(ID);
 
                 if (Res)
-                    Globalne.operatorBL.WylogujOperatora(ID);
+                    Serwer.operatorBL.WylogujOperatora(ID);
                 else
                     return -1;
             }
 
             if (!await CheckNumberOfAvailableLicences())
                 return -1;
-
 
             if (ID == Int32.MaxValue)
             {
@@ -715,13 +870,15 @@ namespace G_Mobile_Android_WMS
             }
             else
             {
-                OperatorVO Operator = Globalne.operatorBL.PobierzOperatora(ID);
+                OperatorVO Operator = Serwer.operatorBL.PobierzOperatora(ID);
 
                 if (Operator.ID == -1 || !Operator.Aktywny)
                 {
-                    await Helpers.AlertAsyncWithConfirm(this,
-                                                        Resource.String.users_user_deactivated,
-                                                        Resource.Raw.sound_error);
+                    await Helpers.AlertAsyncWithConfirm(
+                        this,
+                        Resource.String.users_user_deactivated,
+                        Resource.Raw.sound_error
+                    );
 
                     return -1;
                 }
@@ -730,12 +887,16 @@ namespace G_Mobile_Android_WMS
             }
 
 #pragma warning disable CS0618
-            Globalne.operatorBL.ZalogujOperatora(ID, (Build.VERSION.SdkInt >= BuildVersionCodes.O) ? CrossDeviceInfo.Current.Id.ToString() : Build.Serial);
+            Serwer.operatorBL.ZalogujOperatora(
+                ID,
+                (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    ? CrossDeviceInfo.Current.Id.ToString()
+                    : Build.Serial
+            );
 #pragma warning restore CS0618
             return 0;
-
-
         }
+
         async Task<int> TryLogin(OperatorRow Selected, string Pass)
         {
             if (!await CheckLicence())
@@ -745,20 +906,26 @@ namespace G_Mobile_Android_WMS
                 return -2;
 
 #pragma warning disable CS0618
-            if (Globalne.operatorBL.SprawdźCzyZalogowanyNaInnymUrządzeniu(Selected.ID, (Build.VERSION.SdkInt >= BuildVersionCodes.O) ? CrossDeviceInfo.Current.Id.ToString() : Build.Serial))
+            if (
+                Serwer.operatorBL.SprawdźCzyZalogowanyNaInnymUrządzeniu(
+                    Selected.ID,
+                    (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                        ? CrossDeviceInfo.Current.Id.ToString()
+                        : Build.Serial
+                )
+            )
 #pragma warning restore CS0618
             {
                 var Res = await LogOutElsewhere(Selected.ID);
 
                 if (Res)
-                    Globalne.operatorBL.WylogujOperatora(Selected.ID);
+                    Serwer.operatorBL.WylogujOperatora(Selected.ID);
                 else
                     return -1;
             }
 
             if (!await CheckNumberOfAvailableLicences())
                 return -1;
-
 
             if (Selected.ID == Int32.MaxValue)
             {
@@ -772,13 +939,15 @@ namespace G_Mobile_Android_WMS
             }
             else
             {
-                OperatorVO Operator = Globalne.operatorBL.PobierzOperatora(Selected.ID);
+                OperatorVO Operator = Serwer.operatorBL.PobierzOperatora(Selected.ID);
 
                 if (Operator.ID == -1 || !Operator.Aktywny)
                 {
-                    await Helpers.AlertAsyncWithConfirm(this,
-                                                        Resource.String.users_user_deactivated,
-                                                        Resource.Raw.sound_error);
+                    await Helpers.AlertAsyncWithConfirm(
+                        this,
+                        Resource.String.users_user_deactivated,
+                        Resource.Raw.sound_error
+                    );
 
                     return -1;
                 }
@@ -787,7 +956,12 @@ namespace G_Mobile_Android_WMS
             }
 
 #pragma warning disable CS0618
-            Globalne.operatorBL.ZalogujOperatora(Selected.ID, (Build.VERSION.SdkInt >= BuildVersionCodes.O) ? CrossDeviceInfo.Current.Id.ToString() : Build.Serial);
+            Serwer.operatorBL.ZalogujOperatora(
+                Selected.ID,
+                (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    ? CrossDeviceInfo.Current.Id.ToString()
+                    : Build.Serial
+            );
 #pragma warning restore CS0618
             return 0;
         }
@@ -810,7 +984,13 @@ namespace G_Mobile_Android_WMS
                 RunOnUiThread(() =>
                 {
                     OperatorList.Adapter = new UsersListAdapter(this, Operatorzy);
-                    Helpers.SetTextOnTextView(this, ItemCount, GetString(Resource.String.global_liczba_pozycji) + " " + OperatorList.Adapter.Count.ToString());
+                    Helpers.SetTextOnTextView(
+                        this,
+                        ItemCount,
+                        GetString(Resource.String.global_liczba_pozycji)
+                            + " "
+                            + OperatorList.Adapter.Count.ToString()
+                    );
                 });
 
                 Helpers.HideProgressDialog();
@@ -832,14 +1012,14 @@ namespace G_Mobile_Android_WMS
 
         private List<OperatorRow> GetData()
         {
-            List<OperatorRow> Operatorzy = Globalne.operatorBL.PobierzListęNaTerminal();
+            List<OperatorRow> Operatorzy = Serwer.operatorBL.PobierzListęNaTerminal();
 
             OperatorRow R = Operatorzy.Find(x => x.ID == Int32.MaxValue);
 
             if (R != null)
                 Operatorzy.Remove(R);
 
-            OperatorRow Admin = Globalne.operatorBL.PobierzOperatorRow(Int32.MaxValue);
+            OperatorRow Admin = Serwer.operatorBL.PobierzOperatorRow(Int32.MaxValue);
             Admin.ID = Int32.MaxValue;
             Admin.Login = "SYSADM";
             Admin.Nazwa = "SERWIS";
@@ -853,20 +1033,24 @@ namespace G_Mobile_Android_WMS
         {
             switch (Mode)
             {
-                case UsersActivityModes.LogIn: RunIsBusyAction(() => Helpers.SwitchAndFinishCurrentActivity(this, typeof(MainActivity))); break;
+                case UsersActivityModes.LogIn:
+                    RunIsBusyAction(
+                        () => Helpers.SwitchAndFinishCurrentActivity(this, typeof(MainActivity))
+                    );
+                    break;
                 default:
-                    {
-                        IsSwitchingActivity = true;
+                {
+                    IsSwitchingActivity = true;
 
-                        Intent i = new Intent();
-                        SetResult(Result.Canceled, i);
-                        Finish();
-                        break;
-                    }
+                    Intent i = new Intent();
+                    SetResult(Result.Canceled, i);
+                    Finish();
+                    break;
+                }
             }
         }
 
-        protected async override void OnScan(object sender, System.Timers.ElapsedEventArgs e)
+        protected override async void OnScan(object sender, System.Timers.ElapsedEventArgs e)
         {
             base.OnScan(sender, e);
 
@@ -879,78 +1063,93 @@ namespace G_Mobile_Android_WMS
             switch (Mode)
             {
                 case UsersActivityModes.LogIn:
+                {
+                    bool? Res = await TryUpdate();
+
+                    #region sprawdzenie czy wersja bazy danych jest zgodna z wersja androida
+                    int WersjaBazy = Convert.ToInt32(
+                        Serwer.menuBL.PobierzUstawienie((int)Enums.Ustawienia.WersjaBazy)
+                    );
+
+                    if (WersjaBazy != Globalne.WymaganaWersjaBazy && Res == true)
                     {
-                        bool? Res = await TryUpdate();
-
-                        #region sprawdzenie czy wersja bazy danych jest zgodna z wersja androida
-                        int WersjaBazy = Convert.ToInt32(Helpers.HiveInvoke(typeof(WMSServerAccess.Menu.MenuBL), "PobierzUstawienie", (int)Enums.Ustawienia.WersjaBazy));
-
-                        if (WersjaBazy != Globalne.WymaganaWersjaBazy && Res == true)
-                        {
-                            var ResInfo = await Helpers.AlertAsyncWithConfirm(this, GetString(Resource.String.main_activity_versioninsuff) + " " + Globalne.WymaganaWersjaBazy.ToString(), Resource.Raw.sound_alert);
-                            if (!ResInfo.Value)
-                                return;
-                            var ResPass = await Helpers.AlertAsyncWithPrompt(this, Resource.String.users_getpass, null, "", InputType.Password);
-                            if (!ResPass.Ok || ResPass.Text != "GamaFA")
-                                return;
-                        }
-                        #endregion
-
-                        if (Res == true)
-                            await RunIsBusyTaskAsync(() => DoBarcodeLogin(LastScanData[0]));
-                        else if (Res == false)
-                            Helpers.CenteredToast(GetString(Resource.String.update_failed), ToastLength.Long);
-                        else if (Res == null)
+                        var ResInfo = await Helpers.AlertAsyncWithConfirm(
+                            this,
+                            GetString(Resource.String.main_activity_versioninsuff)
+                                + " "
+                                + Globalne.WymaganaWersjaBazy.ToString(),
+                            Resource.Raw.sound_alert
+                        );
+                        if (!ResInfo.Value)
                             return;
-
-                        break;
+                        var ResPass = await Helpers.AlertAsyncWithPrompt(
+                            this,
+                            Resource.String.users_getpass,
+                            null,
+                            "",
+                            InputType.Password
+                        );
+                        if (!ResPass.Ok || ResPass.Text != "GamaFA")
+                            return;
                     }
+                    #endregion
+
+                    if (Res == true)
+                        await RunIsBusyTaskAsync(() => DoBarcodeLogin(LastScanData[0]));
+                    else if (Res == false)
+                        Helpers.CenteredToast(
+                            GetString(Resource.String.update_failed),
+                            ToastLength.Long
+                        );
+                    else if (Res == null)
+                        return;
+
+                    break;
+                }
                 case UsersActivityModes.IsAllowedToEditSettings:
+                {
+                    bool Ret = false;
+
+                    await RunIsBusyTaskAsync(async () =>
                     {
-                        bool Ret = false;
+                        Ret = await BarcodeLoginAndCheckIfCanEditSettings(LastScanData[0]);
+                    });
 
-                        await RunIsBusyTaskAsync(async () =>
-                        {
-                            Ret = await BarcodeLoginAndCheckIfCanEditSettings(LastScanData[0]);
-                        });
+                    if (!Ret)
+                        return;
+                    else
+                    {
+                        IsSwitchingActivity = true;
 
-                        if (!Ret)
-                            return;
-                        else
-                        {
-                            IsSwitchingActivity = true;
-
-                            Intent i = new Intent();
-                            SetResult(Result.Ok, i);
-                            Finish();
-                        }
-                        break;
+                        Intent i = new Intent();
+                        SetResult(Result.Ok, i);
+                        Finish();
                     }
+                    break;
+                }
                 case UsersActivityModes.IsAllowedToCloseApplication:
+                {
+                    bool Ret = false;
+
+                    await RunIsBusyTaskAsync(async () =>
                     {
-                        bool Ret = false;
+                        Ret = await BarcodeLoginAndCheckIfCanCloseApplication(LastScanData[0]);
+                    });
 
-                        await RunIsBusyTaskAsync(async () =>
-                        {
-                            Ret = await BarcodeLoginAndCheckIfCanCloseApplication(LastScanData[0]);
-                        });
+                    if (!Ret)
+                        return;
+                    else
+                    {
+                        IsSwitchingActivity = true;
 
-                        if (!Ret)
-                            return;
-                        else
-                        {
-                            IsSwitchingActivity = true;
-
-                            Intent i = new Intent();
-                            SetResult(Result.Ok, i);
-                            Finish();
-                        }
-                        break;
+                        Intent i = new Intent();
+                        SetResult(Result.Ok, i);
+                        Finish();
                     }
+                    break;
+                }
             }
         }
-
-
     }
 
     internal class UsersListAdapter : BaseAdapter<OperatorRow>
@@ -958,7 +1157,8 @@ namespace G_Mobile_Android_WMS
         readonly List<OperatorRow> Items;
         readonly Activity Ctx;
 
-        public UsersListAdapter(Activity Ctx, List<OperatorRow> Items) : base()
+        public UsersListAdapter(Activity Ctx, List<OperatorRow> Items)
+            : base()
         {
             this.Ctx = Ctx;
             this.Items = Items;
@@ -968,6 +1168,7 @@ namespace G_Mobile_Android_WMS
         {
             return position;
         }
+
         public override OperatorRow this[int position]
         {
             get { return Items[position]; }
@@ -976,6 +1177,7 @@ namespace G_Mobile_Android_WMS
         {
             get { return Items.Count; }
         }
+
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
             var Operator = Items[position];
@@ -989,7 +1191,5 @@ namespace G_Mobile_Android_WMS
 
             return view;
         }
-
     }
 }
-

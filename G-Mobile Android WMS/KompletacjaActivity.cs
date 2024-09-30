@@ -1,32 +1,38 @@
-﻿using Acr.UserDialogs;
-using Android.App;
-using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Widget;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.IO;
 using System.Linq;
-
-using WMSServerAccess.Model;
-using Android.Content;
-using Android.Runtime;
-using Android.Views;
-using System.Timers;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
+using System.Xml.Serialization;
+using Acr.UserDialogs;
+using Android.App;
+using Android.Content;
+using Android.OS;
+using Android.Renderscripts;
+using Android.Runtime;
+using Android.Support.Design.Widget;
+using Android.Views;
+using Android.Widget;
 using G_Mobile_Android_WMS.BusinessLogicHelpers;
-using G_Mobile_Android_WMS.ExtendedModel;
 using G_Mobile_Android_WMS.Common.BusinessLogicHelpers;
 using G_Mobile_Android_WMS.Enums;
-using Android.Renderscripts;
+using G_Mobile_Android_WMS.ExtendedModel;
 using Symbol.XamarinEMDK.Barcode;
-using Hive.Serialization.Core;
-using System.IO;
-using System.Xml.Serialization;
+using WMS_DESKTOP_API;
+using WMS_DESKTOP_API;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, WindowSoftInputMode = SoftInput.AdjustNothing | SoftInput.StateHidden)]
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        MainLauncher = false,
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        WindowSoftInputMode = SoftInput.AdjustNothing | SoftInput.StateHidden
+    )]
     public class KompletacjaActivity : ActivityWithScanner
     {
         FloatingActionButton Back;
@@ -47,23 +53,52 @@ namespace G_Mobile_Android_WMS
 
         DokumentVO CurrentDoc;
 
-        readonly Dictionary<Enums.EditingDocumentsListDisplayElements, int> HeaderElementsDict = new Dictionary<Enums.EditingDocumentsListDisplayElements, int>()
-        {
-            [EditingDocumentsListDisplayElements.DoneAmount] = Resource.Id.editingdocuments_listheader_amount,
-            [EditingDocumentsListDisplayElements.SetAmount] = Resource.Id.editingdocuments_listheader_setamount,
-            [EditingDocumentsListDisplayElements.Location] = Resource.Id.editingdocuments_listheader_location,
-            [EditingDocumentsListDisplayElements.BestBefore] = Resource.Id.editingdocuments_listheader_bestbefore,
-            [EditingDocumentsListDisplayElements.ProductionDate] = Resource.Id.editingdocuments_listheader_proddate,
-            [EditingDocumentsListDisplayElements.SerialNumber] = Resource.Id.editingdocuments_listheader_serialnumber,
-            [EditingDocumentsListDisplayElements.Flog] = Resource.Id.editingdocuments_listheader_flog,
-            [EditingDocumentsListDisplayElements.Partia] = Resource.Id.editingdocuments_listheader_partia,
-            [EditingDocumentsListDisplayElements.Paleta] = Resource.Id.editingdocuments_listheader_paleta,
-            [EditingDocumentsListDisplayElements.Lot] = Resource.Id.editingdocuments_listheader_lot,
-            [EditingDocumentsListDisplayElements.ArticleName] = Resource.Id.editingdocuments_listheader_articlename,
-            [EditingDocumentsListDisplayElements.KodEAN] = Resource.Id.editingdocuments_listheader_kodean,
-            [EditingDocumentsListDisplayElements.NrKat] = Resource.Id.editingdocuments_listheader_NrKat,
-            [EditingDocumentsListDisplayElements.Symbol] = Resource.Id.editingdocuments_listheader_symbol,
-        };
+        readonly Dictionary<Enums.EditingDocumentsListDisplayElements, int> HeaderElementsDict =
+            new Dictionary<Enums.EditingDocumentsListDisplayElements, int>()
+            {
+                [EditingDocumentsListDisplayElements.DoneAmount] = Resource
+                    .Id
+                    .editingdocuments_listheader_amount,
+                [EditingDocumentsListDisplayElements.SetAmount] = Resource
+                    .Id
+                    .editingdocuments_listheader_setamount,
+                [EditingDocumentsListDisplayElements.Location] = Resource
+                    .Id
+                    .editingdocuments_listheader_location,
+                [EditingDocumentsListDisplayElements.BestBefore] = Resource
+                    .Id
+                    .editingdocuments_listheader_bestbefore,
+                [EditingDocumentsListDisplayElements.ProductionDate] = Resource
+                    .Id
+                    .editingdocuments_listheader_proddate,
+                [EditingDocumentsListDisplayElements.SerialNumber] = Resource
+                    .Id
+                    .editingdocuments_listheader_serialnumber,
+                [EditingDocumentsListDisplayElements.Flog] = Resource
+                    .Id
+                    .editingdocuments_listheader_flog,
+                [EditingDocumentsListDisplayElements.Partia] = Resource
+                    .Id
+                    .editingdocuments_listheader_partia,
+                [EditingDocumentsListDisplayElements.Paleta] = Resource
+                    .Id
+                    .editingdocuments_listheader_paleta,
+                [EditingDocumentsListDisplayElements.Lot] = Resource
+                    .Id
+                    .editingdocuments_listheader_lot,
+                [EditingDocumentsListDisplayElements.ArticleName] = Resource
+                    .Id
+                    .editingdocuments_listheader_articlename,
+                [EditingDocumentsListDisplayElements.KodEAN] = Resource
+                    .Id
+                    .editingdocuments_listheader_kodean,
+                [EditingDocumentsListDisplayElements.NrKat] = Resource
+                    .Id
+                    .editingdocuments_listheader_NrKat,
+                [EditingDocumentsListDisplayElements.Symbol] = Resource
+                    .Id
+                    .editingdocuments_listheader_symbol,
+            };
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -79,7 +114,9 @@ namespace G_Mobile_Android_WMS
 
         private void SetVisibilityOnHeaderItems()
         {
-            Dictionary<EditingDocumentsListDisplayElements, bool> Set = Globalne.CurrentSettings.EditingDocumentsListDisplayElementsListsINNNR[DocType];
+            Dictionary<EditingDocumentsListDisplayElements, bool> Set = Globalne
+                .CurrentSettings
+                .EditingDocumentsListDisplayElementsListsINNNR[DocType];
 
             foreach (EditingDocumentsListDisplayElements Item in HeaderElementsDict.Keys)
             {
@@ -90,25 +127,36 @@ namespace G_Mobile_Android_WMS
 
                 if (v == null)
                     continue;
-                
+
                 bool VisibilityToSet;
 
                 switch (Item)
                 {
-                    case EditingDocumentsListDisplayElements.ArticleName: VisibilityToSet = true; v.Text =  (CurrentDoc == null ?  "Nazwa dokumentu ERP" : "Nazwa towaru");  break;
-                    case EditingDocumentsListDisplayElements.Flog: VisibilityToSet = (Set[Item] && Globalne.CurrentSettings.FunkcjeLogistyczne); break;
-                    case EditingDocumentsListDisplayElements.Paleta: VisibilityToSet = (Set[Item] && Globalne.CurrentSettings.Palety); break;
-                    case EditingDocumentsListDisplayElements.Partia: VisibilityToSet = (Set[Item] && Globalne.CurrentSettings.Partie); break;
+                    case EditingDocumentsListDisplayElements.ArticleName:
+                        VisibilityToSet = true;
+                        v.Text = (CurrentDoc == null ? "Nazwa dokumentu ERP" : "Nazwa towaru");
+                        break;
+                    case EditingDocumentsListDisplayElements.Flog:
+                        VisibilityToSet = (
+                            Set[Item] && Globalne.CurrentSettings.FunkcjeLogistyczne
+                        );
+                        break;
+                    case EditingDocumentsListDisplayElements.Paleta:
+                        VisibilityToSet = (Set[Item] && Globalne.CurrentSettings.Palety);
+                        break;
+                    case EditingDocumentsListDisplayElements.Partia:
+                        VisibilityToSet = (Set[Item] && Globalne.CurrentSettings.Partie);
+                        break;
                     default:
+                    {
+                        if (Set.ContainsKey(Item))
                         {
-                            if (Set.ContainsKey(Item))
-                            {
-                                VisibilityToSet = Set[Item];
-                                break;
-                            }
-                            else
-                                continue;
+                            VisibilityToSet = Set[Item];
+                            break;
                         }
+                        else
+                            continue;
+                    }
                 }
 
                 v.Visibility = VisibilityToSet ? ViewStates.Visible : ViewStates.Gone;
@@ -137,96 +185,107 @@ namespace G_Mobile_Android_WMS
             OK.Click += OK_Click;
             ListView.ItemClick += ListView_ItemClick;
             Refresh.Click += Refresh_Click;
-
         }
 
         private async void ListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
             var selected = (ListView.Adapter as KompletacjaListAdapter)[e.Position];
-            await RunIsBusyTaskAsync(() => ShowProgressAndDecideOperation(new List<string>() { Globalne.lokalizacjaBL.PobierzLokalizację(selected.ExIDLokalizacjaP).strKod }));
+            await RunIsBusyTaskAsync(
+                () =>
+                    ShowProgressAndDecideOperation(
+                        new List<string>()
+                        {
+                            Serwer
+                                .lokalizacjaBL.PobierzLokalizację(selected.ExIDLokalizacjaP)
+                                .strKod
+                        }
+                    )
+            );
         }
 
         private async void OK_Click(object sender, EventArgs e)
         {
-
             Helpers.ShowProgressDialog(GetString(Resource.String.kompletacja_confirming));
             await Task.Run(async () =>
             {
                 try
                 {
-                    Globalne.dokumentBL.UstawLokalizacjęDokumentu(CurrentDoc.ID, -1);
-                    await BusinessLogicHelpers.Documents.ShowAndApplyDocumentExitOptions(this, new List<DokumentVO>() { CurrentDoc }, DocType, DocumentLeaveAction.Close, false, false);
+                    Serwer.dokumentBL.UstawLokalizacjęDokumentu(CurrentDoc.ID, -1);
+                    await BusinessLogicHelpers.Documents.ShowAndApplyDocumentExitOptions(
+                        this,
+                        new List<DokumentVO>() { CurrentDoc },
+                        DocType,
+                        DocumentLeaveAction.Close,
+                        false,
+                        false
+                    );
                     RunOnUiThread(() =>
                     {
                         ScanHint2.Visibility = ViewStates.Visible;
                         KompletacjaView.Visibility = ViewStates.Gone;
-                        Helpers.SetActivityHeader(this, GetString(Resource.String.kompletacja_activity_name));
+                        Helpers.SetActivityHeader(
+                            this,
+                            GetString(Resource.String.kompletacja_activity_name)
+                        );
                     });
-
                 }
                 catch (Exception ex)
                 {
                     Helpers.HandleError(this, ex);
                     return;
                 }
-                
+
                 try
                 {
-                    
-                    DrukarkaO Etykieta = Globalne.drukarkaBL.PowiadomienieEtykiet();
-                    bool Resp2 = await Helpers.QuestionAlertAsyncEtykieta(this,
-                                       Resource.String.Etykieta,
-                                       Resource.Raw.sound_message);
+                    DrukarkaO Etykieta = Serwer.drukarkaBL.PowiadomienieEtykiet();
+                    bool Resp2 = await Helpers.QuestionAlertAsyncEtykieta(
+                        this,
+                        Resource.String.Etykieta,
+                        Resource.Raw.sound_message
+                    );
 
-
-                    if (!Resp2)
-                    {
-
-                    }
+                    if (!Resp2) { }
                     else
                     {
-                    
-                        DrukarkaO drukarka = Globalne.drukarkaBL.PobierzDrukarkeEtykiet();
+                        DrukarkaO drukarka = Serwer.drukarkaBL.PobierzDrukarkeEtykiet();
                         bool PrintIsPossible = await Helpers.DoesPrintPossible(this);
 
                         if (PrintIsPossible)
-                        
                         {
-                        
                             try
-
                             {
+                                LokalizacjaVO intlokalizacja =
+                                    Serwer.lokalizacjaBL.PobierzLokalizację(
+                                        CurrentDoc.intLokalizacja
+                                    );
 
-                                LokalizacjaVO intlokalizacja = Globalne.lokalizacjaBL.PobierzLokalizację(CurrentDoc.intLokalizacja);
-                               
-                                Globalne.dokumentBL.WydrukEty(CurrentDoc.strERP, intlokalizacja.strNazwa, 1);
+                                Serwer.dokumentBL.WydrukEty(
+                                    CurrentDoc.strERP,
+                                    intlokalizacja.strNazwa
+                                //1
+                                );
                             }
-                            
-                            catch (Exception ex)
-                            {
-
-                            }
+                            catch (Exception ex) { }
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-
                     throw;
                 }
-
             });
             LastScanData = null;
             CurrentDoc = null;
 
             Helpers.HideProgressDialog();
             return;
-
         }
+
         async void Refresh_Click(object sender, EventArgs e)
         {
             await RunIsBusyTaskAsync(() => InsertData(CurrentDoc));
         }
+
         async void Back_Click(object sender, EventArgs e)
         {
             IsSwitchingActivity = true;
@@ -238,14 +297,12 @@ namespace G_Mobile_Android_WMS
             Finish();
         }
 
-
         async Task InsertData(DokumentVO Doc)
         {
             try
             {
-                
                 Helpers.ShowProgressDialog(GetString(Resource.String.editing_documents_loading));
-                
+
                 await Task.Delay(Globalne.TaskDelay);
 
                 List<DocumentItemRow> Items = new List<DocumentItemRow>();
@@ -255,9 +312,8 @@ namespace G_Mobile_Android_WMS
                     OK.Visibility = ViewStates.Gone;
                     ItemSum.Visibility = ViewStates.Gone;
                     DocExternal.Visibility = ViewStates.Gone;
-#warning HiveInvoke
-                    ZapytanieZTabeliO Zap = (ZapytanieZTabeliO)Helpers.HiveInvoke(typeof(WMSServerAccess.Ogólne.OgólneBL), "ZapytanieSQL",
-                                    @"select
+                    ZapytanieZTabeliO Zap = Serwer.ogólneBL.ZapytanieSQL(
+                        @"select
                                         	d.idDokumentu,
                                         	d.strNazwa,
                                         	d.strERP,
@@ -288,59 +344,104 @@ namespace G_Mobile_Android_WMS
                                             l.strKod,
                                             l.strNazwa
                                         ORDER BY
-                                            d.intLokalizacja ASC;");
+                                            d.intLokalizacja ASC;"
+                    );
 
                     int licznik = 0;
                     foreach (object[] wiersz in Zap.ListaWierszy)
                     {
-                        var basePoz = Globalne.dokumentBL.PustaPozycjaRow();
-                        basePoz.strNazwaTowaru = wiersz[1].ToString() + " / " + wiersz[2].ToString();
+                        var basePoz = Serwer.dokumentBL.PustaPozycjaRow();
+                        basePoz.strNazwaTowaru =
+                            wiersz[1].ToString() + " / " + wiersz[2].ToString();
                         basePoz.idDokumentu = Convert.ToInt32(wiersz[0]);
-                        basePoz.numIloscZlecona =Convert.ToInt32(wiersz[5]);
+                        basePoz.numIloscZlecona = Convert.ToInt32(wiersz[5]);
                         basePoz.numIloscZrealizowana = Convert.ToInt32(wiersz[6]);
-                        
-                            var isComplete = Convert.ToInt32(wiersz[5])== Convert.ToInt32(wiersz[6]);
-                        
-                        Items.Add(new DocumentItemRow()
-                        {
-                            Base = basePoz,
 
-                            
-                            ExLokalizacjaP = wiersz[4].ToString() + String.Format(", kod {0}", wiersz[7].ToString()),
-                            ExIDLokalizacjaP = Convert.ToInt16(wiersz[3]),
-                            ExLokalizacjaW = wiersz[4].ToString() + String.Format(", kod {0}", wiersz[7].ToString()),
-                            ExIDLokalizacjaW = Convert.ToInt16(wiersz[3]),
-                            KolejnośćNaŚcieżce = licznik++,
-                            Status = isComplete ? DocItemStatus.Complete : DocItemStatus.Incomplete
+                        var isComplete = Convert.ToInt32(wiersz[5]) == Convert.ToInt32(wiersz[6]);
 
-                        }); ;
+                        Items.Add(
+                            new DocumentItemRow()
+                            {
+                                Base = basePoz,
+
+                                ExLokalizacjaP =
+                                    wiersz[4].ToString()
+                                    + String.Format(", kod {0}", wiersz[7].ToString()),
+                                ExIDLokalizacjaP = Convert.ToInt16(wiersz[3]),
+                                ExLokalizacjaW =
+                                    wiersz[4].ToString()
+                                    + String.Format(", kod {0}", wiersz[7].ToString()),
+                                ExIDLokalizacjaW = Convert.ToInt16(wiersz[3]),
+                                KolejnośćNaŚcieżce = licznik++,
+                                Status = isComplete
+                                    ? DocItemStatus.Complete
+                                    : DocItemStatus.Incomplete
+                            }
+                        );
+                        ;
                     }
-                    if (Items.Count >0 )
-                      {
-#warning HiveInvoke
-                    string TypDoc = (string)Helpers.HiveInvoke(typeof(WMSServerAccess.Dokument.DokumentBL), "PobierzTypDokumentu", new object[] { Items.FirstOrDefault().Base.idDokumentu, "", "", -1, -1, "" });
-                    DocType = (DocTypes)Enum.Parse(typeof(DocTypes), TypDoc);
+                    if (Items.Count > 0)
+                    {
+                        string TypDoc = Serwer.dokumentBL.PobierzTypDokumentu(
+                            Items.FirstOrDefault().Base.idDokumentu,
+                            "",
+                            "",
+                            -1,
+                            -1,
+                            ""
+                        );
+                        DocType = (DocTypes)Enum.Parse(typeof(DocTypes), TypDoc);
 
-                    CurrentOperation = (DocType == Enums.DocTypes.PW || DocType == Enums.DocTypes.PZ || DocType == Enums.DocTypes.IN) ? Enums.Operation.In : Enums.Operation.Out;
-                        }
-
+                        CurrentOperation =
+                            (
+                                DocType == Enums.DocTypes.PW
+                                || DocType == Enums.DocTypes.PZ
+                                || DocType == Enums.DocTypes.IN
+                            )
+                                ? Enums.Operation.In
+                                : Enums.Operation.Out;
+                    }
                 }
                 else
                 {
                     #region Sprawdzanie po numerze dok lub kuwety (po staremu)
 
-                    
+
 
                     // maybe like this
-                    //string TypDoc1 = Globalne.dokumentBL.PobierzTypDokumentu( Doc.ID, "", "", -1, -1, "");
-#warning HiveInvoke
-                    string TypDoc = (string)Helpers.HiveInvoke(typeof(WMSServerAccess.Dokument.DokumentBL), "PobierzTypDokumentu", new object[] { Doc.ID, "", "", -1, -1, "" });
+                    //string TypDoc1 = Serwer.dokumentBL.PobierzTypDokumentu( Doc.ID, "", "", -1, -1, "");
+                    string TypDoc = Serwer.dokumentBL.PobierzTypDokumentu(
+                        Doc.ID,
+                        "",
+                        "",
+                        -1,
+                        -1,
+                        ""
+                    );
+
                     DocType = (DocTypes)Enum.Parse(typeof(DocTypes), TypDoc);
 
-                    CurrentOperation = (DocType == Enums.DocTypes.PW || DocType == Enums.DocTypes.PZ || DocType == Enums.DocTypes.IN) ? Enums.Operation.In : Enums.Operation.Out;
+                    CurrentOperation =
+                        (
+                            DocType == Enums.DocTypes.PW
+                            || DocType == Enums.DocTypes.PZ
+                            || DocType == Enums.DocTypes.IN
+                        )
+                            ? Enums.Operation.In
+                            : Enums.Operation.Out;
 
-                    Items = await Task.Factory.StartNew(() => EditingDocumentsActivity_Common.GetData(new List<DokumentVO>() { Doc }, DocType, ZLMMMode.None, CurrentOperation, -1,
-                                                                                                                        DefaultLocType.None, -1));
+                    Items = await Task.Factory.StartNew(
+                        () =>
+                            EditingDocumentsActivity_Common.GetData(
+                                new List<DokumentVO>() { Doc },
+                                DocType,
+                                ZLMMMode.None,
+                                CurrentOperation,
+                                -1,
+                                DefaultLocType.None,
+                                -1
+                            )
+                    );
 
                     #endregion
                 }
@@ -355,7 +456,7 @@ namespace G_Mobile_Android_WMS
                         (ListView.Adapter as KompletacjaListAdapter).Items = Items;
                         (ListView.Adapter as KompletacjaListAdapter).NotifyDataSetChanged();
                     }
-                    
+
                     SetVisibilityOnHeaderItems();
                     if (Doc == null)
                     {
@@ -366,19 +467,38 @@ namespace G_Mobile_Android_WMS
                         Helpers.SetActivityHeader(this, Doc.strNazwa);
                     }
 
-
-                    Helpers.SetTextOnTextView(this, ItemCount, GetString(Resource.String.global_liczba_pozycji) + " " + ListView.Adapter.Count.ToString());
+                    Helpers.SetTextOnTextView(
+                        this,
+                        ItemCount,
+                        GetString(Resource.String.global_liczba_pozycji)
+                            + " "
+                            + ListView.Adapter.Count.ToString()
+                    );
 
                     decimal? Sum = (ListView.Adapter as KompletacjaListAdapter).Sum;
-                    Helpers.SetTextOnTextView(this, ItemSum, GetString(Resource.String.global_suma_pozycji) + " " + (Sum == null ? "---" : Sum.ToString()));
-                    
-                    Helpers.SetTextOnTextView(this, DocExternal, GetString(Resource.String.kompletacja_docexternal) + " " + CurrentDoc?.strNazwaERP);
+                    Helpers.SetTextOnTextView(
+                        this,
+                        ItemSum,
+                        GetString(Resource.String.global_suma_pozycji)
+                            + " "
+                            + (Sum == null ? "---" : Sum.ToString())
+                    );
 
-                    if (Items.Count() > 0 && Items.Where(x => x.Status == DocItemStatus.Incomplete).Count() > 0)
+                    Helpers.SetTextOnTextView(
+                        this,
+                        DocExternal,
+                        GetString(Resource.String.kompletacja_docexternal)
+                            + " "
+                            + CurrentDoc?.strNazwaERP
+                    );
+
+                    if (
+                        Items.Count() > 0
+                        && Items.Where(x => x.Status == DocItemStatus.Incomplete).Count() > 0
+                    )
                     {
                         OK.SetBackgroundColor(Android.Graphics.Color.Gray);
                         OK.Enabled = false;
-
                     }
                     else
                     {
@@ -386,19 +506,15 @@ namespace G_Mobile_Android_WMS
                         OK.Enabled = true;
                     }
 
-
                     ScanHint2.Visibility = ViewStates.Gone;
                     KompletacjaView.Visibility = ViewStates.Visible;
 
                     if (Doc != null)
                     {
-
                         OK.Visibility = ViewStates.Visible;
                         ItemSum.Visibility = ViewStates.Visible;
                         DocExternal.Visibility = ViewStates.Visible;
                     }
-                        
-                    
                 });
 
                 Helpers.HideProgressDialog();
@@ -417,8 +533,7 @@ namespace G_Mobile_Android_WMS
             }
         }
 
-
-        async protected override void OnScan(object sender, System.Timers.ElapsedEventArgs e)
+        protected override async void OnScan(object sender, System.Timers.ElapsedEventArgs e)
         {
             base.OnScan(sender, e);
 
@@ -433,16 +548,31 @@ namespace G_Mobile_Android_WMS
             {
                 try
                 {
-                    int IDLok = Globalne.lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(Scanned[0], Globalne.Magazyn.ID, false).ID; //kuwety
-
+                    int IDLok = Serwer
+                        .lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(
+                            Scanned[0],
+                            Globalne.Magazyn.ID,
+                            false
+                        )
+                        .ID; //kuwety
 
                     // dodano skanowanie dokumnetu po numerze w ERP -> StrERP
                     if (IDLok < 0)
                     {
-                        CurrentDoc = Globalne.dokumentBL.PobierzDokument(-1, "", "", -1, -1, Scanned[0]);
+                        CurrentDoc = Serwer.dokumentBL.PobierzDokument(
+                            -1,
+                            "",
+                            "",
+                            -1,
+                            -1,
+                            Scanned[0]
+                        );
                         if (CurrentDoc.ID > 0)
                         {
-                            Globalne.dokumentBL.UstawOperatoraEdytującegoDokument(IDLok, Globalne.Operator.ID);
+                            Serwer.dokumentBL.UstawOperatoraEdytującegoDokument(
+                                IDLok,
+                                Globalne.Operator.ID
+                            );
 
                             await InsertData(CurrentDoc);
                             Helpers.HideProgressDialog();
@@ -452,30 +582,55 @@ namespace G_Mobile_Android_WMS
                     if (IDLok < 0)
                     {
                         Helpers.HideProgressDialog();
-                        await Helpers.AlertAsyncWithConfirm(this, Resource.String.kompletacja_didnotfind_locbarcode, Resource.Raw.sound_error);
+                        await Helpers.AlertAsyncWithConfirm(
+                            this,
+                            Resource.String.kompletacja_didnotfind_locbarcode,
+                            Resource.Raw.sound_error
+                        );
                         return;
                     }
 
                     if (IDLok >= 0)
-                        CurrentDoc = Globalne.dokumentBL.PobierzDokument(-1, "", "", -1, IDLok, "");
+                        CurrentDoc = Serwer.dokumentBL.PobierzDokument(-1, "", "", -1, IDLok, "");
                     else
-                        CurrentDoc = Globalne.dokumentBL.PobierzDokument(-1, Scanned[0], "", -1, -1, "");
-                    
+                        CurrentDoc = Serwer.dokumentBL.PobierzDokument(
+                            -1,
+                            Scanned[0],
+                            "",
+                            -1,
+                            -1,
+                            ""
+                        );
+
                     if (CurrentDoc.ID < 0)
                     {
                         Helpers.HideProgressDialog();
-                        await Helpers.AlertAsyncWithConfirm(this, Resource.String.kompletacja_didnotfind_barcode, Resource.Raw.sound_error);
+                        await Helpers.AlertAsyncWithConfirm(
+                            this,
+                            Resource.String.kompletacja_didnotfind_barcode,
+                            Resource.Raw.sound_error
+                        );
                         return;
                     }
 
-                    if (CurrentDoc.intEdytowany >= 0 && CurrentDoc.intEdytowany != Globalne.Operator.ID)
+                    if (
+                        CurrentDoc.intEdytowany >= 0
+                        && CurrentDoc.intEdytowany != Globalne.Operator.ID
+                    )
                     {
                         Helpers.HideProgressDialog();
-                        await Helpers.AlertAsyncWithConfirm(this, Resource.String.documents_cantedit_edited, Resource.Raw.sound_error);
+                        await Helpers.AlertAsyncWithConfirm(
+                            this,
+                            Resource.String.documents_cantedit_edited,
+                            Resource.Raw.sound_error
+                        );
                         return;
                     }
                     else
-                        Globalne.dokumentBL.UstawOperatoraEdytującegoDokument(IDLok, Globalne.Operator.ID);
+                        Serwer.dokumentBL.UstawOperatoraEdytującegoDokument(
+                            IDLok,
+                            Globalne.Operator.ID
+                        );
 
                     await InsertData(CurrentDoc);
                 }
@@ -485,7 +640,6 @@ namespace G_Mobile_Android_WMS
                     return;
                 }
             });
-
 
             Helpers.HideProgressDialog();
             return;
@@ -497,7 +651,8 @@ namespace G_Mobile_Android_WMS
         public List<DocumentItemRow> Items;
         readonly KompletacjaActivity Ctx;
 
-        public KompletacjaListAdapter(KompletacjaActivity Ctx, List<DocumentItemRow> Items) : base()
+        public KompletacjaListAdapter(KompletacjaActivity Ctx, List<DocumentItemRow> Items)
+            : base()
         {
             this.Ctx = Ctx;
             this.Items = Items;
@@ -507,6 +662,7 @@ namespace G_Mobile_Android_WMS
         {
             return position;
         }
+
         public override DocumentItemRow this[int position]
         {
             get { return Items[position]; }
@@ -530,7 +686,9 @@ namespace G_Mobile_Android_WMS
 
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
-            Dictionary<EditingDocumentsListDisplayElements, bool> Set = Globalne.CurrentSettings.EditingDocumentsListDisplayElementsListsINNNR[Ctx.DocType];
+            Dictionary<EditingDocumentsListDisplayElements, bool> Set = Globalne
+                .CurrentSettings
+                .EditingDocumentsListDisplayElementsListsINNNR[Ctx.DocType];
 
             var Pos = Items[position];
 
@@ -538,46 +696,103 @@ namespace G_Mobile_Android_WMS
             if (view == null)
                 view = Ctx.LayoutInflater.Inflate(Resource.Layout.list_item_editingdocuments, null);
 
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_amount,
+                Pos.Base.numIloscZrealizowana.ToString() + " " + Pos.Base.strNazwaJednostki,
+                Set[EditingDocumentsListDisplayElements.DoneAmount]
+            );
 
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_amount, Pos.Base.numIloscZrealizowana.ToString() + " " + Pos.Base.strNazwaJednostki,
-                                        Set[EditingDocumentsListDisplayElements.DoneAmount]);
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_setamount,
+                Pos.Base.numIloscZlecona.ToString() + " " + Pos.Base.strNazwaJednostki,
+                Set[EditingDocumentsListDisplayElements.DoneAmount]
+            );
 
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_setamount, Pos.Base.numIloscZlecona.ToString() + " " + Pos.Base.strNazwaJednostki,
-                                                    Set[EditingDocumentsListDisplayElements.DoneAmount]);
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_location,
+                Ctx.CurrentOperation == Operation.In ? Pos.ExLokalizacjaP : Pos.ExLokalizacjaW,
+                Set[EditingDocumentsListDisplayElements.Location]
+            );
 
-            EditingDocumentsActivity_Common.SetView(view,
-                                                    Resource.Id.editingdocuments_list_location,
-                                                    Ctx.CurrentOperation == Operation.In ? Pos.ExLokalizacjaP : Pos.ExLokalizacjaW,
-                                                    Set[EditingDocumentsListDisplayElements.Location]);
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_bestbefore,
+                Pos.Base.dtDataPrzydatności.Year > 2900
+                    ? "---"
+                    : Pos.Base.dtDataPrzydatności.ToString(Globalne.CurrentSettings.DateFormat),
+                Set[EditingDocumentsListDisplayElements.BestBefore]
+            );
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_proddate,
+                Pos.Base.dtDataProdukcji.Year > 2900
+                    ? "---"
+                    : Pos.Base.dtDataPrzydatności.ToString(Globalne.CurrentSettings.DateFormat),
+                Set[EditingDocumentsListDisplayElements.ProductionDate]
+            );
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_serialnumber,
+                Pos.Base.strNumerySeryjne,
+                Set[EditingDocumentsListDisplayElements.SerialNumber]
+            );
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_lot,
+                Pos.Base.strLoty,
+                Set[EditingDocumentsListDisplayElements.Lot]
+            );
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_flog,
+                Ctx.CurrentOperation == Operation.In
+                    ? Pos.Base.strFunkcjiLogistycznejP
+                    : Pos.Base.strFunkcjiLogistycznejW,
+                Set[EditingDocumentsListDisplayElements.Flog]
+                    && Globalne.CurrentSettings.FunkcjeLogistyczne
+            );
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_partia,
+                Pos.Base.strPartia,
+                Set[EditingDocumentsListDisplayElements.Partia] && Globalne.CurrentSettings.Partie
+            );
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_paleta,
+                Ctx.CurrentOperation == Operation.In ? Pos.Base.strPaletaP : Pos.Base.strPaletaW,
+                Set[EditingDocumentsListDisplayElements.Paleta] && Globalne.CurrentSettings.Palety
+            );
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_articlename,
+                Pos.Base.strNazwaTowaru,
+                Set[EditingDocumentsListDisplayElements.ArticleName]
+            );
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_symbol,
+                Pos.Base.strSymbolTowaru,
+                Set[EditingDocumentsListDisplayElements.Symbol]
+            );
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_list_kodean,
+                Pos.Base.kodean,
+                Set[EditingDocumentsListDisplayElements.KodEAN]
+            );
+            EditingDocumentsActivity_Common.SetView(
+                view,
+                Resource.Id.editingdocuments_listheader_NrKat,
+                Pos.Base.NrKat,
+                Set[EditingDocumentsListDisplayElements.NrKat]
+            );
 
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_bestbefore,
-                                                    Pos.Base.dtDataPrzydatności.Year > 2900 ? "---" : Pos.Base.dtDataPrzydatności.ToString(Globalne.CurrentSettings.DateFormat),
-                                                    Set[EditingDocumentsListDisplayElements.BestBefore]);
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_proddate,
-                                                    Pos.Base.dtDataProdukcji.Year > 2900 ? "---" : Pos.Base.dtDataPrzydatności.ToString(Globalne.CurrentSettings.DateFormat),
-                                                    Set[EditingDocumentsListDisplayElements.ProductionDate]);
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_serialnumber, Pos.Base.strNumerySeryjne,
-                                                    Set[EditingDocumentsListDisplayElements.SerialNumber]);
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_lot, Pos.Base.strLoty,
-                                                    Set[EditingDocumentsListDisplayElements.Lot]);
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_flog,
-                                                    Ctx.CurrentOperation == Operation.In ? Pos.Base.strFunkcjiLogistycznejP : Pos.Base.strFunkcjiLogistycznejW,
-                                                    Set[EditingDocumentsListDisplayElements.Flog] && Globalne.CurrentSettings.FunkcjeLogistyczne);
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_partia, Pos.Base.strPartia,
-                                                    Set[EditingDocumentsListDisplayElements.Partia] && Globalne.CurrentSettings.Partie);
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_paleta,
-                                                    Ctx.CurrentOperation == Operation.In ? Pos.Base.strPaletaP : Pos.Base.strPaletaW,
-                                                    Set[EditingDocumentsListDisplayElements.Paleta] && Globalne.CurrentSettings.Palety);
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_articlename, Pos.Base.strNazwaTowaru,
-                                                    Set[EditingDocumentsListDisplayElements.ArticleName]);
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_symbol, Pos.Base.strSymbolTowaru,
-                                                    Set[EditingDocumentsListDisplayElements.Symbol]);
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_list_kodean, Pos.Base.kodean,
-                                          Set[EditingDocumentsListDisplayElements.KodEAN]);
-            EditingDocumentsActivity_Common.SetView(view, Resource.Id.editingdocuments_listheader_NrKat, Pos.Base.NrKat,
-                              Set[EditingDocumentsListDisplayElements.NrKat]);
-
-            view.FindViewById<TextView>(Resource.Id.editingdocuments_list_status).SetBackgroundColor(Helpers.GetItemStatusColorForStatus(Pos.Status));
+            view.FindViewById<TextView>(Resource.Id.editingdocuments_list_status)
+                .SetBackgroundColor(Helpers.GetItemStatusColorForStatus(Pos.Status));
             //view.FindViewById<TextView>(Resource.Id.editingdocuments_list_setamount).Visibility = ViewStates.Gone;
             //view.FindViewById<TextView>(Resource.Id.editingdocuments_list_setamount).Visibility = ViewStates.Gone;
 
@@ -585,4 +800,3 @@ namespace G_Mobile_Android_WMS
         }
     }
 }
-

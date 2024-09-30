@@ -1,28 +1,32 @@
-﻿using Acr.UserDialogs;
-using Android.App;
-using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Widget;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Linq;
-
-using WMSServerAccess.Model;
-using Android.Content;
-using Android.Runtime;
-using Android.Views;
-using System.Timers;
-using System.Threading.Tasks;
-using System.Reflection;
-using G_Mobile_Android_WMS.ExtendedModel;
-using System.ComponentModel;
+﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
+using Acr.UserDialogs;
+using Android.App;
+using Android.Content;
+using Android.OS;
+using Android.Runtime;
+using Android.Support.Design.Widget;
+using Android.Views;
+using Android.Widget;
+using G_Mobile_Android_WMS.ExtendedModel;
+using WMS_DESKTOP_API;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, MainLauncher = false)]
-
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        MainLauncher = false
+    )]
     public class UserSettingIDsActivity : BaseWMSActivity
     {
         ListView ListView;
@@ -56,10 +60,17 @@ namespace G_Mobile_Android_WMS
                 Helpers.ShowProgressDialog(GetString(Resource.String.global_wait));
 
                 Settings.Clear();
-                Settings = Globalne.menuBL.PobierzListęUstawieńMobOpe();
-                Settings.Add(new UstawienieMobilneOpe { ID = -1, strNazwa = GetString(Resource.String.global_none) });
+                Settings = Serwer.menuBL.PobierzListęUstawieńMobOpe();
+                Settings.Add(
+                    new UstawienieMobilneOpe
+                    {
+                        ID = -1,
+                        strNazwa = GetString(Resource.String.global_none)
+                    }
+                );
 
-                Dictionary<OperatorRow, UstawienieMobilneOpe> UsersDict = await Task.Factory.StartNew(() => GetData());
+                Dictionary<OperatorRow, UstawienieMobilneOpe> UsersDict =
+                    await Task.Factory.StartNew(() => GetData());
 
                 RunOnUiThread(() =>
                 {
@@ -87,31 +98,34 @@ namespace G_Mobile_Android_WMS
 
         private Dictionary<OperatorRow, UstawienieMobilneOpe> GetData()
         {
-            List<OperatorRow> Operatorzy = Globalne.operatorBL.PobierzListęNaTerminal();
+            List<OperatorRow> Operatorzy = Serwer.operatorBL.PobierzListęNaTerminal();
 
             OperatorRow A = Operatorzy.Find(x => x.ID == Int32.MaxValue);
 
             if (A != null)
                 Operatorzy.Remove(A);
 
-            OperatorRow Admin = Globalne.operatorBL.PobierzOperatorRow(Int32.MaxValue);
+            OperatorRow Admin = Serwer.operatorBL.PobierzOperatorRow(Int32.MaxValue);
             Admin.ID = Int32.MaxValue;
             Admin.Login = "SYSADM";
             Admin.Nazwa = "SERWIS";
             Admin.bMozeZarzadzacUprawnieniamiMobilnymi = true;
             Operatorzy.Add(Admin);
 
-            Dictionary<OperatorRow, UstawienieMobilneOpe> Dict = new Dictionary<OperatorRow, UstawienieMobilneOpe>();
+            Dictionary<OperatorRow, UstawienieMobilneOpe> Dict =
+                new Dictionary<OperatorRow, UstawienieMobilneOpe>();
 
             foreach (OperatorRow R in Operatorzy)
                 Dict[R] = Settings.Find(x => x.ID == R.idUstawienieMobOpe);
- 
+
             return Dict;
         }
 
         private async void ListView_ItemClick(object sender, AdapterView.ItemClickEventArgs e)
         {
-            KeyValuePair<OperatorRow, UstawienieMobilneOpe> User = (ListView.Adapter as UserSettingIDsActivityAdapter)[e.Position];
+            KeyValuePair<OperatorRow, UstawienieMobilneOpe> User = (
+                ListView.Adapter as UserSettingIDsActivityAdapter
+            )[e.Position];
             await RunIsBusyTaskAsync(() => SetUserSettingID(User));
         }
 
@@ -119,11 +133,13 @@ namespace G_Mobile_Android_WMS
         {
             try
             {
-                string Res = await UserDialogs.Instance.ActionSheetAsync(GetString(Resource.String.usersettingids_selectopsetid),
-                                                                         GetString(Resource.String.global_cancel),
-                                                                         "",
-                                                                         null,
-                                                                         Settings.Select(x => x.strNazwa).ToArray());
+                string Res = await UserDialogs.Instance.ActionSheetAsync(
+                    GetString(Resource.String.usersettingids_selectopsetid),
+                    GetString(Resource.String.global_cancel),
+                    "",
+                    null,
+                    Settings.Select(x => x.strNazwa).ToArray()
+                );
 
                 if (Res == GetString(Resource.String.global_cancel))
                     return;
@@ -135,7 +151,7 @@ namespace G_Mobile_Android_WMS
                         return;
                     else
                     {
-                        Globalne.operatorBL.UstawUstawienieMobOpe(User.Key.ID, Set.ID);
+                        Serwer.operatorBL.UstawUstawienieMobOpe(User.Key.ID, Set.ID);
                         (ListView.Adapter as UserSettingIDsActivityAdapter).Items[User.Key] = Set;
                         (ListView.Adapter as UserSettingIDsActivityAdapter).NotifyDataSetChanged();
                     }
@@ -172,12 +188,17 @@ namespace G_Mobile_Android_WMS
             Finish();
         }
 
-        internal class UserSettingIDsActivityAdapter : BaseAdapter<KeyValuePair<OperatorRow, UstawienieMobilneOpe>>
+        internal class UserSettingIDsActivityAdapter
+            : BaseAdapter<KeyValuePair<OperatorRow, UstawienieMobilneOpe>>
         {
             public Dictionary<OperatorRow, UstawienieMobilneOpe> Items;
             readonly UserSettingIDsActivity Ctx;
 
-            public UserSettingIDsActivityAdapter(UserSettingIDsActivity Ctx, Dictionary<OperatorRow, UstawienieMobilneOpe> Items) : base()
+            public UserSettingIDsActivityAdapter(
+                UserSettingIDsActivity Ctx,
+                Dictionary<OperatorRow, UstawienieMobilneOpe> Items
+            )
+                : base()
             {
                 this.Ctx = Ctx;
                 this.Items = Items;
@@ -187,6 +208,7 @@ namespace G_Mobile_Android_WMS
             {
                 return position;
             }
+
             public override KeyValuePair<OperatorRow, UstawienieMobilneOpe> this[int position]
             {
                 get { return Items.ElementAt(position); }
@@ -205,11 +227,11 @@ namespace G_Mobile_Android_WMS
                     view = Ctx.LayoutInflater.Inflate(Resource.Layout.list_item_barcode, null);
 
                 view.FindViewById<TextView>(Resource.Id.barcode_list_settingA).Text = Pos.Key.Nazwa;
-                view.FindViewById<TextView>(Resource.Id.barcode_list_settingB).Text = Pos.Value.strNazwa;
+                view.FindViewById<TextView>(Resource.Id.barcode_list_settingB).Text =
+                    Pos.Value.strNazwa;
 
                 return view;
             }
         }
     }
 }
-

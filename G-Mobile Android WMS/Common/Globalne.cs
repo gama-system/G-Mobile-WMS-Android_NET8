@@ -2,27 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Android;
 using Android.App;
 using Android.Content;
+using Android.Graphics;
+using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using Android.Media;
-
-using WMSServerAccess.Model;
-using Symbol.XamarinEMDK.Barcode;
-using Android.Graphics;
+using G_Mobile_Android_WMS.Common;
 using Symbol.XamarinEMDK;
-using Android;
+using Symbol.XamarinEMDK.Barcode;
+using WMS_DESKTOP_API;
+using WMS_DESKTOP_API;
+using WMS_Model.ModeleDanych;
 using Xamarin.Essentials;
 
 namespace G_Mobile_Android_WMS
 {
     public static class Globalne
     {
-        
+        // todo: mmozliwe ze czesc rzeczy jest tu nie potrzebna i znajduje sie w biibliiotece desktop api
         public static string AppName = "G-Mobile WMS Android";
         public static string AppVer = AppInfo.Version.ToString();
         public static int WersjaBazy = 0;
@@ -34,40 +35,25 @@ namespace G_Mobile_Android_WMS
 
         public static MediaPlayer Player;
 
-        public static Hive.Rpc.Client client;
-
         public static IBarcodeScannerManager Scanner;
         public static bool ScannerError = false;
 
-        public static TerminalSettings CurrentTerminalSettings = new TerminalSettings();
+        public static TerminalSettings _CurrentTerminalSettings = new TerminalSettings();
+        public static TerminalSettings CurrentTerminalSettings
+        {
+            get { return _CurrentTerminalSettings; }
+            set
+            {
+                _CurrentTerminalSettings = value;
+                Serwer.Konfiguracja = _CurrentTerminalSettings;
+            }
+        }
         public static WMSSettings CurrentSettings = new WMSSettings();
         public static UserSettings CurrentUserSettings = new UserSettings();
 
         public static Enums.DeviceTypes DeviceType = Enums.DeviceTypes.Other;
         public static bool HasCamera = false;
         public static bool HasScanner = false;
-
-        public static WMSServerAccess.Licencja.LicencjaBL licencjaBL;
-        public static WMSServerAccess.Operator.OperatorBL operatorBL;
-        public static WMSServerAccess.Drukarka.DrukarkaBL drukarkaBL;
-        public static WMSServerAccess.Magazyn.MagazynBL magazynBL;
-        public static WMSServerAccess.Ogólne.OgólneBL ogólneBL;
-        public static WMSServerAccess.Podmiot.PodmiotBL podmiotBL;
-        public static WMSServerAccess.JednostkaMiary.JednostkaMiaryBL jednostkaMiaryBL;
-        public static WMSServerAccess.Towar.TowarBL towarBL;
-        public static WMSServerAccess.Wymagania.WymaganiaBL wymaganiaBL;
-        public static WMSServerAccess.Lokalizacja.LokalizacjaBL lokalizacjaBL;
-        public static WMSServerAccess.Rejestr.RejestrBL rejestrBL;
-        public static WMSServerAccess.Dokument.DokumentBL dokumentBL;
-        public static WMSServerAccess.PrzychRozch.PrzychRozchBL przychrozchBL;
-        public static WMSServerAccess.KodyKreskowe.KodyKreskoweBL kodykreskoweBL;
-        public static WMSServerAccess.Partia.PartiaBL partiaBL;
-        public static WMSServerAccess.Paleta.PaletaBL paletaBL;
-        public static WMSServerAccess.FunkcjaLogistyczna.FunkcjaLogistycznaBL funklogBL;
-        public static WMSServerAccess.Menu.MenuBL menuBL;
-        public static WMSServerAccess.Aktualizacje.AktualizacjeBL aktualizacjeBL;
-        public static WMSServerAccess.NumerSeryjny.NumerSeryjnyBL numerSeryjnyBL;
-
 
         public static LicencjaPortableO Licencja = null;
         public static OperatorVO Operator;

@@ -1,28 +1,26 @@
-﻿using Android.App;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using Acr.UserDialogs;
+using Android;
+using Android.App;
 using Android.Content;
+using Android.Content.PM;
+using Android.Net;
+using Android.Net.Wifi;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
-using System;
-using System.Reflection;
-using System.Threading.Tasks;
-using Acr.UserDialogs;
-using System.Collections.Generic;
-using System.Threading;
-using System.Linq.Expressions;
-using Android.Net;
-using System.ComponentModel;
-using System.Linq;
-using Hive.Serialization.Core;
-using WMSServerAccess.Model;
-using WMSServerAccess.Drukarka;
-
-using System.IO;
-using Android;
-using Android.Content.PM;
-using Android.Net.Wifi;
-using WMSServerAccess.Towar;
+using WMS_DESKTOP_API;
+using WMS_DESKTOP_API;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
@@ -33,7 +31,10 @@ namespace G_Mobile_Android_WMS
             Java.Util.Locale.Default = new Java.Util.Locale(language);
 #pragma warning disable CS0618 // Type or member is obsolete
             cxt.Resources.Configuration.Locale = Java.Util.Locale.Default;
-            cxt.Resources.UpdateConfiguration(cxt.Resources.Configuration, cxt.Resources.DisplayMetrics);
+            cxt.Resources.UpdateConfiguration(
+                cxt.Resources.Configuration,
+                cxt.Resources.DisplayMetrics
+            );
 #pragma warning restore CS0618 // Type or member is obsolete
         }
 
@@ -44,43 +45,48 @@ namespace G_Mobile_Android_WMS
                 switch (Globalne.DeviceType)
                 {
                     case Enums.DeviceTypes.Zebra:
+                    {
+                        if (Globalne.Scanner != null)
                         {
-                            if (Globalne.Scanner != null)
-                            {
-                                Globalne.Scanner.Disable();
-                                Globalne.Scanner.Dispose();
-                            }
-
-                            Globalne.Scanner = new BarcodeScannerManager(Application.Context);
-
-                            if (Globalne.HasScanner)
-                                Globalne.Scanner.Enable();
-
-                            break;
+                            Globalne.Scanner.Disable();
+                            Globalne.Scanner.Dispose();
                         }
+
+                        Globalne.Scanner = new BarcodeScannerManager(Application.Context);
+
+                        if (Globalne.HasScanner)
+                            Globalne.Scanner.Enable();
+
+                        break;
+                    }
                     case Enums.DeviceTypes.Newland:
+                    {
+                        if (Globalne.Scanner != null)
                         {
-                            if (Globalne.Scanner != null)
-                            {
-                                Globalne.Scanner.Disable();
-                                Globalne.Scanner.Dispose();
-                            }
-
-                            Globalne.Scanner = new BarcodeScannerManagerNewland();
-
-                            if (Globalne.Scanner != null)
-                                Globalne.HasScanner = true;
-
-                            break;
+                            Globalne.Scanner.Disable();
+                            Globalne.Scanner.Dispose();
                         }
-                    default: break;
+
+                        Globalne.Scanner = new BarcodeScannerManagerNewland();
+
+                        if (Globalne.Scanner != null)
+                            Globalne.HasScanner = true;
+
+                        break;
+                    }
+                    default:
+                        break;
                 }
 
                 Globalne.ScannerError = false;
             }
             catch (Exception)
             {
-                Toast.MakeText(Application.Context, "Błąd inicjalizacji skanera!", ToastLength.Long);
+                Toast.MakeText(
+                    Application.Context,
+                    "Błąd inicjalizacji skanera!",
+                    ToastLength.Long
+                );
                 Globalne.ScannerError = true;
                 return;
             }
@@ -110,7 +116,10 @@ namespace G_Mobile_Android_WMS
             return JsonConvert.DeserializeObject(InStr, type);
         }
 
-        private static KodKreskowyZSzablonuO MergeResults(KodKreskowyZSzablonuO KodA, KodKreskowyZSzablonuO KodB)
+        private static KodKreskowyZSzablonuO MergeResults(
+            KodKreskowyZSzablonuO KodA,
+            KodKreskowyZSzablonuO KodB
+        )
         {
             KodKreskowyZSzablonuO Out = new KodKreskowyZSzablonuO
             {
@@ -119,8 +128,10 @@ namespace G_Mobile_Android_WMS
 
             DateTime EmptyDate = new DateTime(1900, 01, 01);
 
-            Out.DataProdukcji = KodB.DataProdukcji == EmptyDate ? KodA.DataProdukcji : KodB.DataProdukcji;
-            Out.DataPrzydatności = KodB.DataPrzydatności == EmptyDate ? KodA.DataPrzydatności : KodB.DataPrzydatności;
+            Out.DataProdukcji =
+                KodB.DataProdukcji == EmptyDate ? KodA.DataProdukcji : KodB.DataProdukcji;
+            Out.DataPrzydatności =
+                KodB.DataPrzydatności == EmptyDate ? KodA.DataPrzydatności : KodB.DataPrzydatności;
             Out.Partia = KodB.Partia == "" ? KodA.Partia : KodB.Partia;
             Out.Producent = KodB.Producent == "" ? KodA.Producent : KodB.Producent;
             Out.Paleta = KodB.Paleta == "" ? KodA.Paleta : KodB.Paleta;
@@ -145,17 +156,22 @@ namespace G_Mobile_Android_WMS
             }
 
             Out.Ilość = KodB.Ilość == 0 ? KodA.Ilość : KodB.Ilość;
-            Out.KrajPochodzenia = KodB.KrajPochodzenia == "" ? KodA.KrajPochodzenia : KodB.KrajPochodzenia;
+            Out.KrajPochodzenia =
+                KodB.KrajPochodzenia == "" ? KodA.KrajPochodzenia : KodB.KrajPochodzenia;
             Out.NrSeryjny = KodB.NrSeryjny == "" ? KodA.NrSeryjny : KodB.NrSeryjny;
-            Out.NumerZamówienia = KodB.NumerZamówienia == "" ? KodA.NumerZamówienia : KodB.NumerZamówienia;
+            Out.NumerZamówienia =
+                KodB.NumerZamówienia == "" ? KodA.NumerZamówienia : KodB.NumerZamówienia;
             Out.Lot = KodB.Lot == "" ? KodA.Lot : KodB.Lot;
 
             return Out;
         }
 
-        public static KodKreskowyZSzablonuO ParseBarcodesAccordingToOrder(List<string> Barcodes, Enums.DocTypes Type)
+        public static KodKreskowyZSzablonuO ParseBarcodesAccordingToOrder(
+            List<string> Barcodes,
+            Enums.DocTypes Type
+        )
         {
-            KodKreskowyZSzablonuO Ksk = Globalne.kodykreskoweBL.PustyKodKreskowyZSzablonu();
+            KodKreskowyZSzablonuO Ksk = Serwer.kodyKreskoweBL.PustyKodKreskowyZSzablonu();
 
             List<int> Order = Globalne.CurrentSettings.BarcodeScanningOrder[Type];
 
@@ -172,7 +188,7 @@ namespace G_Mobile_Android_WMS
                         }
                     }
 
-                Ksk = Globalne.kodykreskoweBL.ParsujWedługGS1(ToParse);
+                Ksk = Serwer.kodyKreskoweBL.ParsujWedługGS1(ToParse);
             }
 
             for (int i = 0; i < Order.Count; i++)
@@ -183,51 +199,67 @@ namespace G_Mobile_Android_WMS
                 switch (Order[i])
                 {
                     case Enums.BarcodeOrder.Template:
+                    {
+                        Ksk = MergeResults(
+                            Ksk,
+                            Serwer.kodyKreskoweBL.WyszukajKodKreskowy(Barcodes[i])
+                        );
+
+                        if (Ksk.Towar == "")
                         {
-                            Ksk = MergeResults(Ksk, Globalne.kodykreskoweBL.WyszukajKodKreskowy(Barcodes[i]));
-
-                            
-
-                            if (Ksk.Towar == "")
-                            {
-                                var kodKreskowy = Globalne.kodykreskoweBL.PobierzKodKreskowyZNrKat(Barcodes[i]);
-                                if (kodKreskowy.strKod != "")
-                                    Ksk = MergeResults(Ksk, Globalne.kodykreskoweBL.WyszukajKodKreskowy(kodKreskowy.strKod));
-                            }
-                            break;
+                            var kodKreskowy = Serwer.kodyKreskoweBL.PobierzKodKreskowyZNrKat(
+                                Barcodes[i]
+                            );
+                            if (kodKreskowy.strKod != "")
+                                Ksk = MergeResults(
+                                    Ksk,
+                                    Serwer.kodyKreskoweBL.WyszukajKodKreskowy(kodKreskowy.strKod)
+                                );
                         }
-                    case Enums.BarcodeOrder.GS1: continue;
+                        break;
+                    }
+                    case Enums.BarcodeOrder.GS1:
+                        continue;
                     case Enums.BarcodeOrder.Amount:
-                        {
-                            bool Res = Decimal.TryParse(Barcodes[i], out decimal Am);
+                    {
+                        bool Res = Decimal.TryParse(Barcodes[i], out decimal Am);
 
-                            if (Res)
-                                Ksk.Ilość = Am;
+                        if (Res)
+                            Ksk.Ilość = Am;
 
-                            break;
-                        }
+                        break;
+                    }
                     case Enums.BarcodeOrder.Article:
-                        {
-                            List<TowarJednostkaO> IDs = Globalne.towarBL.PobierzTowarJednostkęDlaKoduKreskowego(Barcodes[i]);
+                    {
+                        List<TowarJednostkaO> IDs =
+                            Serwer.towarBL.PobierzTowarJednostkęDlaKoduKreskowego(Barcodes[i]);
 
-                            if (IDs.Count != 0)
-                            {
-                                Ksk.Towar = Barcodes[i];
-                                Ksk.TowaryJednostkiWBazie.AddRange(IDs);
-                            }
-                            break;
+                        if (IDs.Count != 0)
+                        {
+                            Ksk.Towar = Barcodes[i];
+                            Ksk.TowaryJednostkiWBazie.AddRange(IDs);
                         }
-                    case Enums.BarcodeOrder.Lot: Ksk.Lot = Barcodes[i]; break;
-                    case Enums.BarcodeOrder.Paleta: Ksk.Paleta = Barcodes[i]; break;
-                    case Enums.BarcodeOrder.Partia: Ksk.Partia = Barcodes[i]; break;
-                    case Enums.BarcodeOrder.SerialNum: Ksk.NrSeryjny = Barcodes[i]; break;
-                    default: break;
+                        break;
+                    }
+                    case Enums.BarcodeOrder.Lot:
+                        Ksk.Lot = Barcodes[i];
+                        break;
+                    case Enums.BarcodeOrder.Paleta:
+                        Ksk.Paleta = Barcodes[i];
+                        break;
+                    case Enums.BarcodeOrder.Partia:
+                        Ksk.Partia = Barcodes[i];
+                        break;
+                    case Enums.BarcodeOrder.SerialNum:
+                        Ksk.NrSeryjny = Barcodes[i];
+                        break;
+                    default:
+                        break;
                 }
             }
 
             return Ksk;
         }
-
 
         public static void SetActivityHeader(Activity ctx, string Name)
         {
@@ -241,17 +273,37 @@ namespace G_Mobile_Android_WMS
             if (UserView != null)
             {
                 if (Globalne.Operator != null)
-                    SetTextOnTextView(ctx, UserView, ctx.GetString(Resource.String.header_user) + " " + Globalne.Operator.Login.Trim());
+                    SetTextOnTextView(
+                        ctx,
+                        UserView,
+                        ctx.GetString(Resource.String.header_user)
+                            + " "
+                            + Globalne.Operator.Login.Trim()
+                    );
                 else
-                    SetTextOnTextView(ctx, UserView, ctx.GetString(Resource.String.header_user) + " - - -");
+                    SetTextOnTextView(
+                        ctx,
+                        UserView,
+                        ctx.GetString(Resource.String.header_user) + " - - -"
+                    );
             }
 
             if (MagView != null)
             {
                 if (Globalne.Magazyn != null)
-                    SetTextOnTextView(ctx, MagView, ctx.GetString(Resource.String.header_mag) + " " + Globalne.Magazyn.Nazwa.Trim());
+                    SetTextOnTextView(
+                        ctx,
+                        MagView,
+                        ctx.GetString(Resource.String.header_mag)
+                            + " "
+                            + Globalne.Magazyn.Nazwa.Trim()
+                    );
                 else
-                    SetTextOnTextView(ctx, MagView, ctx.GetString(Resource.String.header_mag) + " - - -");
+                    SetTextOnTextView(
+                        ctx,
+                        MagView,
+                        ctx.GetString(Resource.String.header_mag) + " - - -"
+                    );
             }
         }
 
@@ -259,8 +311,11 @@ namespace G_Mobile_Android_WMS
         {
             FieldInfo fi = value.GetType().GetField(value.ToString());
 
-
-            if (fi.GetCustomAttributes(typeof(DescriptionAttribute), false) is DescriptionAttribute[] attributes && attributes.Any())
+            if (
+                fi.GetCustomAttributes(typeof(DescriptionAttribute), false)
+                    is DescriptionAttribute[] attributes
+                && attributes.Any()
+            )
             {
                 return attributes.First().Description;
             }
@@ -270,11 +325,17 @@ namespace G_Mobile_Android_WMS
 
         public static bool IsNetworkConnected(Context ctx)
         {
-            ConnectivityManager cm = (ConnectivityManager)ctx.GetSystemService(Context.ConnectivityService);
+            ConnectivityManager cm = (ConnectivityManager)
+                ctx.GetSystemService(Context.ConnectivityService);
             return cm.ActiveNetworkInfo != null && cm.ActiveNetworkInfo.IsConnected;
         }
 
-        public static async System.Threading.Tasks.Task Alert(Context Ctx, string Message, int? Sound = null, string Title = null)
+        public static async System.Threading.Tasks.Task Alert(
+            Context Ctx,
+            string Message,
+            int? Sound = null,
+            string Title = null
+        )
         {
             if (Sound != null)
                 Helpers.PlaySound(Ctx, Sound);
@@ -282,27 +343,40 @@ namespace G_Mobile_Android_WMS
             if (Title != null)
                 Title = Ctx.GetString(Resource.String.global_alert);
 
-            await UserDialogs.Instance.AlertAsync(new AlertConfig()
-                                                                .SetMessage(Message)
-                                                                .SetTitle(Title));
+            await UserDialogs.Instance.AlertAsync(
+                new AlertConfig().SetMessage(Message).SetTitle(Title)
+            );
 
             return;
         }
 
-        public static async Task Alert(Context Ctx, int Message, int? Sound = null, int Title = Resource.String.global_alert)
+        public static async Task Alert(
+            Context Ctx,
+            int Message,
+            int? Sound = null,
+            int Title = Resource.String.global_alert
+        )
         {
             if (Sound != null)
                 Helpers.PlaySound(Ctx, Sound);
 
-            await UserDialogs.Instance.AlertAsync(new AlertConfig()
-                                                                .SetMessage(Ctx.GetString(Message))
-                                                                .SetTitle(Ctx.GetString(Title)));
+            await UserDialogs.Instance.AlertAsync(
+                new AlertConfig().SetMessage(Ctx.GetString(Message)).SetTitle(Ctx.GetString(Title))
+            );
 
             return;
         }
-        
-        public static async Task<bool?> AlertAsyncWithConfirm(Context Ctx, string Message, int? Sound = null,
-                                                             string Title = null, string Button = null, string Cancel = null, int? AndroidStyleID = null, CancellationToken? tc = null)
+
+        public static async Task<bool?> AlertAsyncWithConfirm(
+            Context Ctx,
+            string Message,
+            int? Sound = null,
+            string Title = null,
+            string Button = null,
+            string Cancel = null,
+            int? AndroidStyleID = null,
+            CancellationToken? tc = null
+        )
         {
             try
             {
@@ -318,12 +392,14 @@ namespace G_Mobile_Android_WMS
                 if (Cancel == null)
                     Cancel = Ctx.GetString(Resource.String.global_cancel);
 
-                var Result = await UserDialogs.Instance.ConfirmAsync(new ConfirmConfig()
-                { AndroidStyleId = AndroidStyleID }
-                                                                        .SetOkText(Button == "" ? null : Button)
-                                                                        .SetMessage(Message)
-                                                                        .SetCancelText(Cancel)
-                                                                        .SetTitle(Title), tc);
+                var Result = await UserDialogs.Instance.ConfirmAsync(
+                    new ConfirmConfig() { AndroidStyleId = AndroidStyleID }
+                        .SetOkText(Button == "" ? null : Button)
+                        .SetMessage(Message)
+                        .SetCancelText(Cancel)
+                        .SetTitle(Title),
+                    tc
+                );
 
                 return Result;
             }
@@ -333,23 +409,36 @@ namespace G_Mobile_Android_WMS
             }
         }
 
-        public static async Task<bool> AlertAsyncWithConfirm(Context Ctx, int Message, int? Sound = null,
-                                                             int Title = Resource.String.global_alert, int Button = Resource.String.global_ok)
+        public static async Task<bool> AlertAsyncWithConfirm(
+            Context Ctx,
+            int Message,
+            int? Sound = null,
+            int Title = Resource.String.global_alert,
+            int Button = Resource.String.global_ok
+        )
         {
             if (Sound != null)
                 Helpers.PlaySound(Ctx, Sound);
 
-            var Result = await UserDialogs.Instance.ConfirmAsync(new ConfirmConfig()
-                                                                    .SetOkText(Ctx.GetString(Button))
-                                                                    .SetMessage(Ctx.GetString(Message))
-                                                                    .SetTitle(Ctx.GetString(Title)));
+            var Result = await UserDialogs.Instance.ConfirmAsync(
+                new ConfirmConfig()
+                    .SetOkText(Ctx.GetString(Button))
+                    .SetMessage(Ctx.GetString(Message))
+                    .SetTitle(Ctx.GetString(Title))
+            );
 
             return Result;
         }
 
-        public static async Task<PromptResult> AlertAsyncWithPrompt(Context Ctx, string Message, int? Sound = null, string DefaultText = "",
-                                                                    InputType InputType = InputType.Default, string OKButton = null,
-                                                                    string ButtonCancel = null)
+        public static async Task<PromptResult> AlertAsyncWithPrompt(
+            Context Ctx,
+            string Message,
+            int? Sound = null,
+            string DefaultText = "",
+            InputType InputType = InputType.Default,
+            string OKButton = null,
+            string ButtonCancel = null
+        )
         {
             if (Sound != null)
                 Helpers.PlaySound(Ctx, Sound);
@@ -360,35 +449,51 @@ namespace G_Mobile_Android_WMS
             if (ButtonCancel == null)
                 ButtonCancel = Ctx.GetString(Resource.String.global_cancel);
 
-            var Result = await UserDialogs.Instance.PromptAsync(new PromptConfig()
-                                                                .SetTitle(Message)
-                                                                .SetOkText(OKButton)
-                                                                .SetCancelText(ButtonCancel)
-                                                                .SetText(DefaultText)
-                                                                .SetInputMode(InputType));
+            var Result = await UserDialogs.Instance.PromptAsync(
+                new PromptConfig()
+                    .SetTitle(Message)
+                    .SetOkText(OKButton)
+                    .SetCancelText(ButtonCancel)
+                    .SetText(DefaultText)
+                    .SetInputMode(InputType)
+            );
 
             return Result;
         }
 
-        public static async Task<PromptResult> AlertAsyncWithPrompt(Context Ctx, int Message, int? Sound = null, string DefaultText = "",
-                                                                    InputType InputType = InputType.Password, int OKButton = Resource.String.global_ok,
-                                                                    int ButtonCancel = Resource.String.global_cancel)
+        public static async Task<PromptResult> AlertAsyncWithPrompt(
+            Context Ctx,
+            int Message,
+            int? Sound = null,
+            string DefaultText = "",
+            InputType InputType = InputType.Password,
+            int OKButton = Resource.String.global_ok,
+            int ButtonCancel = Resource.String.global_cancel
+        )
         {
             if (Sound != null)
                 Helpers.PlaySound(Ctx, Sound);
 
-            var Result = await UserDialogs.Instance.PromptAsync(new PromptConfig()
-                                                                .SetTitle(Ctx.GetString(Message))
-                                                                .SetOkText(Ctx.GetString(OKButton))
-                                                                .SetCancelText(Ctx.GetString(ButtonCancel))
-                                                                .SetText(DefaultText)
-                                                                .SetInputMode(InputType));
+            var Result = await UserDialogs.Instance.PromptAsync(
+                new PromptConfig()
+                    .SetTitle(Ctx.GetString(Message))
+                    .SetOkText(Ctx.GetString(OKButton))
+                    .SetCancelText(Ctx.GetString(ButtonCancel))
+                    .SetText(DefaultText)
+                    .SetInputMode(InputType)
+            );
 
             return Result;
         }
 
-        public static async Task<bool> QuestionAlertAsync(Context Ctx, string Message, int? Sound = null,
-                                                          string Title = null, string YesButton = null, string NoButton = null)
+        public static async Task<bool> QuestionAlertAsync(
+            Context Ctx,
+            string Message,
+            int? Sound = null,
+            string Title = null,
+            string YesButton = null,
+            string NoButton = null
+        )
         {
             if (Sound != null)
                 Helpers.PlaySound(Ctx, Sound);
@@ -402,56 +507,66 @@ namespace G_Mobile_Android_WMS
             if (NoButton == null)
                 NoButton = Ctx.GetString(Resource.String.global_nie);
 
-
-
-            var Result = await UserDialogs.Instance.ConfirmAsync(new ConfirmConfig()
-                                                                    .SetCancelText(NoButton)
-                                                                    .SetOkText(YesButton)
-                                                                    .SetMessage(Message)
-                                                                    .SetTitle(Title));
+            var Result = await UserDialogs.Instance.ConfirmAsync(
+                new ConfirmConfig()
+                    .SetCancelText(NoButton)
+                    .SetOkText(YesButton)
+                    .SetMessage(Message)
+                    .SetTitle(Title)
+            );
             return Result;
         }
 
-        public static async Task<bool> QuestionAlertAsync(Context Ctx, int Message, int? Sound = null,
-                                                          int Title = Resource.String.global_alert, int YesButton = Resource.String.global_tak, int NoButton = Resource.String.global_nie)
+        public static async Task<bool> QuestionAlertAsync(
+            Context Ctx,
+            int Message,
+            int? Sound = null,
+            int Title = Resource.String.global_alert,
+            int YesButton = Resource.String.global_tak,
+            int NoButton = Resource.String.global_nie
+        )
         {
             if (Sound != null)
                 Helpers.PlaySound(Ctx, Sound);
 
-            var Result = await UserDialogs.Instance.ConfirmAsync(new ConfirmConfig()
-                                                                    .SetCancelText(Ctx.GetString(NoButton))
-                                                                    .SetOkText(Ctx.GetString(YesButton))
-                                                                    .SetMessage(Ctx.GetString(Message))
-                                                                    .SetTitle(Ctx.GetString(Title)));
+            var Result = await UserDialogs.Instance.ConfirmAsync(
+                new ConfirmConfig()
+                    .SetCancelText(Ctx.GetString(NoButton))
+                    .SetOkText(Ctx.GetString(YesButton))
+                    .SetMessage(Ctx.GetString(Message))
+                    .SetTitle(Ctx.GetString(Title))
+            );
             return Result;
         }
 
-
-
-
-        public static async Task<bool> QuestionAlertAsyncEtykieta(Context Ctx, int Message, int? Sound = null,
-                                                   int Title = Resource.String.global_alert, int YesButton = Resource.String.global_tak, int NoButton = Resource.String.global_nie)
-            
+        public static async Task<bool> QuestionAlertAsyncEtykieta(
+            Context Ctx,
+            int Message,
+            int? Sound = null,
+            int Title = Resource.String.global_alert,
+            int YesButton = Resource.String.global_tak,
+            int NoButton = Resource.String.global_nie
+        )
         {
-
             if (Sound != null)
                 Helpers.PlaySound(Ctx, Sound);
 
-            var Result = await UserDialogs.Instance.ConfirmAsync(new ConfirmConfig()
-                                                                    .SetCancelText(Ctx.GetString(NoButton))
-                                                                    .SetOkText(Ctx.GetString(YesButton))
-                                                                    .SetMessage(Ctx.GetString(Message))
-                                                                    .SetTitle(Ctx.GetString(Title)));
-
+            var Result = await UserDialogs.Instance.ConfirmAsync(
+                new ConfirmConfig()
+                    .SetCancelText(Ctx.GetString(NoButton))
+                    .SetOkText(Ctx.GetString(YesButton))
+                    .SetMessage(Ctx.GetString(Message))
+                    .SetTitle(Ctx.GetString(Title))
+            );
 
             return Result;
         }
-        
+
         public static async Task<bool> DoesPrintPossible(Context Ctx)
         {
             var result = false;
 
-            DrukarkaO drukarka = Globalne.drukarkaBL.PobierzDrukarkeEtykiet();
+            DrukarkaO drukarka = Serwer.drukarkaBL.PobierzDrukarkeEtykiet();
 
             if (drukarka.strNazwa.Trim().Length > 2 && drukarka.strERP.Trim().Length > 2)
             {
@@ -478,11 +593,13 @@ namespace G_Mobile_Android_WMS
 
         public static void OpenDateEditor(Activity ctx, EditText v, DateTime Default)
         {
-            Fragments.DatePickerFragment frag = Fragments.DatePickerFragment.NewInstance(delegate (DateTime SelectedTime)
-            {
-                v.Text = SelectedTime.ToString(Globalne.CurrentSettings.DateFormat);
-            },
-            Default);
+            Fragments.DatePickerFragment frag = Fragments.DatePickerFragment.NewInstance(
+                delegate(DateTime SelectedTime)
+                {
+                    v.Text = SelectedTime.ToString(Globalne.CurrentSettings.DateFormat);
+                },
+                Default
+            );
 
 #pragma warning disable CS0618
             frag.Show(ctx.FragmentManager, "");
@@ -529,11 +646,20 @@ namespace G_Mobile_Android_WMS
 
         public static void FinishCurrentActivityWithIntent(Activity context)
         {
-            context.OverridePendingTransition(Resource.Animation.abc_fade_in, Resource.Animation.abc_fade_out);
+            context.OverridePendingTransition(
+                Resource.Animation.abc_fade_in,
+                Resource.Animation.abc_fade_out
+            );
             context.Finish();
         }
 
-        public static void OpenMultiListActivity(BaseWMSActivity ctx, string Variable, string Header, Dictionary<string, bool> Items, int ResultCode)
+        public static void OpenMultiListActivity(
+            BaseWMSActivity ctx,
+            string Variable,
+            string Header,
+            Dictionary<string, bool> Items,
+            int ResultCode
+        )
         {
             if (ctx.IsSwitchingActivity)
                 return;
@@ -553,7 +679,9 @@ namespace G_Mobile_Android_WMS
             if (!Globalne.CurrentUserSettings.Sounds)
                 return;
 
-            Android.Net.Uri uri = Android.Net.Uri.Parse("android.resource://" + context.PackageName + "/" + Res);
+            Android.Net.Uri uri = Android.Net.Uri.Parse(
+                "android.resource://" + context.PackageName + "/" + Res
+            );
             Globalne.Player.Reset();
             Globalne.Player.SetDataSource(context, uri);
             Globalne.Player.Prepare();
@@ -574,7 +702,6 @@ namespace G_Mobile_Android_WMS
                 context.RunOnUiThread(() => Widget.Text = Text);
             }
         }
-
 
         public static void SetTextOnButton(Activity context, Button Widget, string Text)
         {
@@ -606,25 +733,30 @@ namespace G_Mobile_Android_WMS
             }
         }
 
-        public static object HiveInvoke(Type Namespace, string Method, params object[] Params)
-        {
-            try
-            {
-                MethodInfo MI = Namespace.GetMethod(Method);
-                return JsonConvert.DeserializeObject(Globalne.ogólneBL.GetAsJson(Method, Namespace, Params).Json, MI.ReturnType);
-            }
-            catch (DeserializingException)
-            {
-                return null;
-            }
-        }
+        //public static object HiveInvoke(Type Namespace, string Method, params object[] Params)
+        //{
+        //    try
+        //    {
+        //        MethodInfo MI = Namespace.GetMethod(Method);
+        //        return JsonConvert.DeserializeObject(
+        //            Serwer.ogólneBL.GetAsJson(Method, Namespace, Params).Json,
+        //            MI.ReturnType
+        //        );
+        //    }
+        //    catch (DeserializingException)
+        //    {
+        //        return null;
+        //    }
+        //}
 
         public static async Task<bool> AskToLogOut(Activity ctx)
         {
-            return await Helpers.QuestionAlertAsync(ctx,
-                                                    Resource.String.common_logout_message,
-                                                    Resource.Raw.sound_message,
-                                                    Resource.String.common_logout_title);
+            return await Helpers.QuestionAlertAsync(
+                ctx,
+                Resource.String.common_logout_message,
+                Resource.Raw.sound_message,
+                Resource.String.common_logout_title
+            );
         }
 
         public static View GetViewWithTag(ViewGroup view, string Tag)
@@ -662,7 +794,9 @@ namespace G_Mobile_Android_WMS
             return Type.ToString().Substring(0, 2);
         }
 
-        public static Android.Graphics.Color GetDocStatusColorForStatus(Enums.DocumentStatusTypes Status)
+        public static Android.Graphics.Color GetDocStatusColorForStatus(
+            Enums.DocumentStatusTypes Status
+        )
         {
             return Status switch
             {
@@ -675,6 +809,7 @@ namespace G_Mobile_Android_WMS
                 _ => Android.Graphics.Color.White,
             };
         }
+
         public static Android.Graphics.Color GetItemStatusColorForStatus(Enums.DocItemStatus Status)
         {
             return Status switch
@@ -696,17 +831,19 @@ namespace G_Mobile_Android_WMS
                 if (!BestBefore)
                 {
                     if (Globalne.CurrentSettings.InsertProdDate)
-                        Ret = Globalne.ogólneBL.GetDate().AddDays(Globalne.CurrentSettings.DaysToAddToProdDate);
+                        Ret = Serwer
+                            .ogólneBL.GetDate()
+                            .AddDays(Globalne.CurrentSettings.DaysToAddToProdDate);
                 }
                 else
                 {
                     if (Globalne.CurrentSettings.InsertBestBeforeDate)
-                        Ret = Globalne.ogólneBL.GetDate().AddDays(Globalne.CurrentSettings.DaysToAddToBestBeforeDate);
+                        Ret = Serwer
+                            .ogólneBL.GetDate()
+                            .AddDays(Globalne.CurrentSettings.DaysToAddToBestBeforeDate);
                 }
             }
-            catch (Exception)
-            {
-            }
+            catch (Exception) { }
 
             return Ret;
         }
@@ -729,10 +866,7 @@ namespace G_Mobile_Android_WMS
                 {
                     System.IO.Compression.ZipFile.ExtractToDirectory(InPath, OutPath);
                 }
-                catch (Exception)
-                {
-
-                }
+                catch (Exception) { }
 
                 string[] Files2 = Directory.GetFiles(OutPath);
                 string APKToInstall = "";
@@ -764,8 +898,7 @@ namespace G_Mobile_Android_WMS
             const int HR_ERROR_HANDLE_DISK_FULL = unchecked((int)0x80070027);
             const int HR_ERROR_DISK_FULL = unchecked((int)0x80070070);
 
-            return ex.HResult == HR_ERROR_HANDLE_DISK_FULL
-                || ex.HResult == HR_ERROR_DISK_FULL;
+            return ex.HResult == HR_ERROR_HANDLE_DISK_FULL || ex.HResult == HR_ERROR_DISK_FULL;
         }
 
         public static void LogErrorToFile(Exception ex)
@@ -778,28 +911,51 @@ namespace G_Mobile_Android_WMS
 
             try
             {
-                var Path = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryDocuments);
+                var Path = Android.OS.Environment.GetExternalStoragePublicDirectory(
+                    Android.OS.Environment.DirectoryDocuments
+                );
 
                 if (!Directory.Exists(Path.AbsolutePath))
                     Directory.CreateDirectory(Path.AbsolutePath);
 
-                WifiManager wifiManager = (WifiManager)Application.Context.GetSystemService(Context.WifiService);
+                WifiManager wifiManager = (WifiManager)
+                    Application.Context.GetSystemService(Context.WifiService);
                 string wifiInfo = string.Empty;
                 if (wifiManager != null)
-                    wifiInfo = "LinkSpeed [" + wifiManager?.ConnectionInfo?.LinkSpeed + "]: " + wifiManager?.ConnectionInfo?.Rssi.ToString()
-                            + " dBm, status: " + wifiManager?.WifiState.ToString()
-                            + ", IP: " + DecodeIpAddress(wifiManager.DhcpInfo.IpAddress)
-                            + ", Ping-Pong: " + Globalne.ogólneBL.Ping()
-                            + ", NET_ID: " + wifiManager?.ConnectionInfo.NetworkId;
+                    wifiInfo =
+                        "LinkSpeed ["
+                        + wifiManager?.ConnectionInfo?.LinkSpeed
+                        + "]: "
+                        + wifiManager?.ConnectionInfo?.Rssi.ToString()
+                        + " dBm, status: "
+                        + wifiManager?.WifiState.ToString()
+                        + ", IP: "
+                        + DecodeIpAddress(wifiManager.DhcpInfo.IpAddress)
+                        + ", Ping-Pong: "
+                        + Serwer.ogólneBL.Ping()
+                        + ", NET_ID: "
+                        + wifiManager?.ConnectionInfo.NetworkId;
 
                 FilePath = System.IO.Path.Combine(Path.AbsolutePath, LogFile);
-                EMessage = " === B Ł Ą D === " + System.Environment.NewLine +
-                           " -- " + DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " -- " + System.Environment.NewLine +
-                           ex.Message + System.Environment.NewLine +
-                           wifiInfo + System.Environment.NewLine +
-                           "=================" + System.Environment.NewLine +
-                           ex.StackTrace + System.Environment.NewLine + System.Environment.NewLine + System.Environment.NewLine;
-
+                EMessage =
+                    " === B Ł Ą D === "
+                    + System.Environment.NewLine
+                    + " -- "
+                    + DateTime.Now.ToShortDateString()
+                    + " "
+                    + DateTime.Now.ToLongTimeString()
+                    + " -- "
+                    + System.Environment.NewLine
+                    + ex.Message
+                    + System.Environment.NewLine
+                    + wifiInfo
+                    + System.Environment.NewLine
+                    + "================="
+                    + System.Environment.NewLine
+                    + ex.StackTrace
+                    + System.Environment.NewLine
+                    + System.Environment.NewLine
+                    + System.Environment.NewLine;
 
                 File.AppendAllText(FilePath, EMessage);
                 Android.Util.Log.Error(ErrorTag, ex.Message + "; " + ex.StackTrace);
@@ -818,17 +974,22 @@ namespace G_Mobile_Android_WMS
                 Android.Util.Log.Error(ErrorTag, exz.Message + "; " + exz.StackTrace);
             }
         }
+
         private static string DecodeIpAddress(int ipAddress)
         {
             return $"{(ipAddress & 0xFF)}.{(ipAddress >> 8 & 0xFF)}.{(ipAddress >> 16 & 0xFF)}.{(ipAddress >> 24 & 0xFF)}";
         }
+
         public static string[] GetListOfUngrantedPerms(Activity ctx, string[] PermNames)
         {
             List<string> Out = new List<string>();
 
             foreach (string Perm in PermNames)
             {
-                if (ctx.CheckSelfPermission(Manifest.Permission.ReadPhoneState) != (int)Permission.Granted)
+                if (
+                    ctx.CheckSelfPermission(Manifest.Permission.ReadPhoneState)
+                    != (int)Permission.Granted
+                )
                     Out.Add(Perm);
             }
 
@@ -846,35 +1007,21 @@ namespace G_Mobile_Android_WMS
             }
         }
 
-
         public static void HandleError(Activity ctx, Exception ex, int? Title = null)
         {
             try
             {
                 if (!(ex is BusinessLogicException))
                     LogErrorToFile(ex);
-
-                if (ex.StackTrace.Contains("Hive.Rpc.Client"))
-                {
-                    ServerConnection.CloseConnections();
-                }
-
-                if (!ServerConnection.PingServer())
+                if (!Serwer.PingServer())
                 {
                     int Wynik = -1;
 
-                    try
-                    {
-                        Wynik = ServerConnection.Connect() + ServerConnection.CreateObjects();
-                    }
-                    catch (Exception)
-                    {
-                        Wynik = -1;
-                    }
-
                     if (Wynik == 0)
                     {
-                        Helpers.LogErrorToFile(new Exception("HandleError -> reconnected connection..."));
+                        Helpers.LogErrorToFile(
+                            new Exception("HandleError -> reconnected connection...")
+                        );
 
                         // wyrzucamy informacje o tym ze stracil polaczenie z serwerem
 
@@ -889,13 +1036,14 @@ namespace G_Mobile_Android_WMS
                     }
                     else
                     {
-                        ctx.RunOnUiThread(
-                        async () =>
+                        ctx.RunOnUiThread(async () =>
                         {
-                            await Helpers.AlertAsyncWithConfirm(ctx,
-                                                                Resource.String.global_connectionerror,
-                                                                Resource.Raw.sound_error,
-                                                                Title != null ? (int)Title : Resource.String.global_error);
+                            await Helpers.AlertAsyncWithConfirm(
+                                ctx,
+                                Resource.String.global_connectionerror,
+                                Resource.Raw.sound_error,
+                                Title != null ? (int)Title : Resource.String.global_error
+                            );
                         });
                     }
 
@@ -903,16 +1051,20 @@ namespace G_Mobile_Android_WMS
                 }
                 else
                 {
-                    ctx.RunOnUiThread(
-                    async () =>
+                    ctx.RunOnUiThread(async () =>
                     {
                         Helpers.PlaySound(ctx, Resource.Raw.sound_error);
-                        await UserDialogs.Instance.ConfirmAsync(new ConfirmConfig()
-                                                                .SetOkText(ctx.GetString(Resource.String.global_ok))
-                                                                .SetMessage(ex.Message)
-                                                                .SetTitle(ctx.GetString(Title != null ? (int)Title : Resource.String.global_error)));
+                        await UserDialogs.Instance.ConfirmAsync(
+                            new ConfirmConfig()
+                                .SetOkText(ctx.GetString(Resource.String.global_ok))
+                                .SetMessage(ex.Message)
+                                .SetTitle(
+                                    ctx.GetString(
+                                        Title != null ? (int)Title : Resource.String.global_error
+                                    )
+                                )
+                        );
                     });
-
                 }
             }
             catch (Exception exc)

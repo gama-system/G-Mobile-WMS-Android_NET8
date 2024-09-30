@@ -1,31 +1,37 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+using Acr.UserDialogs;
 using Android.App;
+using Android.Content;
+using Android.Graphics;
+using Android.Graphics.Drawables;
+using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
+using Android.Support.V4.View;
 using Android.Support.V7.App;
-using Android.Views;
-using Android.Widget;
 using Android.Util;
-using System.Collections.Generic;
-using System.Threading;
-using Android.Media;
+using Android.Views;
 using Android.Views.InputMethods;
+using Android.Widget;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
-using Android.Content;
-using Acr.UserDialogs;
-using System.Linq;
-using Android.Graphics;
-using Android.Graphics.Drawables;
-using Android.Support.V4.View;
-using System.Threading.Tasks;
-using System.Runtime.CompilerServices;
+using WMS_DESKTOP_API;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked)]
-    public class ActivityWithScanner : BaseWMSActivity 
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        MainLauncher = false,
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked
+    )]
+    public class ActivityWithScanner : BaseWMSActivity
     {
         private CancellationTokenSource ctts;
 
@@ -35,10 +41,7 @@ namespace G_Mobile_Android_WMS
         public static Enums.DocTypes DocType;
         BarcodeScannerManagerNewland NewlandScanner;
 
-        public List<int> BarcodeOrder = new List<int>()
-        {
-            Enums.BarcodeOrder.Template
-        };
+        public List<int> BarcodeOrder = new List<int>() { Enums.BarcodeOrder.Template };
 
         private bool ScanClearFlag = true;
 
@@ -60,7 +63,7 @@ namespace G_Mobile_Android_WMS
             {
                 NewlandScanner = new BarcodeScannerManagerNewland();
                 NewlandScanner.DataChanged += BarCodeManager_DataChanged;
-                
+
                 Intent intent = new Intent("ACTION_BAR_SCANCFG");
 
                 //intent.PutExtra("EXTRA_SCAN_NOTY_SND", 1);
@@ -110,7 +113,7 @@ namespace G_Mobile_Android_WMS
                 ScanTarget = (TextView)LastTappedView;
                 return;
             }
-            else if((sender as View) == ScanTarget)
+            else if ((sender as View) == ScanTarget)
             {
                 if (ScanTarget != null && ScanTargetColor != null)
                     (sender as View).Background.SetColorFilter(ScanTargetColor);
@@ -129,7 +132,10 @@ namespace G_Mobile_Android_WMS
             }
         }
 
-        protected virtual void OnFocusChangeTargettableTextView(object sender, View.FocusChangeEventArgs e)
+        protected virtual void OnFocusChangeTargettableTextView(
+            object sender,
+            View.FocusChangeEventArgs e
+        )
         {
             if ((sender as View) == ScanTarget && !(sender as View).IsFocused)
             {
@@ -150,10 +156,10 @@ namespace G_Mobile_Android_WMS
         {
             RunIsBusyAction(() =>
             {
-               Intent i = new Intent(this, typeof(ScannerActivity));
+                Intent i = new Intent(this, typeof(ScannerActivity));
                 i.PutExtra(ScannerActivity.Vars.ScanningOrder, BarcodeOrder.ToArray());
 
-               StartActivityForResult(i, (int)Enums.GlobalResultCodes.ScannerActivityResult);
+                StartActivityForResult(i, (int)Enums.GlobalResultCodes.ScannerActivityResult);
             });
         }
 
@@ -165,16 +171,25 @@ namespace G_Mobile_Android_WMS
         protected override void OnStart()
         {
             base.OnStart();
-            
+
             try
             {
                 Button ScanButton = FindViewById<Button>(Resource.Id.scanbutton);
-                
-                if (Globalne.CurrentSettings != null && Globalne.CurrentSettings.EnableCameraCaptureButton)
+
+                if (
+                    Globalne.CurrentSettings != null
+                    && Globalne.CurrentSettings.EnableCameraCaptureButton
+                )
                 {
                     if (ScanButton != null)
                     {
-                        if (!Globalne.HasCamera || (Globalne.DeviceType == Enums.DeviceTypes.Other && Globalne.HasScanner))
+                        if (
+                            !Globalne.HasCamera
+                            || (
+                                Globalne.DeviceType == Enums.DeviceTypes.Other
+                                && Globalne.HasScanner
+                            )
+                        )
                         {
                             ScanButton.Visibility = ViewStates.Gone;
                         }
@@ -198,7 +213,6 @@ namespace G_Mobile_Android_WMS
         {
             if (Globalne.DeviceType == Enums.DeviceTypes.Zebra)
             {
-
                 if ((int)keyCode == 10036)
                 {
                     if (Globalne.Scanner.Error)
@@ -241,12 +255,12 @@ namespace G_Mobile_Android_WMS
             else
                 return true;
         }
-        
+
         protected virtual async void OnScanReceived(object sender, Scanner.DataEventArgs args)
         {
-             if (IsBusy || IsSwitchingActivity)
+            if (IsBusy || IsSwitchingActivity)
                 return;
-            
+
             List<string> Barcodes = new List<string>();
             IList<ScanDataCollection.ScanData> Data = null;
 
@@ -254,7 +268,7 @@ namespace G_Mobile_Android_WMS
                 Data = args.P0.GetScanData();
 
             // dodajemy obsluge skanera Newland, wtedy senderem jest lista string
-            if(args != null && args.P0 == null && sender is List<string>)
+            if (args != null && args.P0 == null && sender is List<string>)
             {
                 Barcodes.Add((sender as List<string>).FirstOrDefault());
             }
@@ -265,14 +279,17 @@ namespace G_Mobile_Android_WMS
                     Barcodes.Add(D.Data);
             }
             // obsluga skanera Newland (dla zachowania kompatybilnosci dalszego kodu ze skanerem Zebra)
-            if (Data == null && sender is List<string>) 
+            if (Data == null && sender is List<string>)
             {
                 Data = new List<ScanDataCollection.ScanData>();
             }
 
             // dla kodow kreskowych powyżej 30 znaków sprawdz czy nie występują znaki specjalne
             // edit: 24.06.2024, sugestia usuwania specjalnych znakow dla firmy SOPP (etykiety IKEA) na => 29
-            if (Globalne.CurrentSettings.BarcodeScanningRemoveSpecialCharacters && Barcodes[0].Length >= 29)
+            if (
+                Globalne.CurrentSettings.BarcodeScanningRemoveSpecialCharacters
+                && Barcodes[0].Length >= 29
+            )
             {
                 string barcodeFixed = "";
                 foreach (var code in Barcodes[0].ToCharArray())
@@ -287,11 +304,13 @@ namespace G_Mobile_Android_WMS
             // kodIkea                        => kod kreskowy (EAN) towaru w WMS
             //"240702135455015791242430280" => 70213545
             //"240702135455015791242430280"   => 70213545
-            if ((Barcodes[0].Length == 29 || Barcodes[0].Length == 27) &&
-                Barcodes[0].StartsWith("240"))
+            if (
+                (Barcodes[0].Length == 29 || Barcodes[0].Length == 27)
+                && Barcodes[0].StartsWith("240")
+            )
             {
                 var kodEan = Barcodes[0].Substring(3, 8);
-                if (Globalne.kodykreskoweBL.WyszukajKodKreskowy(kodEan).Towar != "")
+                if (Serwer.kodyKreskoweBL.WyszukajKodKreskowy(kodEan).Towar != "")
                     Barcodes[0] = kodEan;
             }
             #endregion
@@ -342,19 +361,33 @@ namespace G_Mobile_Android_WMS
                 ctts.Cancel();
                 ctts = new CancellationTokenSource();
 
-                var btnKoniec = LastScanData.Count >= BarcodeOrder.Count - 1 ? GetString(Resource.String.global_end) : GetString(Resource.String.global_skip);
+                var btnKoniec =
+                    LastScanData.Count >= BarcodeOrder.Count - 1
+                        ? GetString(Resource.String.global_end)
+                        : GetString(Resource.String.global_skip);
 
                 // nie pozwala anulowac skanowania kolejnych elementow, wymusza skanowanie, ukrywa przycik "Koniec"
-                btnKoniec = Globalne.CurrentSettings.BarcodeScanningOrderForce ? "" : btnKoniec; 
+                btnKoniec = Globalne.CurrentSettings.BarcodeScanningOrderForce ? "" : btnKoniec;
 
-                bool? Resp = await Helpers.AlertAsyncWithConfirm(this,
-                                                                GetString(Resource.String.global_scanning_now) + " " + Enums.BarcodeOrder.GetBarcodeOrderName(this, BarcodeOrder[LastScanData.Count]),
-                                                                null,
-                                                                GetString(Resource.String.global_youscanned) + " " + LastScanData.Count + " / " + BarcodeOrder.Count(),
-                                                                btnKoniec,
-                                                                null,
-                                                                Resource.Style.AlertDialogCustom, 
-                                                                ctts.Token);
+                bool? Resp = await Helpers.AlertAsyncWithConfirm(
+                    this,
+                    GetString(Resource.String.global_scanning_now)
+                        + " "
+                        + Enums.BarcodeOrder.GetBarcodeOrderName(
+                            this,
+                            BarcodeOrder[LastScanData.Count]
+                        ),
+                    null,
+                    GetString(Resource.String.global_youscanned)
+                        + " "
+                        + LastScanData.Count
+                        + " / "
+                        + BarcodeOrder.Count(),
+                    btnKoniec,
+                    null,
+                    Resource.Style.AlertDialogCustom,
+                    ctts.Token
+                );
 
                 if (Resp == null)
                     return;
@@ -378,15 +411,23 @@ namespace G_Mobile_Android_WMS
             }
         }
 
-        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        protected override void OnActivityResult(
+            int requestCode,
+            [GeneratedEnum] Result resultCode,
+            Intent data
+        )
         {
             base.OnActivityResult(requestCode, resultCode, data);
 
             LastScanData = null;
 
-            if (requestCode == (int)Enums.GlobalResultCodes.ScannerActivityResult && resultCode == Result.Ok)
+            if (
+                requestCode == (int)Enums.GlobalResultCodes.ScannerActivityResult
+                && resultCode == Result.Ok
+            )
             {
-                LastScanData = data.GetStringArrayExtra(ScannerActivity.Results.ScannedCode).ToList();
+                LastScanData = data.GetStringArrayExtra(ScannerActivity.Results.ScannedCode)
+                    .ToList();
 
                 if (ScanTarget != null)
                 {
@@ -397,7 +438,7 @@ namespace G_Mobile_Android_WMS
                     return;
                 }
                 else
-                { 
+                {
                     Task<bool> Res = CheckBeforeAssumingScanningPath(LastScanData);
 
                     if (Res.Result)
@@ -417,7 +458,11 @@ namespace G_Mobile_Android_WMS
                 Helpers.TurnOnScanner();
             }
 
-            if (Globalne.Scanner != null && Globalne.DeviceType == Enums.DeviceTypes.Zebra && Globalne.HasScanner)
+            if (
+                Globalne.Scanner != null
+                && Globalne.DeviceType == Enums.DeviceTypes.Zebra
+                && Globalne.HasScanner
+            )
             {
                 Globalne.Scanner.ScanReceived -= OnScanReceived;
                 Globalne.Scanner.ScanReceived += OnScanReceived;
@@ -433,7 +478,11 @@ namespace G_Mobile_Android_WMS
         {
             base.OnPause();
 
-            if (Globalne.Scanner != null && Globalne.DeviceType == Enums.DeviceTypes.Zebra && Globalne.HasScanner)
+            if (
+                Globalne.Scanner != null
+                && Globalne.DeviceType == Enums.DeviceTypes.Zebra
+                && Globalne.HasScanner
+            )
             {
                 Globalne.Scanner.ScanReceived -= OnScanReceived;
             }
@@ -446,10 +495,14 @@ namespace G_Mobile_Android_WMS
         protected override void OnRestart()
         {
             base.OnRestart();
-            
+
             Helpers.TurnOnScanner();
 
-            if (Globalne.Scanner != null && Globalne.DeviceType == Enums.DeviceTypes.Zebra && Globalne.HasScanner)
+            if (
+                Globalne.Scanner != null
+                && Globalne.DeviceType == Enums.DeviceTypes.Zebra
+                && Globalne.HasScanner
+            )
             {
                 Globalne.Scanner.ScanReceived += OnScanReceived;
             }
@@ -463,7 +516,11 @@ namespace G_Mobile_Android_WMS
         {
             base.OnDestroy();
 
-            if (Globalne.Scanner != null && Globalne.DeviceType == Enums.DeviceTypes.Zebra && Globalne.HasScanner)
+            if (
+                Globalne.Scanner != null
+                && Globalne.DeviceType == Enums.DeviceTypes.Zebra
+                && Globalne.HasScanner
+            )
             {
                 Globalne.Scanner.ScanReceived -= OnScanReceived;
             }
@@ -473,7 +530,9 @@ namespace G_Mobile_Android_WMS
             }
         }
 
-        public override async System.Threading.Tasks.Task RunIsBusyTaskAsync(Func<System.Threading.Tasks.Task> AwaitableTask)
+        public override async System.Threading.Tasks.Task RunIsBusyTaskAsync(
+            Func<System.Threading.Tasks.Task> AwaitableTask
+        )
         {
             if (!await CheckAndSetBusy())
                 return;
@@ -516,4 +575,3 @@ namespace G_Mobile_Android_WMS
         }
     }
 }
-

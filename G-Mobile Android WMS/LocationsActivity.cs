@@ -1,30 +1,35 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
+using Acr.UserDialogs;
 using Android.App;
+using Android.Content;
+using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
-using Android.Views;
-using Android.Widget;
 using Android.Util;
-using System.Collections.Generic;
-using System.Threading;
-using Android.Media;
+using Android.Views;
 using Android.Views.InputMethods;
-
+using Android.Widget;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
-
-using Acr.UserDialogs;
-
-using WMSServerAccess.Model;
-using Android.Content;
-using System.Timers;
-using System.Threading.Tasks;
+using WMS_DESKTOP_API;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, WindowSoftInputMode = Android.Views.SoftInput.AdjustPan | Android.Views.SoftInput.StateHidden)]
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        MainLauncher = false,
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        WindowSoftInputMode = Android.Views.SoftInput.AdjustPan
+            | Android.Views.SoftInput.StateHidden
+    )]
     public class LocationsActivity : ActivityWithScanner
     {
         FloatingActionButton Back;
@@ -101,9 +106,7 @@ namespace G_Mobile_Android_WMS
                 else
                     Task.Run(() => InsertData(false));
             }
-
         }
-
 
         private void GetAndSetControls()
         {
@@ -119,11 +122,11 @@ namespace G_Mobile_Android_WMS
 
             if (IDTowaru < 0)
             {
-                FindViewById<TextView>(Resource.Id.locations_list_header_amount).Visibility = ViewStates.Gone;
+                FindViewById<TextView>(Resource.Id.locations_list_header_amount).Visibility =
+                    ViewStates.Gone;
                 BtnSettings.Visibility = ViewStates.Gone;
                 AmountField.Visibility = ViewStates.Gone;
             }
-
 
             Back.Click += Back_Click;
             Refresh.Click += Refresh_Click;
@@ -143,7 +146,7 @@ namespace G_Mobile_Android_WMS
             Finish();
         }
 
-        async protected override void OnScan(object sender, ElapsedEventArgs e)
+        protected override async void OnScan(object sender, ElapsedEventArgs e)
         {
             base.OnScan(sender, e);
             await RunIsBusyTaskAsync(() => ShowProgressAndDecodeBarcode(LastScanData[0]));
@@ -168,11 +171,20 @@ namespace G_Mobile_Android_WMS
 
         private async Task<int> ParseBarcode(string Data)
         {
-            LokalizacjaVO Kod = Globalne.lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(Data, Globalne.Magazyn.ID, true);
+            LokalizacjaVO Kod = Serwer.lokalizacjaBL.PobierzLokalizacjęWgKoduKreskowego(
+                Data,
+                Globalne.Magazyn.ID,
+                true
+            );
 
             if (Kod.ID < 0)
             {
-                await Helpers.AlertAsyncWithConfirm(this, Resource.String.locations_not_found, Resource.Raw.sound_error, Resource.String.global_alert);
+                await Helpers.AlertAsyncWithConfirm(
+                    this,
+                    Resource.String.locations_not_found,
+                    Resource.Raw.sound_error,
+                    Resource.String.global_alert
+                );
                 return -1;
             }
             else
@@ -203,8 +215,10 @@ namespace G_Mobile_Android_WMS
             {
                 try
                 {
-                    LokalizacjaRowTerminal Selected = (LocationsList.Adapter as LocationsListAdapter)[e.Position];
-                    LokalizacjaVO Lok = Globalne.lokalizacjaBL.PobierzLokalizację(Selected.ID);
+                    LokalizacjaRowTerminal Selected = (
+                        LocationsList.Adapter as LocationsListAdapter
+                    )[e.Position];
+                    LokalizacjaVO Lok = Serwer.lokalizacjaBL.PobierzLokalizację(Selected.ID);
 
                     if (Lok.ID != -1)
                         SelectLocationAndCloseActivity(Lok);
@@ -219,7 +233,13 @@ namespace G_Mobile_Android_WMS
 
         async void ChangeFilter()
         {
-            var Res = await Helpers.AlertAsyncWithPrompt(this, Resource.String.locations_filter, null, FilterText, InputType.Default);
+            var Res = await Helpers.AlertAsyncWithPrompt(
+                this,
+                Resource.String.locations_filter,
+                null,
+                FilterText,
+                InputType.Default
+            );
 
             if (Res.Ok)
             {
@@ -241,12 +261,20 @@ namespace G_Mobile_Android_WMS
 
                 Helpers.ShowProgressDialog(GetString(Resource.String.locations_loading));
 
-                List<LokalizacjaRowTerminal> Lokalizacje = await Task.Factory.StartNew(() => GetData(Bufor));
+                List<LokalizacjaRowTerminal> Lokalizacje = await Task.Factory.StartNew(
+                    () => GetData(Bufor)
+                );
 
                 RunOnUiThread(() =>
                 {
                     LocationsList.Adapter = new LocationsListAdapter(this, Lokalizacje, IDTowaru);
-                    Helpers.SetTextOnTextView(this, ItemCount, GetString(Resource.String.global_liczba_pozycji) + " " + LocationsList.Adapter.Count.ToString());
+                    Helpers.SetTextOnTextView(
+                        this,
+                        ItemCount,
+                        GetString(Resource.String.global_liczba_pozycji)
+                            + " "
+                            + LocationsList.Adapter.Count.ToString()
+                    );
                 });
 
                 Helpers.HideProgressDialog();
@@ -268,20 +296,21 @@ namespace G_Mobile_Android_WMS
 
         private List<LokalizacjaRowTerminal> GetData(bool Bufor)
         {
-            List<LokalizacjaRowTerminal> Lokalizacje = Globalne.lokalizacjaBL.
-                PobierzListęDostępnychLokalizacjiZeStanemWedług(IDDokumentu,
-                                                                IDMagazynu,
-                                                                IDTowaru,
-                                                                IDFunkcjiLogistycznej,
-                                                                IDPartii,
-                                                                IDPalety,
-                                                                Globalne.CurrentUserSettings.DisplayUnit,
-                                                                IDKontrahenta,
-                                                                FilterText,
-                                                                Bufor,
-                                                                Rozchód,
-                                                                true);
-
+            List<LokalizacjaRowTerminal> Lokalizacje =
+                Serwer.lokalizacjaBL.PobierzListęDostępnychLokalizacjiZeStanemWedług(
+                    IDDokumentu,
+                    IDMagazynu,
+                    IDTowaru,
+                    IDFunkcjiLogistycznej,
+                    IDPartii,
+                    IDPalety,
+                    Globalne.CurrentUserSettings.DisplayUnit,
+                    IDKontrahenta,
+                    FilterText,
+                    Bufor,
+                    Rozchód,
+                    true
+                );
 
             return Lokalizacje;
         }
@@ -299,7 +328,8 @@ namespace G_Mobile_Android_WMS
         readonly Activity Ctx;
         readonly int ArticleID;
 
-        public LocationsListAdapter(Activity Ctx, List<LokalizacjaRowTerminal> Items, int ArticleID) : base()
+        public LocationsListAdapter(Activity Ctx, List<LokalizacjaRowTerminal> Items, int ArticleID)
+            : base()
         {
             this.Ctx = Ctx;
             this.Items = Items;
@@ -310,6 +340,7 @@ namespace G_Mobile_Android_WMS
         {
             return position;
         }
+
         public override LokalizacjaRowTerminal this[int position]
         {
             get { return Items[position]; }
@@ -318,6 +349,7 @@ namespace G_Mobile_Android_WMS
         {
             get { return Items.Count; }
         }
+
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
             var Lokalizacja = Items[position];
@@ -326,20 +358,35 @@ namespace G_Mobile_Android_WMS
             if (view == null)
                 view = Ctx.LayoutInflater.Inflate(Resource.Layout.list_item_locations, null);
 
-            view.FindViewById<TextView>(Resource.Id.locations_list_locationname).Text = Lokalizacja.strNazwa;
-            view.FindViewById<TextView>(Resource.Id.locations_list_warehouse).Text = Lokalizacja.strNazwaMagazynu;
+            view.FindViewById<TextView>(Resource.Id.locations_list_locationname).Text =
+                Lokalizacja.strNazwa;
+            view.FindViewById<TextView>(Resource.Id.locations_list_warehouse).Text =
+                Lokalizacja.strNazwaMagazynu;
 
             if (ArticleID < 0)
-                view.FindViewById<TextView>(Resource.Id.locations_list_amount).Visibility = ViewStates.Gone;
+                view.FindViewById<TextView>(Resource.Id.locations_list_amount).Visibility =
+                    ViewStates.Gone;
             else
-                view.FindViewById<TextView>(Resource.Id.locations_list_amount).Text = Lokalizacja.Zapas.ToString() + "(" + Lokalizacja.strNazwaJednostki.ToString() + ")";
+                view.FindViewById<TextView>(Resource.Id.locations_list_amount).Text =
+                    Lokalizacja.Zapas.ToString()
+                    + "("
+                    + Lokalizacja.strNazwaJednostki.ToString()
+                    + ")";
 
-            view.FindViewById<LinearLayout>(Resource.Id.locations_list_item).SetBackgroundColor(Lokalizacja.Bufor ? Android.Graphics.Color.Aquamarine : Android.Graphics.Color.White);
-            view.FindViewById<TextView>(Resource.Id.locations_list_status).SetBackgroundColor(Lokalizacja.Pełna ? Android.Graphics.Color.Yellow : Android.Graphics.Color.DarkGreen);
+            view.FindViewById<LinearLayout>(Resource.Id.locations_list_item)
+                .SetBackgroundColor(
+                    Lokalizacja.Bufor
+                        ? Android.Graphics.Color.Aquamarine
+                        : Android.Graphics.Color.White
+                );
+            view.FindViewById<TextView>(Resource.Id.locations_list_status)
+                .SetBackgroundColor(
+                    Lokalizacja.Pełna
+                        ? Android.Graphics.Color.Yellow
+                        : Android.Graphics.Color.DarkGreen
+                );
 
             return view;
         }
-
     }
 }
-

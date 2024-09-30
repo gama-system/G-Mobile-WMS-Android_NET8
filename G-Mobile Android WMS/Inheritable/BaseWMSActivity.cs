@@ -1,34 +1,37 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Android.App;
+using Android.Content;
+using Android.Content.PM;
+using Android.Content.Res;
+using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
-using Android.Views;
-using Android.Widget;
 using Android.Util;
-using System.Collections.Generic;
-using System.Threading;
-using Android.Media;
+using Android.Views;
 using Android.Views.InputMethods;
-using Xamarin.Essentials;
+using Android.Widget;
+using Plugin.DeviceInfo;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
-using System.Threading.Tasks;
-using Android.Content;
-using Android.Content.PM;
-using Android.Content.Res;
-using Plugin.DeviceInfo;
+using WMS_DESKTOP_API;
+using Xamarin.Essentials;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = false, ScreenOrientation=ScreenOrientation.Locked)]
-    
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        MainLauncher = false,
+        ScreenOrientation = ScreenOrientation.Locked
+    )]
     public class BaseWMSActivity : AppCompatActivity
     {
-        public bool IsBusy { 
-            get;
-            set; }
+        public bool IsBusy { get; set; }
         public bool IsSwitchingActivity { get; set; }
         public int TimesBusy { get; set; }
 
@@ -51,29 +54,34 @@ namespace G_Mobile_Android_WMS
             {
                 try
                 {
-                    if (!Globalne.operatorBL.SprawdźZalogowanieNaUrządzeniu(Globalne.Operator.ID, CrossDeviceInfo.Current.Id.ToString()))
+                    if (
+                        !Serwer.operatorBL.SprawdźZalogowanieNaUrządzeniu(
+                            Globalne.Operator.ID,
+                            CrossDeviceInfo.Current.Id.ToString()
+                        )
+                    )
                     {
-
                         IsSwitchingActivity = true;
                         Globalne.Operator = null;
                         Globalne.Magazyn = null;
                         Helpers.PlaySound(this, Resource.Raw.sound_alert);
 
-                        Helpers.CenteredToast(GetString(Resource.String.global_logged_out), ToastLength.Long);
+                        Helpers.CenteredToast(
+                            GetString(Resource.String.global_logged_out),
+                            ToastLength.Long
+                        );
 
                         StartActivity(typeof(UsersActivity));
                         this.Finish();
                     }
                 }
-                catch (Exception)
-                {
-
-                }
+                catch (Exception) { }
             }
 
             base.OnCreate(savedInstanceState);
             Acr.UserDialogs.UserDialogs.Init(this);
         }
+
         //protected override void OnDestroy()
         //{
         //    this.Window.CloseAllPanels();
@@ -90,7 +98,10 @@ namespace G_Mobile_Android_WMS
             Helpers.EnableNavigationBar(this);
         }
 
-        private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+        private void TaskScheduler_UnobservedTaskException(
+            object sender,
+            UnobservedTaskExceptionEventArgs e
+        )
         {
             Helpers.HandleError(this, e.Exception);
             Helpers.EnableNavigationBar(this);
@@ -98,7 +109,11 @@ namespace G_Mobile_Android_WMS
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Helpers.HandleError(this, e.ExceptionObject as Exception, Resource.String.unhandled_exception);
+            Helpers.HandleError(
+                this,
+                e.ExceptionObject as Exception,
+                Resource.String.unhandled_exception
+            );
             Helpers.EnableNavigationBar(this);
         }
 
@@ -124,7 +139,7 @@ namespace G_Mobile_Android_WMS
             {
                 await Task.Delay(Globalne.TaskDelay);
                 bool Resp = true; // await Helpers.QuestionAlertAsync(this, Resource.String.global_busy, Resource.Raw.sound_error);
-                
+
                 if (!Resp)
                     return false;
 
@@ -191,7 +206,11 @@ namespace G_Mobile_Android_WMS
             }
         }
 
-        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        protected override void OnActivityResult(
+            int requestCode,
+            [GeneratedEnum] Result resultCode,
+            Intent data
+        )
         {
             IsSwitchingActivity = false;
 
@@ -211,9 +230,17 @@ namespace G_Mobile_Android_WMS
                 return base.OnKeyDown(keyCode, e);
         }
 
-        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
+        public override void OnRequestPermissionsResult(
+            int requestCode,
+            string[] permissions,
+            [GeneratedEnum] Android.Content.PM.Permission[] grantResults
+        )
         {
-            Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            Xamarin.Essentials.Platform.OnRequestPermissionsResult(
+                requestCode,
+                permissions,
+                grantResults
+            );
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
@@ -221,11 +248,11 @@ namespace G_Mobile_Android_WMS
         {
             if (this.CurrentFocus != null)
             {
-                InputMethodManager imm = (InputMethodManager)this.BaseContext.GetSystemService(Android.Content.Context.InputMethodService);
+                InputMethodManager imm = (InputMethodManager)
+                    this.BaseContext.GetSystemService(Android.Content.Context.InputMethodService);
                 imm.HideSoftInputFromWindow(this.CurrentFocus.WindowToken, 0);
             }
             return base.DispatchTouchEvent(ev);
         }
     }
 }
-

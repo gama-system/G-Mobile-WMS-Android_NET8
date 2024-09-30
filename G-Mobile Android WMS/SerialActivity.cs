@@ -1,31 +1,38 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
+using Acr.UserDialogs;
 using Android.App;
+using Android.Content;
+using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
-using Android.Views;
-using Android.Widget;
 using Android.Util;
-using System.Collections.Generic;
-using System.Threading;
-using Android.Media;
+using Android.Views;
 using Android.Views.InputMethods;
-
+using Android.Widget;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
-
-using Acr.UserDialogs;
-
-using WMSServerAccess.Model;
-using Android.Content;
-using System.Timers;
-using System.Threading.Tasks;
-using System.Linq;
+using WMS_DESKTOP_API;
+using WMS_DESKTOP_API;
+using WMS_DESKTOP_API;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, WindowSoftInputMode = Android.Views.SoftInput.AdjustPan | Android.Views.SoftInput.StateHidden)]
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        MainLauncher = false,
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        WindowSoftInputMode = Android.Views.SoftInput.AdjustPan
+            | Android.Views.SoftInput.StateHidden
+    )]
     public class SerialActivity : ActivityWithScanner
     {
         FloatingActionButton Back;
@@ -35,7 +42,6 @@ namespace G_Mobile_Android_WMS
         FloatingActionButton BtnSettings;
         TextView ItemCount;
         TextView AmountField;
-
 
         int IDTowaru = -1;
         int IDLokalizacji = -1;
@@ -73,7 +79,6 @@ namespace G_Mobile_Android_WMS
             AskOnStart = Intent.GetBooleanExtra(Vars.AskOnStart, false);
             bool Bufor = Intent.GetBooleanExtra(Vars.Bufor, false);
 
-   
             GetAndSetControls();
 
             if (Bufor)
@@ -90,9 +95,7 @@ namespace G_Mobile_Android_WMS
                 else
                     Task.Run(() => InsertData());
             }
-            
         }
-
 
         private void GetAndSetControls()
         {
@@ -127,7 +130,7 @@ namespace G_Mobile_Android_WMS
             Finish();
         }
 
-        async protected override void OnScan(object sender, ElapsedEventArgs e)
+        protected override async void OnScan(object sender, ElapsedEventArgs e)
         {
             base.OnScan(sender, e);
             await RunIsBusyTaskAsync(() => ShowProgressAndDecodeBarcode(LastScanData[0]));
@@ -152,10 +155,15 @@ namespace G_Mobile_Android_WMS
 
         private async Task<int> ParseBarcode(string Data)
         {
-            NumerSeryjnyO numerSeryjny = Globalne.numerSeryjnyBL.PobierzNumerSeryjny(-1, Data);
+            NumerSeryjnyO numerSeryjny = Serwer.numerySeryjneBL.PobierzNumerSeryjny(-1, Data);
             if (numerSeryjny.ID < 0)
             {
-                await Helpers.AlertAsyncWithConfirm(this, Resource.String.serial_not_found, Resource.Raw.sound_error, Resource.String.global_alert);
+                await Helpers.AlertAsyncWithConfirm(
+                    this,
+                    Resource.String.serial_not_found,
+                    Resource.Raw.sound_error,
+                    Resource.String.global_alert
+                );
                 return -1;
             }
             else
@@ -190,7 +198,6 @@ namespace G_Mobile_Android_WMS
 
                     if (Selected.ID != -1)
                         SelectSerialAndCloseActivity(Selected);
-
                 }
                 catch (Exception ex)
                 {
@@ -202,7 +209,13 @@ namespace G_Mobile_Android_WMS
 
         async void ChangeFilter()
         {
-            var Res = await Helpers.AlertAsyncWithPrompt(this, Resource.String.serial_filter, null, FilterText, InputType.Default);
+            var Res = await Helpers.AlertAsyncWithPrompt(
+                this,
+                Resource.String.serial_filter,
+                null,
+                FilterText,
+                InputType.Default
+            );
 
             if (Res.Ok)
             {
@@ -229,7 +242,13 @@ namespace G_Mobile_Android_WMS
                 RunOnUiThread(() =>
                 {
                     serialList.Adapter = new SerialListAdapter(this, serial, IDTowaru);
-                    Helpers.SetTextOnTextView(this, ItemCount, GetString(Resource.String.global_liczba_pozycji) + " " + serialList.Adapter.Count.ToString());
+                    Helpers.SetTextOnTextView(
+                        this,
+                        ItemCount,
+                        GetString(Resource.String.global_liczba_pozycji)
+                            + " "
+                            + serialList.Adapter.Count.ToString()
+                    );
                 });
 
                 Helpers.HideProgressDialog();
@@ -251,11 +270,19 @@ namespace G_Mobile_Android_WMS
 
         private List<NumerSeryjnyO> GetData()
         {
-            List<NumerSeryjnyO> numery = Globalne.numerSeryjnyBL.PobierzListeNumerowSeryjychNaLokalizacjiDlaDanegoTowaru(IDTowaru,IDLokalizacji);
+            List<NumerSeryjnyO> numery =
+                Serwer.numerySeryjneBL.PobierzListeNumerowSeryjychNaLokalizacjiDlaDanegoTowaru(
+                    IDTowaru,
+                    IDLokalizacji
+                );
 
             return numery;
         }
-        public IEnumerable<TSource> DistinctBy<TSource, TKey>(IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+
+        public IEnumerable<TSource> DistinctBy<TSource, TKey>(
+            IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector
+        )
         {
             HashSet<TKey> seenKeys = new HashSet<TKey>();
             foreach (TSource element in source)
@@ -266,6 +293,7 @@ namespace G_Mobile_Android_WMS
                 }
             }
         }
+
         private void Back_Click(object sender, EventArgs e)
         {
             SetResult(Result.Canceled);
@@ -279,7 +307,8 @@ namespace G_Mobile_Android_WMS
         readonly Activity Ctx;
         readonly int ArticleID;
 
-        public SerialListAdapter(Activity Ctx, List<NumerSeryjnyO> Items, int ArticleID) : base()
+        public SerialListAdapter(Activity Ctx, List<NumerSeryjnyO> Items, int ArticleID)
+            : base()
         {
             this.Ctx = Ctx;
             this.Items = Items;
@@ -290,6 +319,7 @@ namespace G_Mobile_Android_WMS
         {
             return position;
         }
+
         public override NumerSeryjnyO this[int position]
         {
             get { return Items[position]; }
@@ -298,20 +328,18 @@ namespace G_Mobile_Android_WMS
         {
             get { return Items.Count; }
         }
+
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
-             var data= Items[position];
+            var data = Items[position];
 
             View view = convertView;
             if (view == null)
                 view = Ctx.LayoutInflater.Inflate(Resource.Layout.list_item_serial, null);
 
-            view.FindViewById<TextView>(Resource.Id.serial_list_name).Text =data.strKod ;
+            view.FindViewById<TextView>(Resource.Id.serial_list_name).Text = data.strKod;
 
-          
             return view;
         }
-
     }
 }
-

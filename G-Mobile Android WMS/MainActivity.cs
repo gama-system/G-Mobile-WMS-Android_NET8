@@ -10,11 +10,20 @@ using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Widget;
 using Java.Nio.Channels;
+using WMS_DESKTOP_API;
+using WMS_Model.ModeleDanych;
 using static Android.Views.View;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, WindowSoftInputMode = Android.Views.SoftInput.AdjustNothing | Android.Views.SoftInput.StateHidden)]
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        MainLauncher = false,
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        WindowSoftInputMode = Android.Views.SoftInput.AdjustNothing
+            | Android.Views.SoftInput.StateHidden
+    )]
     public class MainActivity : BaseWMSActivity
     {
         FloatingActionButton BtnStart;
@@ -49,7 +58,11 @@ namespace G_Mobile_Android_WMS
             Helpers.SetActivityHeader(this, GetString(Resource.String.main_activity_name));
 
             TxWersja = FindViewById<TextView>(Resource.Id.TextWersja);
-            Helpers.SetTextOnTextView(this, TxWersja, GetString(Resource.String.main_activity_wersja) + " " + Globalne.AppVer);
+            Helpers.SetTextOnTextView(
+                this,
+                TxWersja,
+                GetString(Resource.String.main_activity_wersja) + " " + Globalne.AppVer
+            );
 
             BtnZamknij = FindViewById<FloatingActionButton>(Resource.Id.BtnZamknij);
             BtnZamknij.Click += BtnZamknij_Click;
@@ -65,10 +78,12 @@ namespace G_Mobile_Android_WMS
             if (Globalne.Logo != null)
                 Logo.SetImageBitmap(Globalne.Logo);
 
-
-            if (!ServerConnection.Connected)
+            if (!Serwer.Connected)
             {
-                Android.Content.Res.ColorStateList CS1 = new Android.Content.Res.ColorStateList(new int[][] { new int[0] }, new int[] { Color.ParseColor("#000000") });  
+                Android.Content.Res.ColorStateList CS1 = new Android.Content.Res.ColorStateList(
+                    new int[][] { new int[0] },
+                    new int[] { Color.ParseColor("#000000") }
+                );
                 BtnStart.BackgroundTintList = CS1;
                 BtnStart.Enabled = false;
             }
@@ -76,8 +91,7 @@ namespace G_Mobile_Android_WMS
             {
                 if (Globalne.Logo == null)
                 {
-#warning HiveInvoke
-                    WMSServerAccess.Model.FirmaO Firma = (WMSServerAccess.Model.FirmaO)Helpers.HiveInvoke(typeof(WMSServerAccess.Podmiot.PodmiotBL), "PobierzFirmę", new object[] { 1 });
+                    FirmaO Firma = Serwer.podmiotBL.PobierzFirmę(1);
 
                     if (Globalne.Logo == null && Firma.Logo != null)
                     {
@@ -87,63 +101,86 @@ namespace G_Mobile_Android_WMS
                         {
                             Bitmap bmp = BitmapFactory.DecodeByteArray(bytes, 0, bytes.Length);
 
-                            Logo.Measure(MeasureSpec.MakeMeasureSpec(0, Android.Views.MeasureSpecMode.Unspecified), MeasureSpec.MakeMeasureSpec(0, Android.Views.MeasureSpecMode.Unspecified));
-                            Globalne.Logo = Bitmap.CreateScaledBitmap(bmp, Logo.MeasuredWidth, Logo.MeasuredHeight, true);
+                            Logo.Measure(
+                                MeasureSpec.MakeMeasureSpec(
+                                    0,
+                                    Android.Views.MeasureSpecMode.Unspecified
+                                ),
+                                MeasureSpec.MakeMeasureSpec(
+                                    0,
+                                    Android.Views.MeasureSpecMode.Unspecified
+                                )
+                            );
+                            Globalne.Logo = Bitmap.CreateScaledBitmap(
+                                bmp,
+                                Logo.MeasuredWidth,
+                                Logo.MeasuredHeight,
+                                true
+                            );
                             Logo.SetImageBitmap(Globalne.Logo);
                         }
                     }
                 }
-
             }
-            
         }
 
         private void BtnStart_Click(object sender, EventArgs e)
         {
-            RunIsBusyAction(() => Helpers.SwitchAndFinishCurrentActivity(this, typeof(UsersActivity)));
+            RunIsBusyAction(
+                () => Helpers.SwitchAndFinishCurrentActivity(this, typeof(UsersActivity))
+            );
         }
 
         private void BtnInfo_Click(object sender, EventArgs e)
         {
-            RunIsBusyAction(() => Helpers.SwitchAndFinishCurrentActivity(this, typeof(InfoActivity)));
+            RunIsBusyAction(
+                () => Helpers.SwitchAndFinishCurrentActivity(this, typeof(InfoActivity))
+            );
         }
 
         async Task AskAboutClosingAndClose()
         {
-            await Task.Delay(Globalne.TaskDelay);
-
-            var Odp = await Helpers.QuestionAlertAsync(this,
-                                                       Resource.String.main_activity_wyjściezprogramu_message,
-                                                       Resource.Raw.sound_alert,
-                                                       Resource.String.main_activity_wyjściezprogramu_title);
-
-            if (Odp)
-            {
-                try
-                {
-                    Helpers.EnableNavigationBar(this);
-
-                    this.FinishAffinity();
-
-                    if (ServerConnection.Connected)
-                        Globalne.client.Release();
+            //TODO: DOSTOSOWAĆ DO API
 
 
-                    if (Globalne.Scanner != null)
-                    {
-                        Globalne.Scanner.Disable();
-                        Globalne.Scanner.Dispose();
-                    }
-                }
-                catch (Exception)
-                {
-                }
-            }
+            //await Task.Delay(Globalne.TaskDelay);
+
+            //var Odp = await Helpers.QuestionAlertAsync(this,
+            //                                           Resource.String.main_activity_wyjściezprogramu_message,
+            //                                           Resource.Raw.sound_alert,
+            //                                           Resource.String.main_activity_wyjściezprogramu_title);
+
+            //if (Odp)
+            //{
+            //    try
+            //    {
+            //        Helpers.EnableNavigationBar(this);
+
+            //        this.FinishAffinity();
+
+            //        if (ServerConnection.Connected)
+            //            Globalne.client.Release();
+
+
+            //        if (Globalne.Scanner != null)
+            //        {
+            //            Globalne.Scanner.Disable();
+            //            Globalne.Scanner.Dispose();
+            //        }
+            //    }
+            //    catch (Exception)
+            //    {
+            //    }
+            //}
         }
 
         async void BtnZamknij_Click(object sender, EventArgs e)
         {
-            if (Globalne.CurrentSettings != null && Globalne.CurrentSettings.CheckCanCloseApp && ServerConnection.Connected)
+            if (
+                Globalne.CurrentSettings != null
+                && Globalne.CurrentSettings.CheckCanCloseApp
+                && Serwer.Connected
+            )
             {
                 if (IsSwitchingActivity)
                     return;
@@ -151,15 +188,24 @@ namespace G_Mobile_Android_WMS
                 IsSwitchingActivity = true;
 
                 Intent i = new Intent(this, typeof(UsersActivity));
-                i.PutExtra(UsersActivity.Vars.Mode, (int)UsersActivity.UsersActivityModes.IsAllowedToCloseApplication);
+                i.PutExtra(
+                    UsersActivity.Vars.Mode,
+                    (int)UsersActivity.UsersActivityModes.IsAllowedToCloseApplication
+                );
 
-                RunOnUiThread(() => StartActivityForResult(i, (int)ResultCodes.CanQuitApplicationResult));
+                RunOnUiThread(
+                    () => StartActivityForResult(i, (int)ResultCodes.CanQuitApplicationResult)
+                );
             }
             else
                 await RunIsBusyTaskAsync(() => AskAboutClosingAndClose());
         }
 
-        async protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        protected override async void OnActivityResult(
+            int requestCode,
+            [GeneratedEnum] Result resultCode,
+            Intent data
+        )
         {
             IsSwitchingActivity = false;
 
@@ -167,8 +213,6 @@ namespace G_Mobile_Android_WMS
 
             if (requestCode == (int)ResultCodes.CanQuitApplicationResult && resultCode == Result.Ok)
                 await RunIsBusyTaskAsync(() => AskAboutClosingAndClose());
-
         }
     }
 }
-

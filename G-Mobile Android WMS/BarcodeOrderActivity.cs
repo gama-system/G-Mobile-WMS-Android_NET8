@@ -1,27 +1,32 @@
-﻿using Acr.UserDialogs;
-using Android.App;
-using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Widget;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Linq;
-
-using WMSServerAccess.Model;
-using Android.Content;
-using Android.Runtime;
-using Android.Views;
-using System.Timers;
-using System.Threading.Tasks;
-using System.Reflection;
-using G_Mobile_Android_WMS.ExtendedModel;
 using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
+using Acr.UserDialogs;
+using Android.App;
+using Android.Content;
+using Android.OS;
+using Android.Runtime;
+using Android.Support.Design.Widget;
+using Android.Views;
+using Android.Widget;
+using G_Mobile_Android_WMS.ExtendedModel;
+using WMS_DESKTOP_API;
+using WMS_DESKTOP_API;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, MainLauncher = false)]
-
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        MainLauncher = false
+    )]
     public class BarcodeOrderActivity : BaseWMSActivity
     {
         ListView ListView;
@@ -68,11 +73,13 @@ namespace G_Mobile_Android_WMS
         {
             Dictionary<string, int> Options = GetOptionsList();
 
-            string Res = await UserDialogs.Instance.ActionSheetAsync(GetString(Resource.String.barcodesettings_target),
-                                                                     GetString(Resource.String.global_cancel),
-                                                                     "",
-                                                                     null,
-                                                                     Options.Keys.ToArray());
+            string Res = await UserDialogs.Instance.ActionSheetAsync(
+                GetString(Resource.String.barcodesettings_target),
+                GetString(Resource.String.global_cancel),
+                "",
+                null,
+                Options.Keys.ToArray()
+            );
 
             if (Res == GetString(Resource.String.global_cancel))
                 return;
@@ -85,7 +92,7 @@ namespace G_Mobile_Android_WMS
 
         private Dictionary<string, int> GetOptionsList()
         {
-            Dictionary<string, int> Options = new Dictionary<string,int>();
+            Dictionary<string, int> Options = new Dictionary<string, int>();
             int i = -1;
 
             Options[GetString(Resource.String.barcodeorder_remove)] = Int32.MinValue;
@@ -109,11 +116,13 @@ namespace G_Mobile_Android_WMS
             int S = (ListView.Adapter as BarcodeOrderActivityAdapter)[e.Position];
             Dictionary<string, int> Options = GetOptionsList();
 
-            string Res = await UserDialogs.Instance.ActionSheetAsync(GetString(Resource.String.barcodesettings_target),
-                                                                     GetString(Resource.String.global_cancel),
-                                                                     "",
-                                                                     null,
-                                                                     Options.Keys.ToArray());
+            string Res = await UserDialogs.Instance.ActionSheetAsync(
+                GetString(Resource.String.barcodesettings_target),
+                GetString(Resource.String.global_cancel),
+                "",
+                null,
+                Options.Keys.ToArray()
+            );
 
             if (Res == GetString(Resource.String.global_cancel))
                 return;
@@ -139,7 +148,10 @@ namespace G_Mobile_Android_WMS
         private void OK_Click(object sender, EventArgs e)
         {
             Intent i = new Intent();
-            i.PutExtra(Results.Order, Helpers.SerializeJSON((ListView.Adapter as BarcodeOrderActivityAdapter).Items));
+            i.PutExtra(
+                Results.Order,
+                Helpers.SerializeJSON((ListView.Adapter as BarcodeOrderActivityAdapter).Items)
+            );
             i.PutExtra(Results.DocType, DocType);
 
             SetResult(Result.Ok, i);
@@ -151,7 +163,8 @@ namespace G_Mobile_Android_WMS
             public List<int> Items;
             readonly BarcodeOrderActivity Ctx;
 
-            public BarcodeOrderActivityAdapter(BarcodeOrderActivity Ctx, List<int> Items) : base()
+            public BarcodeOrderActivityAdapter(BarcodeOrderActivity Ctx, List<int> Items)
+                : base()
             {
                 this.Ctx = Ctx;
                 this.Items = Items;
@@ -161,6 +174,7 @@ namespace G_Mobile_Android_WMS
             {
                 return position;
             }
+
             public override int this[int position]
             {
                 get { return Items[position]; }
@@ -170,7 +184,6 @@ namespace G_Mobile_Android_WMS
                 get { return Items.Count; }
             }
 
-
             public override View GetView(int position, View convertView, ViewGroup parent)
             {
                 var Pos = Items[position];
@@ -179,7 +192,8 @@ namespace G_Mobile_Android_WMS
                 if (view == null)
                     view = Ctx.LayoutInflater.Inflate(Resource.Layout.list_item_barcode, null);
 
-                view.FindViewById<TextView>(Resource.Id.barcode_list_settingA).Text = Enums.BarcodeOrder.GetBarcodeOrderName(Ctx, (int)Pos);
+                view.FindViewById<TextView>(Resource.Id.barcode_list_settingA).Text =
+                    Enums.BarcodeOrder.GetBarcodeOrderName(Ctx, (int)Pos);
                 view.FindViewById<TextView>(Resource.Id.barcode_list_settingB).Text = "";
 
                 return view;
@@ -187,4 +201,3 @@ namespace G_Mobile_Android_WMS
         }
     }
 }
-

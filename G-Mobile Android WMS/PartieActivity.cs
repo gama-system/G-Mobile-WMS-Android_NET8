@@ -1,30 +1,35 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Timers;
+using Acr.UserDialogs;
 using Android.App;
+using Android.Content;
+using Android.Media;
 using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V7.App;
-using Android.Views;
-using Android.Widget;
 using Android.Util;
-using System.Collections.Generic;
-using System.Threading;
-using Android.Media;
+using Android.Views;
 using Android.Views.InputMethods;
-
+using Android.Widget;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
-
-using Acr.UserDialogs;
-
-using WMSServerAccess.Model;
-using Android.Content;
-using System.Timers;
-using System.Threading.Tasks;
+using WMS_DESKTOP_API;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, WindowSoftInputMode = Android.Views.SoftInput.AdjustPan | Android.Views.SoftInput.StateHidden)]
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        MainLauncher = false,
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        WindowSoftInputMode = Android.Views.SoftInput.AdjustPan
+            | Android.Views.SoftInput.StateHidden
+    )]
     public class PartieActivity : ActivityWithScanner
     {
         FloatingActionButton Back;
@@ -100,9 +105,7 @@ namespace G_Mobile_Android_WMS
                 else
                     Task.Run(() => InsertData());
             }
-            
         }
-
 
         private void GetAndSetControls()
         {
@@ -137,7 +140,7 @@ namespace G_Mobile_Android_WMS
             Finish();
         }
 
-        async protected override void OnScan(object sender, ElapsedEventArgs e)
+        protected override async void OnScan(object sender, ElapsedEventArgs e)
         {
             base.OnScan(sender, e);
             await RunIsBusyTaskAsync(() => ShowProgressAndDecodeBarcode(LastScanData[0]));
@@ -162,11 +165,16 @@ namespace G_Mobile_Android_WMS
 
         private async Task<int> ParseBarcode(string Data)
         {
-            PartiaO Kod = Globalne.partiaBL.PobierzPartię(-1, Data);
+            PartiaO Kod = Serwer.partiaBL.PobierzPartię(-1, Data);
 
             if (Kod.ID < 0)
             {
-                await Helpers.AlertAsyncWithConfirm(this, Resource.String.partie_not_found, Resource.Raw.sound_error, Resource.String.global_alert);
+                await Helpers.AlertAsyncWithConfirm(
+                    this,
+                    Resource.String.partie_not_found,
+                    Resource.Raw.sound_error,
+                    Resource.String.global_alert
+                );
                 return -1;
             }
             else
@@ -197,8 +205,10 @@ namespace G_Mobile_Android_WMS
             {
                 try
                 {
-                    PartiaRowTerminal Selected = (PartieList.Adapter as PartieListAdapter)[e.Position];
-                    PartiaO Par = Globalne.partiaBL.PobierzPartię(Selected.ID, "");
+                    PartiaRowTerminal Selected = (PartieList.Adapter as PartieListAdapter)[
+                        e.Position
+                    ];
+                    PartiaO Par = Serwer.partiaBL.PobierzPartię(Selected.ID, "");
 
                     if (Par.ID != -1)
                         SelectPartiaAndCloseActivity(Par);
@@ -213,7 +223,13 @@ namespace G_Mobile_Android_WMS
 
         async void ChangeFilter()
         {
-            var Res = await Helpers.AlertAsyncWithPrompt(this, Resource.String.partie_filter, null, FilterText, InputType.Default);
+            var Res = await Helpers.AlertAsyncWithPrompt(
+                this,
+                Resource.String.partie_filter,
+                null,
+                FilterText,
+                InputType.Default
+            );
 
             if (Res.Ok)
             {
@@ -240,7 +256,13 @@ namespace G_Mobile_Android_WMS
                 RunOnUiThread(() =>
                 {
                     PartieList.Adapter = new PartieListAdapter(this, Lokalizacje, IDTowaru);
-                    Helpers.SetTextOnTextView(this, ItemCount, GetString(Resource.String.global_liczba_pozycji) + " " + PartieList.Adapter.Count.ToString());
+                    Helpers.SetTextOnTextView(
+                        this,
+                        ItemCount,
+                        GetString(Resource.String.global_liczba_pozycji)
+                            + " "
+                            + PartieList.Adapter.Count.ToString()
+                    );
                 });
 
                 Helpers.HideProgressDialog();
@@ -262,18 +284,20 @@ namespace G_Mobile_Android_WMS
 
         private List<PartiaRowTerminal> GetData()
         {
-            List<PartiaRowTerminal> Lokalizacje = Globalne.partiaBL.PobierzListęDostępnychPartiiZeStanemWedług(IDMagazynu,
-                                                                                                                    IDTowaru,
-                                                                                                                    IDFunkcjiLogistycznej,
-                                                                                                                    IDLokalizacji,
-                                                                                                                    IDPalety,
-                                                                                                                    Globalne.CurrentUserSettings.DisplayUnit,
-                                                                                                                    IDKontrahenta,
-                                                                                                                    IDDokumentu,
-                                                                                                                    FilterText,
-                                                                                                                    Rozchód,
-                                                                                                                    "");
-
+            List<PartiaRowTerminal> Lokalizacje =
+                Serwer.partiaBL.PobierzListęDostępnychPartiiZeStanemWedług(
+                    IDMagazynu,
+                    IDTowaru,
+                    IDFunkcjiLogistycznej,
+                    IDLokalizacji,
+                    IDPalety,
+                    Globalne.CurrentUserSettings.DisplayUnit,
+                    IDKontrahenta,
+                    IDDokumentu,
+                    FilterText,
+                    Rozchód,
+                    ""
+                );
 
             return Lokalizacje;
         }
@@ -291,7 +315,8 @@ namespace G_Mobile_Android_WMS
         readonly Activity Ctx;
         readonly int ArticleID;
 
-        public PartieListAdapter(Activity Ctx, List<PartiaRowTerminal> Items, int ArticleID) : base()
+        public PartieListAdapter(Activity Ctx, List<PartiaRowTerminal> Items, int ArticleID)
+            : base()
         {
             this.Ctx = Ctx;
             this.Items = Items;
@@ -302,6 +327,7 @@ namespace G_Mobile_Android_WMS
         {
             return position;
         }
+
         public override PartiaRowTerminal this[int position]
         {
             get { return Items[position]; }
@@ -310,6 +336,7 @@ namespace G_Mobile_Android_WMS
         {
             get { return Items.Count; }
         }
+
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
             var Partia = Items[position];
@@ -321,13 +348,13 @@ namespace G_Mobile_Android_WMS
             view.FindViewById<TextView>(Resource.Id.partie_list_name).Text = Partia.strNazwa;
 
             if (ArticleID < 0)
-                view.FindViewById<TextView>(Resource.Id.partie_list_amount).Visibility = ViewStates.Invisible;
+                view.FindViewById<TextView>(Resource.Id.partie_list_amount).Visibility =
+                    ViewStates.Invisible;
             else
-                view.FindViewById<TextView>(Resource.Id.partie_list_amount).Text = Partia.Zapas.ToString() + "(" + Partia.strNazwaJednostki.ToString() + ")";
+                view.FindViewById<TextView>(Resource.Id.partie_list_amount).Text =
+                    Partia.Zapas.ToString() + "(" + Partia.strNazwaJednostki.ToString() + ")";
 
             return view;
         }
-
     }
 }
-

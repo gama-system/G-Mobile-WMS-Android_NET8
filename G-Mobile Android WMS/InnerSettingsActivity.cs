@@ -1,23 +1,31 @@
-﻿using Acr.UserDialogs;
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Support.Design.Widget;
-using Android.Widget;
-using G_Mobile_Android_WMS.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using G_Mobile_Android_WMS.ExtendedModel;
-using WMSServerAccess.Model;
 using System.Threading.Tasks;
+using Acr.UserDialogs;
+using Android.App;
+using Android.Content;
+using Android.OS;
 using Android.Runtime;
+using Android.Support.Design.Widget;
+using Android.Widget;
+using G_Mobile_Android_WMS.Controls;
+using G_Mobile_Android_WMS.ExtendedModel;
 using Newtonsoft.Json;
+using WMS_DESKTOP_API;
+using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = false, ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked, WindowSoftInputMode = Android.Views.SoftInput.AdjustPan | Android.Views.SoftInput.StateHidden)]
+    [Activity(
+        Label = "@string/app_name",
+        Theme = "@style/AppTheme.NoActionBar",
+        MainLauncher = false,
+        ScreenOrientation = Android.Content.PM.ScreenOrientation.Locked,
+        WindowSoftInputMode = Android.Views.SoftInput.AdjustPan
+            | Android.Views.SoftInput.StateHidden
+    )]
     public class InnerSettingsActivity : BaseWMSActivity
     {
         CheckBox CheckCanCloseApp;
@@ -58,7 +66,6 @@ namespace G_Mobile_Android_WMS
         CheckBox PositionConfirmOnlyByLocationRW;
         CheckBox PositionConfirmOnlyByLocationPW;
         CheckBox PositionConfirmOnlyByLocationZL;
-
 
         CheckBox SkipPositionConfirmPW;
         CheckBox SkipPositionConfirmRW;
@@ -106,38 +113,55 @@ namespace G_Mobile_Android_WMS
 
         private void GetAndSetControls()
         {
-
-            Helpers.SetActivityHeader(this, GetString(Resource.String.settings_inner_activity_name));
+            Helpers.SetActivityHeader(
+                this,
+                GetString(Resource.String.settings_inner_activity_name)
+            );
 
             CheckCanCloseApp = FindViewById<CheckBox>(Resource.Id.settings_can_close_app_global);
             DisableEditPallete = FindViewById<CheckBox>(Resource.Id.disable_edit_sscc);
-            OnlyOncePalleteOnDocument = FindViewById<CheckBox>(Resource.Id.only_one_SSCC_on_document);
-
+            OnlyOncePalleteOnDocument = FindViewById<CheckBox>(
+                Resource.Id.only_one_SSCC_on_document
+            );
 
             CanBarcodeLogin = FindViewById<CheckBox>(Resource.Id.settings_barcodelogin);
             InventAutoClose = FindViewById<CheckBox>(Resource.Id.settings_autoclose_one_invent);
             RefreshFrequency = FindViewById<NumericUpDown>(Resource.Id.settings_refresh_frequency);
-            Days_Back_Documents = FindViewById<NumericUpDown>(Resource.Id.settings_days_back_to_display);
+            Days_Back_Documents = FindViewById<NumericUpDown>(
+                Resource.Id.settings_days_back_to_display
+            );
             UseProdDate = FindViewById<CheckBox>(Resource.Id.settings_proddate);
             ProdDateOffset = FindViewById<NumericUpDown>(Resource.Id.settings_proddate_days);
             UseBestBefore = FindViewById<CheckBox>(Resource.Id.settings_bestbeforedate);
             GetDataFromSSCC = FindViewById<CheckBox>(Resource.Id.settings_getfromsscc);
-            BestBeforeOffset = FindViewById<NumericUpDown>(Resource.Id.settings_bestbeforedate_days);
+            BestBeforeOffset = FindViewById<NumericUpDown>(
+                Resource.Id.settings_bestbeforedate_days
+            );
             AutoDetal = FindViewById<CheckBox>(Resource.Id.settings_AutoDetal);
             SetRejestrForDetal = FindViewById<EditText>(Resource.Id.settings_SetRejestrForDetal);
             SetContrahForDetal = FindViewById<EditText>(Resource.Id.settings_SetContrahForDetal);
 
-            BarcodeScannerOrderForce = FindViewById<CheckBox>(Resource.Id.settings_barcode_order_force);
+            BarcodeScannerOrderForce = FindViewById<CheckBox>(
+                Resource.Id.settings_barcode_order_force
+            );
 
             QuickMM = FindViewById<CheckBox>(Resource.Id.settings_QuickMM);
             SetRejestrForMM = FindViewById<EditText>(Resource.Id.settings_SetRejestrForMM);
             SetMagazineForMM = FindViewById<EditText>(Resource.Id.settings_SetMagazineForMM);
 
-            DisableNavigationBar = FindViewById<CheckBox>(Resource.Id.settings_disable_navigationbar);
-            EnableCameraCaptureButton = FindViewById<CheckBox>(Resource.Id.settings_enable_cameracapture);
+            DisableNavigationBar = FindViewById<CheckBox>(
+                Resource.Id.settings_disable_navigationbar
+            );
+            EnableCameraCaptureButton = FindViewById<CheckBox>(
+                Resource.Id.settings_enable_cameracapture
+            );
             AllowLocationSourceChange = FindViewById<CheckBox>(Resource.Id.settings_locationChange);
-            DisableHandLocationsChange = FindViewById<CheckBox>(Resource.Id.settings_disableHandLocationsChange);
-            LocationPositionsSuggestedZL = FindViewById<CheckBox>(Resource.Id.settings_location_suggested_ZL);
+            DisableHandLocationsChange = FindViewById<CheckBox>(
+                Resource.Id.settings_disableHandLocationsChange
+            );
+            LocationPositionsSuggestedZL = FindViewById<CheckBox>(
+                Resource.Id.settings_location_suggested_ZL
+            );
 
             PositionConfirmOnlyByLocationPW = FindViewById<CheckBox>(Resource.Id.doc_pw);
             PositionConfirmOnlyByLocationRW = FindViewById<CheckBox>(Resource.Id.doc_rw);
@@ -148,27 +172,54 @@ namespace G_Mobile_Android_WMS
             SkipPositionConfirmPZ = FindViewById<CheckBox>(Resource.Id.tow_skip_pz);
             SkipPositionConfirmWZ = FindViewById<CheckBox>(Resource.Id.tow_skip_wz);
 
-            NumericSetForDocPW = FindViewById<NumericUpDown>(Resource.Id.settings_set_value_on_doc_pw);
-            NumericSetForDocRW = FindViewById<NumericUpDown>(Resource.Id.settings_set_value_on_doc_rw);
-            NumericSetForDocWZ = FindViewById<NumericUpDown>(Resource.Id.settings_set_value_on_doc_wz);
-            NumericSetForDocPZ = FindViewById<NumericUpDown>(Resource.Id.settings_set_value_on_doc_pz);
-            NumericSetForDocZL = FindViewById<NumericUpDown>(Resource.Id.settings_set_value_on_doc_zl);
+            NumericSetForDocPW = FindViewById<NumericUpDown>(
+                Resource.Id.settings_set_value_on_doc_pw
+            );
+            NumericSetForDocRW = FindViewById<NumericUpDown>(
+                Resource.Id.settings_set_value_on_doc_rw
+            );
+            NumericSetForDocWZ = FindViewById<NumericUpDown>(
+                Resource.Id.settings_set_value_on_doc_wz
+            );
+            NumericSetForDocPZ = FindViewById<NumericUpDown>(
+                Resource.Id.settings_set_value_on_doc_pz
+            );
+            NumericSetForDocZL = FindViewById<NumericUpDown>(
+                Resource.Id.settings_set_value_on_doc_zl
+            );
 
-            NumericSetForOrderDocWZ = FindViewById<NumericUpDown>(Resource.Id.settings_set_value_on_order_doc_wz);
-            NumericSetForOrderDocPZ = FindViewById<NumericUpDown>(Resource.Id.settings_set_value_on_order_doc_pz);
-            NumericSetForOrderDocRW = FindViewById<NumericUpDown>(Resource.Id.settings_set_value_on_order_doc_rw);
-            NumericSetForOrderDocPW = FindViewById<NumericUpDown>(Resource.Id.settings_set_value_on_order_doc_pw);
-            NumericSetForOrderDocZL = FindViewById<NumericUpDown>(Resource.Id.settings_set_value_on_order_doc_zl);
+            NumericSetForOrderDocWZ = FindViewById<NumericUpDown>(
+                Resource.Id.settings_set_value_on_order_doc_wz
+            );
+            NumericSetForOrderDocPZ = FindViewById<NumericUpDown>(
+                Resource.Id.settings_set_value_on_order_doc_pz
+            );
+            NumericSetForOrderDocRW = FindViewById<NumericUpDown>(
+                Resource.Id.settings_set_value_on_order_doc_rw
+            );
+            NumericSetForOrderDocPW = FindViewById<NumericUpDown>(
+                Resource.Id.settings_set_value_on_order_doc_pw
+            );
+            NumericSetForOrderDocZL = FindViewById<NumericUpDown>(
+                Resource.Id.settings_set_value_on_order_doc_zl
+            );
 
             Multipicking = FindViewById<CheckBox>(Resource.Id.allow_multipicking);
             MultipConfirmOut = FindViewById<CheckBox>(Resource.Id.multipicking_confirmoutloc);
-            MultipStatusCloseWZ = FindViewById<CheckBox>(Resource.Id.multipicking_set_status_close_after_finish);
-            MultipAutoKompletacjaAfterFinish = FindViewById<CheckBox>(Resource.Id.multipicking_auto_kompletacja_after_finish);
+            MultipStatusCloseWZ = FindViewById<CheckBox>(
+                Resource.Id.multipicking_set_status_close_after_finish
+            );
+            MultipAutoKompletacjaAfterFinish = FindViewById<CheckBox>(
+                Resource.Id.multipicking_auto_kompletacja_after_finish
+            );
             MultipConfirmArt = FindViewById<CheckBox>(Resource.Id.multipicking_confirmart);
             MultipConfirmIn = FindViewById<CheckBox>(Resource.Id.multipicking_confirminloc);
-            MultipDelayBeforeClose = FindViewById<NumericUpDown>(Resource.Id.settings_multipicking_closedelay);
-            MultipDocSelection = FindViewById<CheckBox>(Resource.Id.multipicking_document_selection);
-
+            MultipDelayBeforeClose = FindViewById<NumericUpDown>(
+                Resource.Id.settings_multipicking_closedelay
+            );
+            MultipDocSelection = FindViewById<CheckBox>(
+                Resource.Id.multipicking_document_selection
+            );
 
             // Kompatybilność z 5.0
             Days_Back_Documents.Initialize();
@@ -197,20 +248,24 @@ namespace G_Mobile_Android_WMS
             FindViewById<Button>(Resource.Id.settings_requiredfields).Click += RequiredFields_Click;
             FindViewById<Button>(Resource.Id.settings_statuses_exit).Click += Statuses_Exit_Click;
             FindViewById<Button>(Resource.Id.settings_codes).Click += CodeParsin_Click;
-            FindViewById<Button>(Resource.Id.settings_statuses_finish).Click += Statuses_Finish_Click;
-            FindViewById<Button>(Resource.Id.settings_statuses_incomplete).Click += Statuses_Incomplete_Click;
+            FindViewById<Button>(Resource.Id.settings_statuses_finish).Click +=
+                Statuses_Finish_Click;
+            FindViewById<Button>(Resource.Id.settings_statuses_incomplete).Click +=
+                Statuses_Incomplete_Click;
             FindViewById<Button>(Resource.Id.settings_statuses_enter).Click += Statuses_Enter_Click;
             FindViewById<Button>(Resource.Id.settings_statuses_pause).Click += Statuses_Pause_Click;
             FindViewById<Button>(Resource.Id.settings_statuses_done).Click += Statuses_Done_Click;
-            FindViewById<Button>(Resource.Id.settings_items_requiredfields).Click += RequiredFields_Items_Click;
+            FindViewById<Button>(Resource.Id.settings_items_requiredfields).Click +=
+                RequiredFields_Items_Click;
             FindViewById<Button>(Resource.Id.settings_barcode_order).Click += BarcodeOrderClick;
-            FindViewById<Button>(Resource.Id.settings_instantscan).Click += InstantScanModules_Click;
+            FindViewById<Button>(Resource.Id.settings_instantscan).Click +=
+                InstantScanModules_Click;
 
             RefreshFrequency.DecimalSpaces = 0;
             Days_Back_Documents.DecimalSpaces = 0;
             Days_Back_Documents.Min = 0;
-           // SetContrahForDetal = 
-           // SetRejestrForDetal =
+            // SetContrahForDetal =
+            // SetRejestrForDetal =
             BestBeforeOffset.DecimalSpaces = 0;
             BestBeforeOffset.Min = Int16.MinValue;
             BestBeforeOffset.Max = Int16.MaxValue;
@@ -220,7 +275,6 @@ namespace G_Mobile_Android_WMS
             MultipDelayBeforeClose.DecimalSpaces = 0;
             MultipDelayBeforeClose.Min = 0;
             MultipDelayBeforeClose.Max = 60000;
-
 
             NumericSetForDocPW.Max = 1;
             NumericSetForDocPW.Min = -1;
@@ -262,12 +316,14 @@ namespace G_Mobile_Android_WMS
             NumericSetForOrderDocZL.Min = -1;
             NumericSetForOrderDocZL.DecimalSpaces = 0;
 
-
             SetupBasedOnCurrentSettings();
 
-            FindViewById<FloatingActionButton>(Resource.Id.SettingsInnerBtnPrev).Click += SettingsBtnPrev_Click;
-            FindViewById<FloatingActionButton>(Resource.Id.SettingsInnerBtnSave).Click += SettingsBtnExport_Click;
-            FindViewById<FloatingActionButton>(Resource.Id.SettingsInnerBtnDefault).Click += SettingsBtnDefault_ClickAsync;
+            FindViewById<FloatingActionButton>(Resource.Id.SettingsInnerBtnPrev).Click +=
+                SettingsBtnPrev_Click;
+            FindViewById<FloatingActionButton>(Resource.Id.SettingsInnerBtnSave).Click +=
+                SettingsBtnExport_Click;
+            FindViewById<FloatingActionButton>(Resource.Id.SettingsInnerBtnDefault).Click +=
+                SettingsBtnDefault_ClickAsync;
         }
 
         private async void BarcodeOrderClick(object sender, EventArgs e)
@@ -283,19 +339,19 @@ namespace G_Mobile_Android_WMS
                 ResDict[Description] = Type;
             }
 
-
-            string Res = await UserDialogs.Instance.ActionSheetAsync(GetString(Resource.String.settings_select_module),
-                                                                     GetString(Resource.String.global_cancel),
-                                                                     "",
-                                                                     null,
-                                                                     Types.ToArray());
+            string Res = await UserDialogs.Instance.ActionSheetAsync(
+                GetString(Resource.String.settings_select_module),
+                GetString(Resource.String.global_cancel),
+                "",
+                null,
+                Types.ToArray()
+            );
 
             if (Res == GetString(Resource.String.global_cancel))
                 return;
             else
             {
                 List<int> SettingDict = Edited.BarcodeScanningOrder[ResDict[Res]];
-
 
                 if (IsSwitchingActivity)
                     return;
@@ -307,10 +363,8 @@ namespace G_Mobile_Android_WMS
                 i.PutExtra(BarcodeOrderActivity.Vars.DocType, (int)ResDict[Res]);
 
                 StartActivityForResult(i, (int)ResultCodes.BarcodeOrderResult);
-
             }
         }
-
 
         private async void RequiredFields_Items_Click(object sender, EventArgs e)
         {
@@ -325,30 +379,34 @@ namespace G_Mobile_Android_WMS
                 ResDict[Description] = Type;
             }
 
-
-            string Res = await UserDialogs.Instance.ActionSheetAsync(GetString(Resource.String.settings_select_module),
-                                                                     GetString(Resource.String.global_cancel),
-                                                                     "",
-                                                                     null,
-                                                                     Types.ToArray());
+            string Res = await UserDialogs.Instance.ActionSheetAsync(
+                GetString(Resource.String.settings_select_module),
+                GetString(Resource.String.global_cancel),
+                "",
+                null,
+                Types.ToArray()
+            );
 
             if (Res == GetString(Resource.String.global_cancel))
                 return;
             else
             {
-
                 Dictionary<string, bool> Dict = new Dictionary<string, bool>();
 
-                Dictionary<Enums.DocumentItemFields, bool> SettingDict = Edited.RequiredDocItemFields[ResDict[Res]];
-
+                Dictionary<Enums.DocumentItemFields, bool> SettingDict =
+                    Edited.RequiredDocItemFields[ResDict[Res]];
 
                 foreach (Enums.DocumentItemFields Key in SettingDict.Keys)
                     Dict[Helpers.GetEnumDescription(Key)] = SettingDict[Key];
 
-
-                Helpers.OpenMultiListActivity(this, Res, GetString(Resource.String.settings_requiredfields) + " " + Res, Dict, (int)ResultCodes.RequiredDocItemItemsResult);
+                Helpers.OpenMultiListActivity(
+                    this,
+                    Res,
+                    GetString(Resource.String.settings_requiredfields) + " " + Res,
+                    Dict,
+                    (int)ResultCodes.RequiredDocItemItemsResult
+                );
                 return;
-
             }
         }
 
@@ -360,16 +418,21 @@ namespace G_Mobile_Android_WMS
             IsSwitchingActivity = true;
 
             Intent i = new Intent(this, typeof(BarcodeSettingsActivity));
-            i.PutExtra(BarcodeSettingsActivity.Vars.Settings, Helpers.SerializeJSON(Edited.CodeParsing));
+            i.PutExtra(
+                BarcodeSettingsActivity.Vars.Settings,
+                Helpers.SerializeJSON(Edited.CodeParsing)
+            );
 
             StartActivityForResult(i, (int)ResultCodes.BarcodeSettingsResult);
         }
 
         private async void SettingsBtnDefault_ClickAsync(object sender, EventArgs e)
         {
-            bool Resp = await Helpers.QuestionAlertAsync(this,
-                                                         Resource.String.settings_do_default,
-                                                         Resource.Raw.sound_message);
+            bool Resp = await Helpers.QuestionAlertAsync(
+                this,
+                Resource.String.settings_do_default,
+                Resource.Raw.sound_message
+            );
 
             if (Resp)
             {
@@ -411,9 +474,11 @@ namespace G_Mobile_Android_WMS
 
         private async void SettingsBtnExport_Click(object sender, EventArgs e)
         {
-            bool Resp = await Helpers.QuestionAlertAsync(this,
-                                 Resource.String.settings_do_export,
-                                 Resource.Raw.sound_message);
+            bool Resp = await Helpers.QuestionAlertAsync(
+                this,
+                Resource.String.settings_do_export,
+                Resource.Raw.sound_message
+            );
 
             int Ret = 0;
 
@@ -427,7 +492,10 @@ namespace G_Mobile_Android_WMS
 
                     if (Ret == 0)
                     {
-                        Helpers.CenteredToast(GetString(Resource.String.settings_exported), ToastLength.Long);
+                        Helpers.CenteredToast(
+                            GetString(Resource.String.settings_exported),
+                            ToastLength.Long
+                        );
                         Helpers.SwitchAndFinishCurrentActivity(this, typeof(SettingsActivity));
                     }
                 });
@@ -459,7 +527,8 @@ namespace G_Mobile_Android_WMS
                 Edited.InventAutoClose = InventAutoClose.Checked;
                 Edited.Multipicking = Multipicking.Checked;
                 Edited.MultipickingSetStatusClose = MultipStatusCloseWZ.Checked;
-                Edited.MultipickingAutoKompletacjaAfterFinish = MultipAutoKompletacjaAfterFinish.Checked;
+                Edited.MultipickingAutoKompletacjaAfterFinish =
+                    MultipAutoKompletacjaAfterFinish.Checked;
                 Edited.AllowSourceLocationChange = AllowLocationSourceChange.Checked;
                 Edited.DisableHandLocationsChange = DisableHandLocationsChange.Checked;
                 Edited.LocationPositionsSuggestedZL = LocationPositionsSuggestedZL.Checked;
@@ -481,7 +550,6 @@ namespace G_Mobile_Android_WMS
                 Edited.DefaultValueOnDocPZ = (int)NumericSetForDocPZ.Value;
                 Edited.DefaultValueOnDocZL = (int)NumericSetForDocZL.Value;
 
-
                 Edited.DefaultValueOnOrderDocRW = (int)NumericSetForOrderDocRW.Value;
                 Edited.DefaultValueOnOrderDocWZ = (int)NumericSetForOrderDocWZ.Value;
                 Edited.DefaultValueOnOrderDocPW = (int)NumericSetForOrderDocPW.Value;
@@ -495,8 +563,11 @@ namespace G_Mobile_Android_WMS
                 Edited.MultipickingConfirmOutLocation = MultipConfirmOut.Checked;
                 Edited.MultipickingSelectDocuments = MultipDocSelection.Checked;
                 Edited.MultipickingDelayBeforeClose = (int)MultipDelayBeforeClose.Value;
-				
-                Globalne.menuBL.ZapiszUstawienie((int)Enums.Ustawienia.KonfiguracjaAndroid, Encryption.AESEncrypt(Helpers.SerializeJSON(Edited)));
+
+                Serwer.menuBL.ZapiszUstawienie(
+                    (int)Enums.Ustawienia.KonfiguracjaAndroid,
+                    Encryption.AESEncrypt(Helpers.SerializeJSON(Edited))
+                );
                 Globalne.CurrentSettings = Edited;
 
                 return 0;
@@ -508,7 +579,11 @@ namespace G_Mobile_Android_WMS
             }
         }
 
-        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        protected override void OnActivityResult(
+            int requestCode,
+            [GeneratedEnum] Result resultCode,
+            Intent data
+        )
         {
             base.OnActivityResult(requestCode, resultCode, data);
 
@@ -516,20 +591,43 @@ namespace G_Mobile_Android_WMS
             {
                 if (requestCode == (int)ResultCodes.BarcodeSettingsResult)
                 {
-                    Dictionary<string, string> RDict = (Dictionary<string, string>)Helpers.DeserializePassedJSON(data, BarcodeSettingsActivity.Results.Settings, typeof(Dictionary<string, string>));
+                    Dictionary<string, string> RDict =
+                        (Dictionary<string, string>)
+                            Helpers.DeserializePassedJSON(
+                                data,
+                                BarcodeSettingsActivity.Results.Settings,
+                                typeof(Dictionary<string, string>)
+                            );
                     Edited.CodeParsing = RDict;
                 }
                 else if (requestCode == (int)ResultCodes.BarcodeOrderResult)
                 {
-                    List<int> Dict = (List<int>)Helpers.DeserializePassedJSON(data, BarcodeOrderActivity.Results.Order, typeof(List<int>));
-                    Enums.DocTypes DocType = (Enums.DocTypes)data.GetIntExtra(BarcodeOrderActivity.Results.DocType, (int)Enums.DocTypes.Error);
+                    List<int> Dict =
+                        (List<int>)
+                            Helpers.DeserializePassedJSON(
+                                data,
+                                BarcodeOrderActivity.Results.Order,
+                                typeof(List<int>)
+                            );
+                    Enums.DocTypes DocType = (Enums.DocTypes)
+                        data.GetIntExtra(
+                            BarcodeOrderActivity.Results.DocType,
+                            (int)Enums.DocTypes.Error
+                        );
                     Edited.BarcodeScanningOrder[DocType] = Dict;
                 }
                 else
                 {
-                    Dictionary<string, bool> Dict = (Dictionary<string, bool>)Helpers.DeserializePassedJSON(data, MultiSelectListActivity.Results.CheckedItems, typeof(Dictionary<string, bool>));
+                    Dictionary<string, bool> Dict =
+                        (Dictionary<string, bool>)
+                            Helpers.DeserializePassedJSON(
+                                data,
+                                MultiSelectListActivity.Results.CheckedItems,
+                                typeof(Dictionary<string, bool>)
+                            );
 
-                    Dictionary<string, Enums.DocTypes> DocTypesDict = new Dictionary<string, Enums.DocTypes>();
+                    Dictionary<string, Enums.DocTypes> DocTypesDict =
+                        new Dictionary<string, Enums.DocTypes>();
 
                     foreach (Enums.DocTypes d in Enum.GetValues(typeof(Enums.DocTypes)))
                         DocTypesDict[Helpers.GetEnumDescription(d)] = d;
@@ -546,95 +644,124 @@ namespace G_Mobile_Android_WMS
                     switch (requestCode)
                     {
                         case (int)ResultCodes.InstantScanListResult:
+                        {
+                            Dictionary<string, Enums.DocTypes> ModulesDict =
+                                new Dictionary<string, Enums.DocTypes>();
+
+                            foreach (Enums.DocTypes Key in Edited.Modules.Keys)
+                                ModulesDict[Helpers.GetEnumDescription(Key)] = Key;
+
+                            foreach (string Key in Dict.Keys)
                             {
-                                Dictionary<string, Enums.DocTypes> ModulesDict = new Dictionary<string, Enums.DocTypes>();
-
-                                foreach (Enums.DocTypes Key in Edited.Modules.Keys)
-                                    ModulesDict[Helpers.GetEnumDescription(Key)] = Key;
-
-                                foreach (string Key in Dict.Keys)
-                                {
-                                    if (ModulesDict.ContainsKey(Key))
-                                        Edited.InstantScanning[ModulesDict[Key]] = Dict[Key];
-                                }
-
-                                break;
+                                if (ModulesDict.ContainsKey(Key))
+                                    Edited.InstantScanning[ModulesDict[Key]] = Dict[Key];
                             }
+
+                            break;
+                        }
                         case (int)ResultCodes.ModulesListResult:
+                        {
+                            Dictionary<string, Enums.Modules> ModulesDict =
+                                new Dictionary<string, Enums.Modules>();
+
+                            foreach (Enums.Modules Key in Edited.Modules.Keys)
+                                ModulesDict[Helpers.GetEnumDescription(Key)] = Key;
+
+                            foreach (string Key in Dict.Keys)
                             {
-                                Dictionary<string, Enums.Modules> ModulesDict = new Dictionary<string, Enums.Modules>();
-
-                                foreach (Enums.Modules Key in Edited.Modules.Keys)
-                                    ModulesDict[Helpers.GetEnumDescription(Key)] = Key;
-
-                                foreach (string Key in Dict.Keys)
-                                {
-                                    if (ModulesDict.ContainsKey(Key))
-                                        Edited.Modules[ModulesDict[Key]] = Dict[Key];
-                                }
-
-                                break;
+                                if (ModulesDict.ContainsKey(Key))
+                                    Edited.Modules[ModulesDict[Key]] = Dict[Key];
                             }
+
+                            break;
+                        }
                         case (int)ResultCodes.RequiredDocItemsResult:
+                        {
+                            Dictionary<string, Enums.DocumentFields> RespDict =
+                                new Dictionary<string, Enums.DocumentFields>();
+
+                            foreach (
+                                Enums.DocumentFields Key in Edited
+                                    .CreatingDocumentsRequiredFields[SelectedDocType]
+                                    .Keys
+                            )
+                                RespDict[Helpers.GetEnumDescription(Key)] = Key;
+
+                            foreach (string Key in Dict.Keys)
                             {
-                                Dictionary<string, Enums.DocumentFields> RespDict = new Dictionary<string, Enums.DocumentFields>();
-
-                                foreach (Enums.DocumentFields Key in Edited.CreatingDocumentsRequiredFields[SelectedDocType].Keys)
-                                    RespDict[Helpers.GetEnumDescription(Key)] = Key;
-
-                                foreach (string Key in Dict.Keys)
-                                {
-                                    if (RespDict.ContainsKey(Key))
-                                        Edited.CreatingDocumentsRequiredFields[SelectedDocType][RespDict[Key]] = Dict[Key];
-                                }
-
-                                break;
+                                if (RespDict.ContainsKey(Key))
+                                    Edited.CreatingDocumentsRequiredFields[SelectedDocType][
+                                        RespDict[Key]
+                                    ] = Dict[Key];
                             }
+
+                            break;
+                        }
                         case (int)ResultCodes.RequiredDocItemItemsResult:
+                        {
+                            Dictionary<string, Enums.DocumentItemFields> RespDict =
+                                new Dictionary<string, Enums.DocumentItemFields>();
+
+                            foreach (
+                                Enums.DocumentItemFields Key in Edited
+                                    .RequiredDocItemFields[SelectedDocType]
+                                    .Keys
+                            )
+                                RespDict[Helpers.GetEnumDescription(Key)] = Key;
+
+                            foreach (string Key in Dict.Keys)
                             {
-                                Dictionary<string, Enums.DocumentItemFields> RespDict = new Dictionary<string, Enums.DocumentItemFields>();
-
-                                foreach (Enums.DocumentItemFields Key in Edited.RequiredDocItemFields[SelectedDocType].Keys)
-                                    RespDict[Helpers.GetEnumDescription(Key)] = Key;
-
-                                foreach (string Key in Dict.Keys)
-                                {
-                                    if (RespDict.ContainsKey(Key))
-                                        Edited.RequiredDocItemFields[SelectedDocType][RespDict[Key]] = Dict[Key];
-                                }
-
-                                break;
+                                if (RespDict.ContainsKey(Key))
+                                    Edited.RequiredDocItemFields[SelectedDocType][RespDict[Key]] =
+                                        Dict[Key];
                             }
+
+                            break;
+                        }
                         case (int)ResultCodes.ShowOnEditingDocumentsListResult:
+                        {
+                            Dictionary<string, Enums.EditingDocumentsListDisplayElements> RespDict =
+                                new Dictionary<string, Enums.EditingDocumentsListDisplayElements>();
+
+                            foreach (
+                                Enums.EditingDocumentsListDisplayElements Key in Edited
+                                    .EditingDocumentsListDisplayElementsListsINNNR[SelectedDocType]
+                                    .Keys
+                            )
+                                RespDict[Helpers.GetEnumDescription(Key)] = Key;
+
+                            foreach (string Key in Dict.Keys)
                             {
-                                Dictionary<string, Enums.EditingDocumentsListDisplayElements> RespDict = new Dictionary<string, Enums.EditingDocumentsListDisplayElements>();
-
-                                foreach (Enums.EditingDocumentsListDisplayElements Key in Edited.EditingDocumentsListDisplayElementsListsINNNR[SelectedDocType].Keys)
-                                    RespDict[Helpers.GetEnumDescription(Key)] = Key;
-
-                                foreach (string Key in Dict.Keys)
-                                {
-                                    if (RespDict.ContainsKey(Key))
-                                        Edited.EditingDocumentsListDisplayElementsListsINNNR[SelectedDocType][RespDict[Key]] = Dict[Key];
-                                }
-
-                                break;
+                                if (RespDict.ContainsKey(Key))
+                                    Edited.EditingDocumentsListDisplayElementsListsINNNR[
+                                        SelectedDocType
+                                    ][RespDict[Key]] = Dict[Key];
                             }
+
+                            break;
+                        }
                         case (int)ResultCodes.ShowOnItemScreenResult:
+                        {
+                            Dictionary<string, Enums.DocumentItemDisplayElements> RespDict =
+                                new Dictionary<string, Enums.DocumentItemDisplayElements>();
+
+                            foreach (
+                                Enums.DocumentItemDisplayElements Key in Edited
+                                    .EditingDocumentItemDisplayElementsListsKAT[SelectedDocType]
+                                    .Keys
+                            )
+                                RespDict[Helpers.GetEnumDescription(Key)] = Key;
+
+                            foreach (string Key in Dict.Keys)
                             {
-                                Dictionary<string, Enums.DocumentItemDisplayElements> RespDict = new Dictionary<string, Enums.DocumentItemDisplayElements>();
-
-                                foreach (Enums.DocumentItemDisplayElements Key in Edited.EditingDocumentItemDisplayElementsListsKAT[SelectedDocType].Keys)
-                                    RespDict[Helpers.GetEnumDescription(Key)] = Key;
-
-                                foreach (string Key in Dict.Keys)
-                                {
-                                    if (RespDict.ContainsKey(Key))
-                                        Edited.EditingDocumentItemDisplayElementsListsKAT[SelectedDocType][RespDict[Key]] = Dict[Key];
-                                }
-
-                                break;
+                                if (RespDict.ContainsKey(Key))
+                                    Edited.EditingDocumentItemDisplayElementsListsKAT[
+                                        SelectedDocType
+                                    ][RespDict[Key]] = Dict[Key];
                             }
+
+                            break;
+                        }
                     }
                 }
             }
@@ -646,12 +773,24 @@ namespace G_Mobile_Android_WMS
 
             switch (DictType)
             {
-                case "Enter": DictToUse = Edited.StatusesToSetOnDocumentEnter; break;
-                case "Leave": DictToUse = Edited.StatusesToSetOnDocumentLeave; break;
-                case "Pause": DictToUse = Edited.StatusesToSetOnDocumentPause; break;
-                case "Finish": DictToUse = Edited.StatusesToSetOnDocumentPause; break;
-                case "Done": DictToUse = Edited.StatusesToSetOnDocumentDone; break;
-                case "FinishIncorrect": DictToUse = Edited.StatusesToSetOnDocumentFinishIncorrect; break;
+                case "Enter":
+                    DictToUse = Edited.StatusesToSetOnDocumentEnter;
+                    break;
+                case "Leave":
+                    DictToUse = Edited.StatusesToSetOnDocumentLeave;
+                    break;
+                case "Pause":
+                    DictToUse = Edited.StatusesToSetOnDocumentPause;
+                    break;
+                case "Finish":
+                    DictToUse = Edited.StatusesToSetOnDocumentPause;
+                    break;
+                case "Done":
+                    DictToUse = Edited.StatusesToSetOnDocumentDone;
+                    break;
+                case "FinishIncorrect":
+                    DictToUse = Edited.StatusesToSetOnDocumentFinishIncorrect;
+                    break;
             }
 
             List<string> Types = new List<string>();
@@ -665,12 +804,13 @@ namespace G_Mobile_Android_WMS
                 ResDict[Description] = Type;
             }
 
-            string Res = await UserDialogs.Instance.ActionSheetAsync(GetString(Resource.String.settings_select_module),
-                                                                     GetString(Resource.String.global_cancel),
-                                                                     "",
-                                                                     null,
-                                                                     Types.ToArray());
-
+            string Res = await UserDialogs.Instance.ActionSheetAsync(
+                GetString(Resource.String.settings_select_module),
+                GetString(Resource.String.global_cancel),
+                "",
+                null,
+                Types.ToArray()
+            );
 
             if (Res == GetString(Resource.String.global_cancel))
                 return;
@@ -678,8 +818,17 @@ namespace G_Mobile_Android_WMS
             {
                 try
                 {
-                    List<StatusDokumentuO> Statusy = Globalne.dokumentBL.PobierzListęStatusówDokumentów(ResDict[Res].ToString().Substring(0, 2));
-                    Statusy.Add(new StatusDokumentuO() { strNazwaStatusu = GetString(Resource.String.global_default), ID = -1 });
+                    List<StatusDokumentuO> Statusy =
+                        Serwer.dokumentBL.PobierzListęStatusówDokumentów(
+                            ResDict[Res].ToString().Substring(0, 2)
+                        );
+                    Statusy.Add(
+                        new StatusDokumentuO()
+                        {
+                            strNazwaStatusu = GetString(Resource.String.global_default),
+                            ID = -1
+                        }
+                    );
 
                     StatusDokumentuO Obecny = Statusy.Find(x => x.ID == DictToUse[ResDict[Res]]);
 
@@ -688,11 +837,13 @@ namespace G_Mobile_Android_WMS
 
                     Statusy = Statusy.OrderBy(x => x.ID).ThenBy(x => x.intPoziomStatusu).ToList();
 
-                    string Res2 = await UserDialogs.Instance.ActionSheetAsync(GetString(Resource.String.settings_select_doc_status),
-                                                                              GetString(Resource.String.global_cancel),
-                                                                              "",
-                                                                              null,
-                                                                              Statusy.Select(x => x.strNazwaStatusu).ToArray());
+                    string Res2 = await UserDialogs.Instance.ActionSheetAsync(
+                        GetString(Resource.String.settings_select_doc_status),
+                        GetString(Resource.String.global_cancel),
+                        "",
+                        null,
+                        Statusy.Select(x => x.strNazwaStatusu).ToArray()
+                    );
 
                     if (Res2 == GetString(Resource.String.global_cancel))
                         return;
@@ -718,7 +869,10 @@ namespace G_Mobile_Android_WMS
 
             foreach (Enums.DocTypes Type in Edited.CreatingDocumentsRequiredFields.Keys)
             {
-                if (Type.ToString().Contains("Gathering") || Type.ToString().Contains("Distribution"))
+                if (
+                    Type.ToString().Contains("Gathering")
+                    || Type.ToString().Contains("Distribution")
+                )
                     continue;
 
                 string Description = Helpers.GetEnumDescription(Type);
@@ -727,30 +881,34 @@ namespace G_Mobile_Android_WMS
                 ResDict[Description] = Type;
             }
 
-
-            string Res = await UserDialogs.Instance.ActionSheetAsync(GetString(Resource.String.settings_select_module),
-                                                                     GetString(Resource.String.global_cancel),
-                                                                     "",
-                                                                     null,
-                                                                     Types.ToArray());
+            string Res = await UserDialogs.Instance.ActionSheetAsync(
+                GetString(Resource.String.settings_select_module),
+                GetString(Resource.String.global_cancel),
+                "",
+                null,
+                Types.ToArray()
+            );
 
             if (Res == GetString(Resource.String.global_cancel))
                 return;
             else
             {
-
                 Dictionary<string, bool> Dict = new Dictionary<string, bool>();
 
-                Dictionary<Enums.DocumentFields, bool> SettingDict = Edited.CreatingDocumentsRequiredFields[ResDict[Res]];
-
+                Dictionary<Enums.DocumentFields, bool> SettingDict =
+                    Edited.CreatingDocumentsRequiredFields[ResDict[Res]];
 
                 foreach (Enums.DocumentFields Key in SettingDict.Keys)
                     Dict[Helpers.GetEnumDescription(Key)] = SettingDict[Key];
 
-
-                Helpers.OpenMultiListActivity(this, Res, GetString(Resource.String.settings_requiredfields) + " " + Res, Dict, (int)ResultCodes.RequiredDocItemsResult);
+                Helpers.OpenMultiListActivity(
+                    this,
+                    Res,
+                    GetString(Resource.String.settings_requiredfields) + " " + Res,
+                    Dict,
+                    (int)ResultCodes.RequiredDocItemsResult
+                );
                 return;
-
             }
         }
 
@@ -767,40 +925,44 @@ namespace G_Mobile_Android_WMS
                 ResDict[Description] = Type;
             }
 
-
-            string Res = await UserDialogs.Instance.ActionSheetAsync(GetString(Resource.String.settings_select_module),
-                                                                     GetString(Resource.String.global_cancel),
-                                                                     "",
-                                                                     null,
-                                                                     Types.ToArray());
+            string Res = await UserDialogs.Instance.ActionSheetAsync(
+                GetString(Resource.String.settings_select_module),
+                GetString(Resource.String.global_cancel),
+                "",
+                null,
+                Types.ToArray()
+            );
 
             if (Res == GetString(Resource.String.global_cancel))
                 return;
             else
             {
-
                 Dictionary<string, bool> Dict = new Dictionary<string, bool>();
-                Dictionary<Enums.DocumentItemDisplayElements, bool> SettingDict = Edited.EditingDocumentItemDisplayElementsListsKAT[ResDict[Res]];
-
+                Dictionary<Enums.DocumentItemDisplayElements, bool> SettingDict =
+                    Edited.EditingDocumentItemDisplayElementsListsKAT[ResDict[Res]];
 
                 foreach (Enums.DocumentItemDisplayElements Key in SettingDict.Keys)
                     Dict[Helpers.GetEnumDescription(Key)] = SettingDict[Key];
 
-
-                Helpers.OpenMultiListActivity(this, Res, GetString(Resource.String.settings_shown_elements) + " " + Res, Dict, (int)ResultCodes.ShowOnItemScreenResult);
+                Helpers.OpenMultiListActivity(
+                    this,
+                    Res,
+                    GetString(Resource.String.settings_shown_elements) + " " + Res,
+                    Dict,
+                    (int)ResultCodes.ShowOnItemScreenResult
+                );
                 return;
-
             }
         }
-
-
 
         private async void ShowOnLists_Click(object sender, EventArgs e)
         {
             List<string> Types = new List<string>();
             Dictionary<string, Enums.DocTypes> ResDict = new Dictionary<string, Enums.DocTypes>();
 
-            foreach (Enums.DocTypes Type in Edited.EditingDocumentsListDisplayElementsListsINNNR.Keys)
+            foreach (
+                Enums.DocTypes Type in Edited.EditingDocumentsListDisplayElementsListsINNNR.Keys
+            )
             {
                 string Description = Helpers.GetEnumDescription(Type);
 
@@ -808,29 +970,33 @@ namespace G_Mobile_Android_WMS
                 ResDict[Description] = Type;
             }
 
-
-            string Res = await UserDialogs.Instance.ActionSheetAsync(GetString(Resource.String.settings_select_module),
-                                                                     GetString(Resource.String.global_cancel),
-                                                                     "",
-                                                                     null,
-                                                                     Types.ToArray());
+            string Res = await UserDialogs.Instance.ActionSheetAsync(
+                GetString(Resource.String.settings_select_module),
+                GetString(Resource.String.global_cancel),
+                "",
+                null,
+                Types.ToArray()
+            );
 
             if (Res == GetString(Resource.String.global_cancel))
                 return;
             else
             {
-
                 Dictionary<string, bool> Dict = new Dictionary<string, bool>();
-                Dictionary<Enums.EditingDocumentsListDisplayElements, bool> SettingDict = Edited.EditingDocumentsListDisplayElementsListsINNNR[ResDict[Res]];
-                
+                Dictionary<Enums.EditingDocumentsListDisplayElements, bool> SettingDict =
+                    Edited.EditingDocumentsListDisplayElementsListsINNNR[ResDict[Res]];
 
                 foreach (Enums.EditingDocumentsListDisplayElements Key in SettingDict.Keys)
                     Dict[Helpers.GetEnumDescription(Key)] = SettingDict[Key];
 
-
-                Helpers.OpenMultiListActivity(this, Res, GetString(Resource.String.settings_shown_elements) + " " + Res, Dict, (int)ResultCodes.ShowOnEditingDocumentsListResult);
+                Helpers.OpenMultiListActivity(
+                    this,
+                    Res,
+                    GetString(Resource.String.settings_shown_elements) + " " + Res,
+                    Dict,
+                    (int)ResultCodes.ShowOnEditingDocumentsListResult
+                );
                 return;
-
             }
         }
 
@@ -850,11 +1016,13 @@ namespace G_Mobile_Android_WMS
                 ResDict[Description] = m;
             }
 
-            string Res = await UserDialogs.Instance.ActionSheetAsync(GetString(Resource.String.settings_zlmode),
-                                                                     GetString(Resource.String.global_cancel),
-                                                                     "",
-                                                                     null,
-                                                                     Options.ToArray());
+            string Res = await UserDialogs.Instance.ActionSheetAsync(
+                GetString(Resource.String.settings_zlmode),
+                GetString(Resource.String.global_cancel),
+                "",
+                null,
+                Options.ToArray()
+            );
 
             if (Res == GetString(Resource.String.global_cancel))
                 return;
@@ -878,19 +1046,19 @@ namespace G_Mobile_Android_WMS
                 ResDict[Description] = m;
             }
 
-            string Res = await UserDialogs.Instance.ActionSheetAsync(GetString(Resource.String.settings_mmmode),
-                                                                     GetString(Resource.String.global_cancel),
-                                                                     "",
-                                                                     null,
-                                                                     Options.ToArray());
+            string Res = await UserDialogs.Instance.ActionSheetAsync(
+                GetString(Resource.String.settings_mmmode),
+                GetString(Resource.String.global_cancel),
+                "",
+                null,
+                Options.ToArray()
+            );
 
             if (Res == GetString(Resource.String.global_cancel))
                 return;
             else
                 Edited.DefaultMMMode = ResDict[Res];
         }
-
-        
 
         private void Modules_Click(object sender, EventArgs e)
         {
@@ -899,7 +1067,13 @@ namespace G_Mobile_Android_WMS
             foreach (Enums.Modules Key in Edited.Modules.Keys)
                 Dict[Helpers.GetEnumDescription(Key)] = Edited.Modules[Key];
 
-            Helpers.OpenMultiListActivity(this, "", GetString(Resource.String.settings_modules), Dict, (int)ResultCodes.ModulesListResult);
+            Helpers.OpenMultiListActivity(
+                this,
+                "",
+                GetString(Resource.String.settings_modules),
+                Dict,
+                (int)ResultCodes.ModulesListResult
+            );
         }
 
         private void InstantScanModules_Click(object sender, EventArgs e)
@@ -909,9 +1083,14 @@ namespace G_Mobile_Android_WMS
             foreach (Enums.DocTypes Key in Edited.InstantScanning.Keys)
                 Dict[Helpers.GetEnumDescription(Key)] = Edited.InstantScanning[Key];
 
-            Helpers.OpenMultiListActivity(this, "", GetString(Resource.String.settings_instantscan), Dict, (int)ResultCodes.InstantScanListResult);
+            Helpers.OpenMultiListActivity(
+                this,
+                "",
+                GetString(Resource.String.settings_instantscan),
+                Dict,
+                (int)ResultCodes.InstantScanListResult
+            );
         }
-
 
         private void SetupBasedOnCurrentSettings()
         {
@@ -961,21 +1140,23 @@ namespace G_Mobile_Android_WMS
             InventAutoClose.Checked = Edited.InventAutoClose;
             CanBarcodeLogin.Checked = Edited.CheckCanBarcodeLogin;
             Multipicking.Checked = Edited.Multipicking;
-            MultipAutoKompletacjaAfterFinish.Checked = Edited.MultipickingAutoKompletacjaAfterFinish;
+            MultipAutoKompletacjaAfterFinish.Checked =
+                Edited.MultipickingAutoKompletacjaAfterFinish;
             MultipConfirmArt.Checked = Edited.MultipickingConfirmArticle;
             MultipStatusCloseWZ.Checked = Edited.MultipickingSetStatusClose;
             MultipConfirmIn.Checked = Edited.MultipickingConfirmInLocation;
             MultipConfirmOut.Checked = Edited.MultipickingConfirmOutLocation;
             MultipDocSelection.Checked = Edited.MultipickingSelectDocuments;
             MultipDelayBeforeClose.Value = Edited.MultipickingDelayBeforeClose;
-          
+
             //OneInsteadOfSet.Checked = Edited.OneInsteadOfSetAmount;
         }
 
         private void SettingsBtnPrev_Click(object sender, EventArgs e)
         {
-            RunIsBusyAction(() => Helpers.SwitchAndFinishCurrentActivity(this, typeof(SettingsActivity)));
+            RunIsBusyAction(
+                () => Helpers.SwitchAndFinishCurrentActivity(this, typeof(SettingsActivity))
+            );
         }
     }
 }
-

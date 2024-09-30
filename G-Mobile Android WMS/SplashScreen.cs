@@ -14,6 +14,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using G_Mobile_Android_WMS.Common;
 using Newtonsoft.Json;
 using Symbol.XamarinEMDK;
 using WMS_DESKTOP_API;
@@ -45,16 +46,13 @@ namespace G_Mobile_Android_WMS
 
             if (LoadConfig())
             {
-                if (ServerConnection.Connect() == -1)
+                if (Serwer.PołączZSerwerem() == -1)
                 {
                     Errors = GetString(Resource.String.splash_activity_connecterror);
                 }
                 else
                 {
-                    int Res = ServerConnection.CreateObjects();
-
-                    if (Res == 0)
-                        Globalne.Licencja = Serwer.licencjaBL.GetLicence_Portable();
+                    Globalne.Licencja = Serwer.licencjaBL.GetLicence_Portable();
                 }
             }
             else
@@ -78,7 +76,7 @@ namespace G_Mobile_Android_WMS
 #if DEBUG
             Globalne.CurrentTerminalSettings = new TerminalSettings();
             //Globalne.CurrentTerminalSettings.IP = "10.1.0.50";
-            Globalne.CurrentTerminalSettings.IP = "192.168.127.231";
+            Globalne.CurrentTerminalSettings.IP = "10.1.0.236";
             Globalne.CurrentTerminalSettings.Port = "6446";
             Globalne.CurrentTerminalSettings.User = "Terminal1";
             Globalne.CurrentTerminalSettings.Password = "Terminal1";
@@ -103,39 +101,18 @@ namespace G_Mobile_Android_WMS
         void SetDefaults()
         {
             //todo: dosotwąć do api
-            //SetDeviceData();
+            SetDeviceData();
 
-            //Globalne.AppName = Xamarin.Essentials.AppInfo.Name;
-            //Globalne.AppVer = Xamarin.Essentials.AppInfo.VersionString;
+            Globalne.AppName = Xamarin.Essentials.AppInfo.Name;
+            Globalne.AppVer = Xamarin.Essentials.AppInfo.VersionString;
 
-            //Globalne.Player = new Android.Media.MediaPlayer();
+            Globalne.Player = new Android.Media.MediaPlayer();
+            Globalne.CurrentSettings = null;
 
-            //Globalne.client = null;
-
-            //Globalne.CurrentSettings = null;
-
-            //Serwer.licencjaBL = null;
-            //Serwer.operatorBL = null;
-            //Serwer.magazynBL = null;
-            //Serwer.ogólneBL = null;
-            //Serwer.podmiotBL = null;
-            //Serwer.jednostkaMiaryBL = null;
-            //Serwer.towarBL = null;
-            //Globalne.wymaganiaBL = null;
-            //Serwer.lokalizacjaBL = null;
-            //Serwer.rejestrBL = null;
-            //Serwer.dokumentBL = null;
-            //Serwer.przychRozchBL = null;
-            //Serwer.kodykreskoweBL = null;
-            //Serwer.partiaBL = null;
-            //Serwer.paletaBL = null;
-            //Serwer.funklogBL = null;
-            //Serwer.menuBL = null;
-            //Serwer.aktualizacjeBL = null;
-
-            //Globalne.Licencja = null;
-            //Globalne.Operator = null;
-            //Globalne.Magazyn = null;
+            Serwer.Konfiguracja = Globalne.CurrentTerminalSettings;
+            Globalne.Licencja = null;
+            Globalne.Operator = null;
+            Globalne.Magazyn = null;
         }
 
         void SetDeviceData()

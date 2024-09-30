@@ -78,7 +78,7 @@ namespace G_Mobile_Android_WMS
             if (Globalne.Logo != null)
                 Logo.SetImageBitmap(Globalne.Logo);
 
-            if (!ServerConnection.Connected)
+            if (!Serwer.Connected)
             {
                 Android.Content.Res.ColorStateList CS1 = new Android.Content.Res.ColorStateList(
                     new int[][] { new int[0] },
@@ -179,7 +179,7 @@ namespace G_Mobile_Android_WMS
             if (
                 Globalne.CurrentSettings != null
                 && Globalne.CurrentSettings.CheckCanCloseApp
-                && ServerConnection.Connected
+                && Serwer.Connected
             )
             {
                 if (IsSwitchingActivity)

@@ -11,6 +11,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using G_Mobile_Android_WMS.Common;
 using Symbol.XamarinEMDK;
 using Symbol.XamarinEMDK.Barcode;
 using WMS_DESKTOP_API;
@@ -37,7 +38,16 @@ namespace G_Mobile_Android_WMS
         public static IBarcodeScannerManager Scanner;
         public static bool ScannerError = false;
 
-        public static TerminalSettings CurrentTerminalSettings = new TerminalSettings();
+        public static TerminalSettings _CurrentTerminalSettings = new TerminalSettings();
+        public static TerminalSettings CurrentTerminalSettings
+        {
+            get { return _CurrentTerminalSettings; }
+            set
+            {
+                _CurrentTerminalSettings = value;
+                Serwer.Konfiguracja = _CurrentTerminalSettings;
+            }
+        }
         public static WMSSettings CurrentSettings = new WMSSettings();
         public static UserSettings CurrentUserSettings = new UserSettings();
 

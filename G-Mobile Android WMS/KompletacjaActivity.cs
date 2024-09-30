@@ -261,8 +261,8 @@ namespace G_Mobile_Android_WMS
 
                                 Serwer.dokumentBL.WydrukEty(
                                     CurrentDoc.strERP,
-                                    intlokalizacja.strNazwa,
-                                    1
+                                    intlokalizacja.strNazwa
+                                //1
                                 );
                             }
                             catch (Exception ex) { }

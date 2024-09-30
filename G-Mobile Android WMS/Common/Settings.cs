@@ -14,11 +14,12 @@ using G_Mobile_Android_WMS.Enums;
 using G_Mobile_Android_WMS.ExtendedModel;
 using WMS_DESKTOP_API;
 using WMS_DESKTOP_API;
+using WMS_DESKTOP_API.Konfiguracje;
 using WMS_Model.ModeleDanych;
 
 namespace G_Mobile_Android_WMS
 {
-    public class TerminalSettings
+    public class TerminalSettings : IKonfiguracjaKontroler
     {
         public static string SettingsBundleName = "GMobileWMS";
         public string IP { get; set; }
@@ -27,6 +28,17 @@ namespace G_Mobile_Android_WMS
         public string Password { get; set; }
 
         public ScreenOrientation Orientation { get; set; }
+        Konfiguracja IKonfiguracjaKontroler.Konfig
+        {
+            get { return new Konfiguracja(this.IP, this.Port, this.User, this.Password); }
+            set
+            {
+                this.IP = value.IP;
+                this.Port = value.Port;
+                this.User = value.User;
+                this.Password = value.Password;
+            }
+        }
 
         public TerminalSettings()
         {
@@ -88,6 +100,16 @@ namespace G_Mobile_Android_WMS
 
             SettingsEditor.PutString("Json", Json);
             SettingsEditor.Apply();
+        }
+
+        void IKonfiguracjaKontroler.ZaładujKonfiguracje()
+        {
+            TerminalSettings terminal = GetSettings();
+            this.IP = terminal.IP;
+            this.Orientation = terminal.Orientation;
+            this.Password = terminal.Password;
+            this.Port = terminal.Port;
+            this.User = terminal.User;
         }
     }
 

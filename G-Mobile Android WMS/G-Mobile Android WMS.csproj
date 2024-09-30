@@ -128,7 +128,6 @@
     <Compile Include="Common\IBarcodeScannerManager.cs" />
     <Compile Include="Common\BarcodeScannerManager.cs" />
     <Compile Include="Common\ProfileSetter.cs" />
-    <Compile Include="Common\ServerConnection.cs" />
     <Compile Include="Common\Settings.cs" />
     <Compile Include="Common\Szyfrowanie.cs" />
     <Compile Include="InfoActivity.cs" />

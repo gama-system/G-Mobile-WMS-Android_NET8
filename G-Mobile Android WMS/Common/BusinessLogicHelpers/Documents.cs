@@ -357,8 +357,7 @@ namespace G_Mobile_Android_WMS.BusinessLogicHelpers
                                         {
                                             Serwer.dokumentBL.WydrukEty(
                                                 Documents.FirstOrDefault().strNazwa,
-                                                location,
-                                                numerDrukarki
+                                                location
                                             );
                                         }
                                         //return true;

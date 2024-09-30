@@ -87,7 +87,7 @@ namespace G_Mobile_Android_WMS
                 Resource.Color.button_blue
             );
 
-            if (!ServerConnection.Connected)
+            if (!Serwer.Connected)
             {
                 InnerSettings.Visibility = ViewStates.Gone;
                 IdsSettings.Visibility = ViewStates.Gone;
@@ -300,7 +300,7 @@ namespace G_Mobile_Android_WMS
 
             TerminalSettings.SaveSettings(Globalne.CurrentTerminalSettings);
 
-            if (ServerConnection.Connect() == -1)
+            if (Serwer.PołączZSerwerem() == -1)
             {
                 RunOnUiThread(
                     () =>
@@ -312,28 +312,15 @@ namespace G_Mobile_Android_WMS
             }
             else
             {
-                int Res = ServerConnection.CreateObjects();
-
-                if (Res == 0)
-                {
-                    Globalne.Licencja = Serwer.licencjaBL.GetLicence_Portable();
-                    BusinessLogicHelpers.Config.GetDatabaseConfig();
-                    RunOnUiThread(
-                        () =>
-                            Helpers.CenteredToast(
-                                GetString(Resource.String.settings_activity_saved),
-                                ToastLength.Short
-                            )
-                    );
-                }
-                else
-                    RunOnUiThread(
-                        () =>
-                            Helpers.CenteredToast(
-                                GetString(Resource.String.settings_activity_connecterror),
-                                ToastLength.Short
-                            )
-                    );
+                Globalne.Licencja = Serwer.licencjaBL.GetLicence_Portable();
+                BusinessLogicHelpers.Config.GetDatabaseConfig();
+                RunOnUiThread(
+                    () =>
+                        Helpers.CenteredToast(
+                            GetString(Resource.String.settings_activity_saved),
+                            ToastLength.Short
+                        )
+                );
             }
         }
 

@@ -1013,24 +1013,9 @@ namespace G_Mobile_Android_WMS
             {
                 if (!(ex is BusinessLogicException))
                     LogErrorToFile(ex);
-
-                if (ex.StackTrace.Contains("Hive.Rpc.Client"))
-                {
-                    ServerConnection.CloseConnections();
-                }
-
-                if (!ServerConnection.PingServer())
+                if (!Serwer.PingServer())
                 {
                     int Wynik = -1;
-
-                    try
-                    {
-                        Wynik = ServerConnection.Connect() + ServerConnection.CreateObjects();
-                    }
-                    catch (Exception)
-                    {
-                        Wynik = -1;
-                    }
 
                     if (Wynik == 0)
                     {
